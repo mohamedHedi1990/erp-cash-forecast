@@ -17,4 +17,12 @@ public class CustomerService {
 		return customerRepo.findAll();
 	}
 
+	public Customer saveNewCustomer(Customer customer) {
+		return customerRepo.save(customer);
+	}
+
+	public Customer findCustomerById(Long customerId) {
+		return customerRepo.findOne(customerId);
+	}
+
 }

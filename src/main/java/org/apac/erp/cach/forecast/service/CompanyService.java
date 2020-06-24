@@ -17,4 +17,12 @@ public class CompanyService {
 		return companyRepo.findAll();
 	}
 
+	public Company saveNewCompany(Company company) {
+		return companyRepo.save(company);
+	}
+
+	public Company findCompanyById(Long companyId) {
+		return companyRepo.findOne(companyId);
+	}
+
 }

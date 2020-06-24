@@ -2,8 +2,10 @@ package org.apac.erp.cach.forecast.controller;
 
 import java.util.List;
 
+import org.apac.erp.cach.forecast.persistence.entities.CustomerInvoice;
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
-import org.apac.erp.cach.forecast.service.InvoiceService;
+import org.apac.erp.cach.forecast.persistence.entities.ProviderInvoice;
+import org.apac.erp.cach.forecast.service.CustomerInvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,28 +16,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/invoice")
-public class InvoiceController {
-
+@RequestMapping("/api/customer/invoice")
+public class CustomerInvoiceController {
+	
 	@Autowired
-	private InvoiceService invoiceService;
+	private CustomerInvoiceService customerInvoiceService;
 
 	@CrossOrigin
 	@GetMapping()
-	public List<Invoice> findAllInvoices() {
-		return invoiceService.findAllInvoices();
+	public List<CustomerInvoice> findAllProviderInvoices() {
+		return customerInvoiceService.findAllCustomerInvoices();
 	}
 
 	@CrossOrigin
 	@PostMapping()
-	public Invoice saveNewInvoice(@RequestBody Invoice invoice) {
-		return invoiceService.saveNewInvoice(invoice);
+	public CustomerInvoice saveNewProviderInvoice(@RequestBody CustomerInvoice invoice) {
+		return customerInvoiceService.saveNewCustomerInvoice(invoice);
 	}
-
+	
 	@CrossOrigin
 	@GetMapping("by-invoice-id/{invoiceId}")
 	public Invoice findInvoiceById(@PathVariable("invoiceId") Long invoiceId) {
-		return invoiceService.findInvoiceById(invoiceId);
+		return customerInvoiceService.findCustomerInvoiceById(invoiceId);
 	}
 
 }

@@ -16,4 +16,12 @@ public class ProviderService {
 	public List<Provider> findAllProvides() {
 		return providerRepo.findAll();
 	}
+
+	public Provider saveNewProvider(Provider provider) {
+		return providerRepo.save(provider);
+	}
+
+	public Provider findProviderById(Long providerId) {
+		return providerRepo.findOne(providerId);
+	}
 }
