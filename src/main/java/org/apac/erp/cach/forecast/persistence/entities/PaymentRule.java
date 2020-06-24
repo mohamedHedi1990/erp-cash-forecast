@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 @Entity
-@Table(name = "erp_payment_rule")
+@Table(name = "erp_paymentRule")
 @Data
 public class PaymentRule extends AuditableSql implements Serializable {
 

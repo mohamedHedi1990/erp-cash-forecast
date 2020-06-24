@@ -2,11 +2,14 @@ package org.apac.erp.cach.forecast.persistence.entities;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
@@ -30,6 +33,12 @@ public class BankAccount extends AuditableSql implements Serializable {
 	private String bankAccountChargeCustomerName;
 
 	private String bankAccountChargeCustomerPhoneNumber;
+
+	@ManyToOne
+	private Agency bankAccountAgency;
+	
+	@OneToMany
+	private List<EncaissementDecaissement> bankAccountEncaissementDecaissements;
 
 	@PrePersist
 	private void persistId() {

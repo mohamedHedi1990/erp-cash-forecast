@@ -8,7 +8,7 @@ import javax.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "erp_customer_invoice")
+@Table(name = "erp_customerInvoice")
 @Data
 public class CustomerInvoice extends Invoice implements Serializable {
 

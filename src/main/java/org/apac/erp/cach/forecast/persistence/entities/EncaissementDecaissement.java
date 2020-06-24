@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 @Entity
-@Table(name = "erp_timeline")
+@Table(name = "erp_encaissementDecaissement")
 @Data
 public class EncaissementDecaissement extends AuditableSql implements Serializable {
 
