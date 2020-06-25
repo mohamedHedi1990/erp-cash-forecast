@@ -17,4 +17,12 @@ public class BankService {
 		return bankRepo.findAll();
 	}
 
+	public Bank saveNewBank(Bank bank) {
+		return bankRepo.save(bank);
+	}
+
+	public Bank findBankById(Long bankId) {
+		return bankRepo.findOne(bankId);
+	}
+
 }

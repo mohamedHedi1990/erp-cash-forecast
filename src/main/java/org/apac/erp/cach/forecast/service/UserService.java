@@ -12,9 +12,17 @@ public class UserService {
 
 	@Autowired
 	private UserRepository userRepo;
-	
+
 	public List<User> findAllUsers() {
 		return userRepo.findAll();
+	}
+
+	public User saveNewUser(User user) {
+		return userRepo.save(user);
+	}
+
+	public User findUserById(Long userId) {
+		return userRepo.findOne(userId);
 	}
 
 }

@@ -17,4 +17,12 @@ public class InvoiceService {
 		return invoiceRepo.findAll();
 	}
 
+	public Invoice saveNewInvoice(Invoice invoice) {
+		return invoiceRepo.save(invoice);
+	}
+
+	public Invoice findInvoiceById(Long invoiceId) {
+		return invoiceRepo.findOne(invoiceId);
+	}
+
 }
