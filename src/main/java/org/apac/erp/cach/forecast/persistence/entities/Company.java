@@ -1,4 +1,4 @@
- package org.apac.erp.cach.forecast.persistence.entities;
+package org.apac.erp.cach.forecast.persistence.entities;
 
 import java.io.Serializable;
 import java.util.Date;
