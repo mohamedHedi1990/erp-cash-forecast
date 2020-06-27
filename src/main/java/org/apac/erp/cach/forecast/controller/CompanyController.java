@@ -6,6 +6,7 @@ import org.apac.erp.cach.forecast.persistence.entities.Company;
 import org.apac.erp.cach.forecast.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,6 +36,12 @@ public class CompanyController {
 	@GetMapping("by-company-id/{companyId}")
 	public Company findCompanyById(@PathVariable("companyId") Long companyId) {
 		return companyService.findCompanyById(companyId);
+	}
+	
+	@CrossOrigin
+	@DeleteMapping("/{companyId}")
+	public void deleteCompany(@PathVariable("companyId") Long companyId) {
+		 companyService.deleteCompany(companyId);
 	}
 
 }
