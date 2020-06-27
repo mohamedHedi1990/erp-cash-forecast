@@ -2,6 +2,7 @@ package org.apac.erp.cach.forecast.controller;
 
 import java.util.List;
 
+import org.apac.erp.cach.forecast.dtos.CustomerDTO;
 import org.apac.erp.cach.forecast.persistence.entities.Customer;
 import org.apac.erp.cach.forecast.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +23,14 @@ public class CustomerController {
 
 	@CrossOrigin
 	@GetMapping()
-	public List<Customer> findAllCustomers() {
+	public List<CustomerDTO> findAllCustomers() {
 		return customerService.findAllCustomers();
 	}
 
 	@CrossOrigin
-	@PostMapping()
-	public Customer saveNewCustomer(@RequestBody Customer customer) {
-		return customerService.saveNewCustomer(customer);
+	@PostMapping("/company/{companyId}")
+	public Customer saveNewCustomer(@RequestBody Customer customer, @PathVariable("companyId") Long companyId) {
+		return customerService.saveNewCustomerToGvenCompany(customer, companyId);
 	}
 
 	@CrossOrigin

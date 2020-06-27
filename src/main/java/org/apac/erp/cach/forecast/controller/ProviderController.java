@@ -2,6 +2,7 @@ package org.apac.erp.cach.forecast.controller;
 
 import java.util.List;
 
+import org.apac.erp.cach.forecast.dtos.ProviderDTO;
 import org.apac.erp.cach.forecast.persistence.entities.Provider;
 import org.apac.erp.cach.forecast.service.ProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +23,14 @@ public class ProviderController {
 
 	@CrossOrigin
 	@GetMapping()
-	public List<Provider> findAllUsers() {
+	public List<ProviderDTO> findAllUsers() {
 		return providerService.findAllProvides();
 	}
 
 	@CrossOrigin
-	@PostMapping()
-	public Provider saveNewProvider(@RequestBody Provider provider) {
-		return providerService.saveNewProvider(provider);
+	@PostMapping("/company/{companyId}")
+	public Provider saveNewProvider(@RequestBody Provider provider, @PathVariable("companyId") Long companyId) {
+		return providerService.saveNewProviderToGvenCompany(provider, companyId);
 	}
 	@CrossOrigin
 	@GetMapping("by-provider-id/{providerId}")
