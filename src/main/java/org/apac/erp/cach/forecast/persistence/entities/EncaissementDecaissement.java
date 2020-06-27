@@ -9,6 +9,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -47,6 +48,9 @@ public class EncaissementDecaissement extends AuditableSql implements Serializab
 	private String encaissementDecaissementLabel;
 
 	private Double encaissementDecaissementAmount;
+	
+	@ManyToOne
+	private BankAccount bankAccount;
 
 	@PrePersist
 	private void persistId() {

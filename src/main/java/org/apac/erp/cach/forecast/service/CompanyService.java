@@ -25,4 +25,8 @@ public class CompanyService {
 		return companyRepo.findOne(companyId);
 	}
 
+	public void deleteCompany(Long companyId) {
+		companyRepo.delete(companyId);
+	}
+
 }

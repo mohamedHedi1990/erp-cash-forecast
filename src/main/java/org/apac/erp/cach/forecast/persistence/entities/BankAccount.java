@@ -37,8 +37,6 @@ public class BankAccount extends AuditableSql implements Serializable {
 	@ManyToOne
 	private Agency bankAccountAgency;
 	
-	@OneToMany
-	private List<EncaissementDecaissement> bankAccountEncaissementDecaissements;
 
 	@PrePersist
 	private void persistId() {
