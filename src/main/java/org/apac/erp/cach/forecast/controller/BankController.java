@@ -6,6 +6,7 @@ import org.apac.erp.cach.forecast.persistence.entities.Bank;
 import org.apac.erp.cach.forecast.service.BankService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,7 +29,7 @@ public class BankController {
 
 	@CrossOrigin
 	@PostMapping()
-	public Bank saveNewConsultant(@RequestBody Bank bank) {
+	public Bank saveNewBank(@RequestBody Bank bank) {
 		return bankService.saveNewBank(bank);
 	}
 
@@ -36,6 +37,12 @@ public class BankController {
 	@GetMapping("by-bank-id/{bankId}")
 	public Bank findBankById(@PathVariable("bankId") Long bankId) {
 		return bankService.findBankById(bankId);
+	}
+	
+	@CrossOrigin
+	@DeleteMapping("/{bankId}")
+	public void deleteBank(@PathVariable("bankId") Long bankId) {
+		bankService.deleteBank(bankId);
 	}
 
 }

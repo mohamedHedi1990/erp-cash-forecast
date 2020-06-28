@@ -25,4 +25,9 @@ public class BankService {
 		return bankRepo.findOne(bankId);
 	}
 
+	public void deleteBank(Long bankId) {
+		bankRepo.delete(bankId);
+		
+	}
+
 }
