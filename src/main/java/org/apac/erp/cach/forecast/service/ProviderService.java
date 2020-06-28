@@ -28,8 +28,8 @@ public class ProviderService {
 		providers.stream().forEach(provider -> {
 			ProviderDTO dto = new ProviderDTO(provider.getProviderId(), provider.getProviderLabel(),
 					provider.getProviderAddress(), provider.getProviderUniqueIdentifier(),
-					provider.getProviderManagerName(), provider.getProviderContactNumber(),
-					provider.getProviderCompany().getCampanyName());
+					provider.getProviderManagerName(), provider.getProviderContactNumber(), provider.getCreatedAt(),
+					provider.getUpdatedAt(), provider.getProviderCompany().getCampanyName());
 			dtos.add(dto);
 		});
 
@@ -49,5 +49,9 @@ public class ProviderService {
 
 	public Provider findProviderById(Long providerId) {
 		return providerRepo.findOne(providerId);
+	}
+
+	public void deleteCompany(Long providerId) {
+		providerRepo.delete(providerId);
 	}
 }

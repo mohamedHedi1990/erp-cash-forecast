@@ -7,6 +7,7 @@ import org.apac.erp.cach.forecast.persistence.entities.Provider;
 import org.apac.erp.cach.forecast.service.ProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,4 +38,11 @@ public class ProviderController {
 	public Provider findProviderById(@PathVariable("providerId") Long providerId) {
 		return providerService.findProviderById(providerId);
 	}
+	
+	@CrossOrigin
+	@DeleteMapping("/{providerId}")
+	public void deleteCompany(@PathVariable("providerId") Long providerId) {
+		 providerService.deleteCompany(providerId);
+	}
+
 }
