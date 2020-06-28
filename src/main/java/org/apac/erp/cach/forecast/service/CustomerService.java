@@ -23,9 +23,10 @@ public class CustomerService {
 		List<CustomerDTO> dtos = new ArrayList<CustomerDTO>();
 		List<Customer> customers = customerRepo.findAll();
 		customers.stream().forEach(customer -> {
-			CustomerDTO dto = new CustomerDTO(customer.getCustomerId(), customer.getCustomerLabel(), customer.getCustomerAddress(),
-					customer.getCustomerUniqueIdentifier(), customer.getCustomerManagerName(),
-					customer.getCustomerContactNumber(), customer.getCustomerCompany().getCampanyName());
+			CustomerDTO dto = new CustomerDTO(customer.getCustomerId(), customer.getCustomerLabel(),
+					customer.getCustomerAddress(), customer.getCustomerUniqueIdentifier(),
+					customer.getCustomerManagerName(), customer.getCustomerContactNumber(), customer.getCreatedAt(),
+					customer.getUpdatedAt(), customer.getCustomerCompany().getCampanyName());
 			dtos.add(dto);
 		});
 
@@ -44,6 +45,10 @@ public class CustomerService {
 
 	public Customer findCustomerById(Long customerId) {
 		return customerRepo.findOne(customerId);
+	}
+
+	public void deleteCustomer(Long customerId) {
+		customerRepo.delete(customerId);
 	}
 
 }

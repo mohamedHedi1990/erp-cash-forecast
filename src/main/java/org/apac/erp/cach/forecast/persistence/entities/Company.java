@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -33,16 +34,10 @@ public class Company extends AuditableSql implements Serializable {
 
 	private String campanyPhoneNumber;
 
-	@OneToMany
-	private List<BankAccount> campanyBankAccounts;
-
-	@OneToMany
-	private List<Timeline> campanyTimelines;
-
-	@OneToMany
+	@OneToMany(cascade = CascadeType.REMOVE)
 	private List<Customer> campanyCustomers;
 
-	@OneToMany
+	@OneToMany(cascade = CascadeType.REMOVE)
 	private List<Provider> campanyProviders;
 
 	@PrePersist

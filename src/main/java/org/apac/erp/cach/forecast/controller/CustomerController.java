@@ -7,6 +7,7 @@ import org.apac.erp.cach.forecast.persistence.entities.Customer;
 import org.apac.erp.cach.forecast.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,5 +39,12 @@ public class CustomerController {
 	public Customer findCustomerById(@PathVariable("customerId") Long customerId) {
 		return customerService.findCustomerById(customerId);
 	}
+	
+	@CrossOrigin
+	@DeleteMapping("/{customerId}")
+	public void deleteCompany(@PathVariable("customerId") Long customerId) {
+		customerService.deleteCustomer(customerId);
+	}
+
 
 }

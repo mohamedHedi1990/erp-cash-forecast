@@ -1,5 +1,13 @@
 package org.apac.erp.cach.forecast.dtos;
 
+import java.util.Date;
+
+import javax.persistence.Column;
+
+import org.springframework.data.annotation.LastModifiedDate;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -18,6 +26,10 @@ public class ProviderDTO {
 	private String providerManagerName;
 
 	private String providerContactNumber;
+	
+	protected Date createdAt;
+
+	protected Date updatedAt;
 
 	private String companyName;
 
