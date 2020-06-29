@@ -26,21 +26,16 @@ public class CustomerService {
 			CustomerDTO dto = new CustomerDTO(customer.getCustomerId(), customer.getCustomerLabel(),
 					customer.getCustomerAddress(), customer.getCustomerUniqueIdentifier(),
 					customer.getCustomerManagerName(), customer.getCustomerContactNumber(), customer.getCreatedAt(),
-					customer.getUpdatedAt(), customer.getCustomerCompany().getCampanyName());
+					customer.getUpdatedAt());
 			dtos.add(dto);
 		});
 
 		return dtos;
 	}
 
-	public Customer saveNewCustomerToGvenCompany(Customer customer, Long companyId) {
-		Company company = companyService.findCompanyById(companyId);
-		if (company != null) {
-			customer.setCustomerCompany(company);
-			return customerRepo.save(customer);
-		} else {
-			return null;
-		}
+	public Customer saveNewCustomer(Customer customer) {
+		return customerRepo.save(customer);
+
 	}
 
 	public Customer findCustomerById(Long customerId) {

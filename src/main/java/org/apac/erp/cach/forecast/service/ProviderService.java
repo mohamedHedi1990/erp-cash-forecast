@@ -29,22 +29,15 @@ public class ProviderService {
 			ProviderDTO dto = new ProviderDTO(provider.getProviderId(), provider.getProviderLabel(),
 					provider.getProviderAddress(), provider.getProviderUniqueIdentifier(),
 					provider.getProviderManagerName(), provider.getProviderContactNumber(), provider.getCreatedAt(),
-					provider.getUpdatedAt(), provider.getProviderCompany().getCampanyName());
+					provider.getUpdatedAt());
 			dtos.add(dto);
 		});
 
 		return dtos;
 	}
 
-	public Provider saveNewProviderToGvenCompany(Provider provider, Long companyId) {
-		Company company = companyService.findCompanyById(companyId);
-		if (company != null) {
-			provider.setProviderCompany(company);
-			return providerRepo.save(provider);
-		} else {
-			return null;
-		}
-
+	public Provider saveNewProvider(Provider provider) {
+		return providerRepo.save(provider);
 	}
 
 	public Provider findProviderById(Long providerId) {

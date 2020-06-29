@@ -39,9 +39,6 @@ public class Provider extends AuditableSql implements Serializable {
 	@OneToMany
 	private List<ProviderInvoice> providerInvoices;
 
-	@ManyToOne
-	private Company providerCompany;
-
 	@PrePersist
 	private void persistId() {
 		if (this.createdAt == null) {

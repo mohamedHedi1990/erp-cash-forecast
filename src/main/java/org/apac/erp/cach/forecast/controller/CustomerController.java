@@ -29,9 +29,9 @@ public class CustomerController {
 	}
 
 	@CrossOrigin
-	@PostMapping("/company/{companyId}")
-	public Customer saveNewCustomer(@RequestBody Customer customer, @PathVariable("companyId") Long companyId) {
-		return customerService.saveNewCustomerToGvenCompany(customer, companyId);
+	@PostMapping()
+	public Customer saveNewCustomer(@RequestBody Customer customer) {
+		return customerService.saveNewCustomer(customer);
 	}
 
 	@CrossOrigin

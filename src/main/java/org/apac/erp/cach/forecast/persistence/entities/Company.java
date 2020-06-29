@@ -34,12 +34,6 @@ public class Company extends AuditableSql implements Serializable {
 
 	private String campanyPhoneNumber;
 
-	@OneToMany(cascade = CascadeType.REMOVE)
-	private List<Customer> campanyCustomers;
-
-	@OneToMany(cascade = CascadeType.REMOVE)
-	private List<Provider> campanyProviders;
-
 	@PrePersist
 	private void persistId() {
 		if (this.createdAt == null) {
