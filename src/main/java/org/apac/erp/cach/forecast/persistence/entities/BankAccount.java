@@ -3,6 +3,7 @@ package org.apac.erp.cach.forecast.persistence.entities;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -34,9 +35,6 @@ public class BankAccount extends AuditableSql implements Serializable {
 
 	@ManyToOne
 	private Agency bankAccountAgency;
-
-	@ManyToOne
-	private Company bankAccountCompany;
 
 	@PrePersist
 	private void persistId() {

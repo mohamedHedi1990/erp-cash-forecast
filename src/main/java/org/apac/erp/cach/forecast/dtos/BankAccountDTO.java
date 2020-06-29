@@ -1,5 +1,7 @@
 package org.apac.erp.cach.forecast.dtos;
 
+import java.util.Date;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -18,7 +20,9 @@ public class BankAccountDTO {
 	private String bankAccountChargeCustomerPhoneNumber;
 
 	private String bankAccountAgencyName;
+	
+	protected Date createdAt;
 
-	private String bankAccountCompanyName;
+	protected Date updatedAt;
 
 }
