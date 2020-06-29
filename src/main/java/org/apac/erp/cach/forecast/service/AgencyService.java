@@ -35,6 +35,10 @@ public class AgencyService {
 		agency.setAgencyBank(bankService.findBankById(bankId));
 		return agencyRepo.save(agency);
 	}
+	
+	public Agency findOneById(Long agencyId) {
+		return agencyRepo.findOne(agencyId);
+	}
 
 	public void deleteAgency(Long agencyId) {
 		agencyRepo.delete(agencyId);
