@@ -1,5 +1,6 @@
 package org.apac.erp.cach.forecast.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
@@ -13,21 +14,35 @@ public class ProviderInvoiceService {
 
 	@Autowired
 	private ProviderInvoiceRepository providerInvoiceRepo;
-	
+
 	@Autowired
-	private ProviderService  providerService;
-	
+	private ProviderService providerService;
+
+	@Autowired
+	private InvoiceService invoiceService;
+
 	public List<ProviderInvoice> findAllProviderInvoices() {
 		return providerInvoiceRepo.findAll();
 	}
 
 	public ProviderInvoice saveNewProviderInvoice(ProviderInvoice invoice, Long providerId) {
 		invoice.setProvider(providerService.findProviderById(providerId));
+		invoice.setInvoiceTotalAmount(invoice.getInvoiceNet() + invoice.getInvoiceRs());
+		try {
+			long days = invoiceService.betweenDates(invoice.getInvoiceDate(), invoice.getInvoiceDeadlineDate());
+			invoice.setInvoiceDeadlineInNumberOfDays((int) days);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return providerInvoiceRepo.save(invoice);
 	}
 
 	public Invoice findProviderInvoiceById(Long invoiceId) {
 		return providerInvoiceRepo.findOne(invoiceId);
+	}
+
+	public void deleteInvoice(Long invoiceId) {
+		providerInvoiceRepo.delete(invoiceId);
 	}
 
 }
