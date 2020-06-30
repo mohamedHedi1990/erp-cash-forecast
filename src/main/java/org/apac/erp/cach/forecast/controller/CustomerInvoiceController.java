@@ -2,6 +2,7 @@ package org.apac.erp.cach.forecast.controller;
 
 import java.util.List;
 
+import org.apac.erp.cach.forecast.dtos.CustomerInvoiceDTO;
 import org.apac.erp.cach.forecast.persistence.entities.CustomerInvoice;
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
 import org.apac.erp.cach.forecast.service.CustomerInvoiceService;
@@ -24,7 +25,7 @@ public class CustomerInvoiceController {
 
 	@CrossOrigin
 	@GetMapping()
-	public List<CustomerInvoice> findAllProviderInvoices() {
+	public List<CustomerInvoiceDTO> findAllProviderInvoices() {
 		return customerInvoiceService.findAllCustomerInvoices();
 	}
 

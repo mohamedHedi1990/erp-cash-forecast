@@ -1,8 +1,11 @@
 package org.apac.erp.cach.forecast.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apac.erp.cach.forecast.dtos.CustomerInvoiceDTO;
+import org.apac.erp.cach.forecast.dtos.ProviderInvoiceDTO;
 import org.apac.erp.cach.forecast.persistence.entities.CustomerInvoice;
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
 import org.apac.erp.cach.forecast.persistence.repositories.CustomerInvoiceRepository;
@@ -20,8 +23,20 @@ public class CustomerInvoiceService {
 	@Autowired
 	private InvoiceService invoiceService;
 
-	public List<CustomerInvoice> findAllCustomerInvoices() {
-		return customerInvoiceRepo.findAll();
+	public List<CustomerInvoiceDTO> findAllCustomerInvoices() {
+
+		List<CustomerInvoice> invoices = customerInvoiceRepo.findAll();
+		List<CustomerInvoiceDTO> dtos = new ArrayList<>();
+		invoices.stream().forEach(invoice -> {
+			CustomerInvoiceDTO dto = new CustomerInvoiceDTO(invoice.getInvoiceId(), invoice.getInvoiceNumber(),
+					invoice.getInvoiceDeadlineInNumberOfDays(), invoice.getInvoiceDeadlineDate(),
+					invoice.getInvoiceDate(), invoice.getInvoiceTotalAmount(), invoice.getInvoiceRs(),
+					invoice.getInvoiceNet(), invoice.getInvoicePayment(), invoice.getCustomer().getCustomerLabel(),
+					invoice.getCreatedAt(), invoice.getUpdatedAt());
+
+			dtos.add(dto);
+		});
+		return dtos;
 	}
 
 	public CustomerInvoice saveNewCustomerInvoice(CustomerInvoice invoice, Long customerId) {

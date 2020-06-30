@@ -58,6 +58,8 @@ public class Invoice extends AuditableSql implements Serializable {
 
 	@OneToMany
 	private List<PaymentRule> invoicePaymentRules;
+	
+	
 
 	@PrePersist
 	private void persistId() {

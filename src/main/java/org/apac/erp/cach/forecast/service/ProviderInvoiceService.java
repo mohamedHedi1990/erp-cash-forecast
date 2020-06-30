@@ -1,8 +1,10 @@
 package org.apac.erp.cach.forecast.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apac.erp.cach.forecast.dtos.ProviderInvoiceDTO;
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
 import org.apac.erp.cach.forecast.persistence.entities.ProviderInvoice;
 import org.apac.erp.cach.forecast.persistence.repositories.ProviderInvoiceRepository;
@@ -21,8 +23,19 @@ public class ProviderInvoiceService {
 	@Autowired
 	private InvoiceService invoiceService;
 
-	public List<ProviderInvoice> findAllProviderInvoices() {
-		return providerInvoiceRepo.findAll();
+	public List<ProviderInvoiceDTO> findAllProviderInvoices() {
+		List<ProviderInvoice> invoices = providerInvoiceRepo.findAll();
+		List<ProviderInvoiceDTO> dtos = new ArrayList<>();
+		invoices.stream().forEach(invoice -> {
+			ProviderInvoiceDTO dto = new ProviderInvoiceDTO(invoice.getInvoiceId(), invoice.getInvoiceNumber(),
+					invoice.getInvoiceDeadlineInNumberOfDays(), invoice.getInvoiceDeadlineDate(),
+					invoice.getInvoiceDate(), invoice.getInvoiceTotalAmount(), invoice.getInvoiceRs(),
+					invoice.getInvoiceNet(), invoice.getInvoicePayment(), invoice.getProvider().getProviderLabel(),
+					invoice.getCreatedAt(), invoice.getUpdatedAt());
+
+			dtos.add(dto);
+		});
+		return dtos;
 	}
 
 	public ProviderInvoice saveNewProviderInvoice(ProviderInvoice invoice, Long providerId) {
