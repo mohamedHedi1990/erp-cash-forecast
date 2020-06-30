@@ -2,6 +2,7 @@ package org.apac.erp.cach.forecast.controller;
 
 import java.util.List;
 
+import org.apac.erp.cach.forecast.persistence.entities.CustomerInvoice;
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
 import org.apac.erp.cach.forecast.persistence.entities.ProviderInvoice;
 import org.apac.erp.cach.forecast.service.ProviderInvoiceService;
@@ -28,9 +29,10 @@ public class ProviderInvoiceController {
 	}
 
 	@CrossOrigin
-	@PostMapping()
-	public ProviderInvoice saveNewProviderInvoice(@RequestBody ProviderInvoice invoice) {
-		return providerInvoiceService.saveNewProviderInvoice(invoice);
+	@PostMapping("{providerId}")
+	public ProviderInvoice saveNewProviderInvoice(@RequestBody ProviderInvoice invoice, 
+			@PathVariable("providerId") Long providerId) {
+		return providerInvoiceService.saveNewProviderInvoice(invoice, providerId);
 	}
 	
 	@CrossOrigin
