@@ -24,7 +24,7 @@ public class CustomerController {
 
 	@CrossOrigin
 	@GetMapping()
-	public List<CustomerDTO> findAllCustomers() {
+	public List<Customer> findAllCustomers() {
 		return customerService.findAllCustomers();
 	}
 

@@ -24,7 +24,7 @@ public class ProviderController {
 
 	@CrossOrigin
 	@GetMapping()
-	public List<ProviderDTO> findAllUsers() {
+	public List<Provider> findAllUsers() {
 		return providerService.findAllProvides();
 	}
 

@@ -1,10 +1,7 @@
 package org.apac.erp.cach.forecast.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apac.erp.cach.forecast.dtos.CustomerDTO;
-import org.apac.erp.cach.forecast.persistence.entities.Company;
 import org.apac.erp.cach.forecast.persistence.entities.Customer;
 import org.apac.erp.cach.forecast.persistence.repositories.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,21 +13,8 @@ public class CustomerService {
 	@Autowired
 	private CustomerRepository customerRepo;
 
-	@Autowired
-	private CompanyService companyService;
-
-	public List<CustomerDTO> findAllCustomers() {
-		List<CustomerDTO> dtos = new ArrayList<CustomerDTO>();
-		List<Customer> customers = customerRepo.findAll();
-		customers.stream().forEach(customer -> {
-			CustomerDTO dto = new CustomerDTO(customer.getCustomerId(), customer.getCustomerLabel(),
-					customer.getCustomerAddress(), customer.getCustomerUniqueIdentifier(),
-					customer.getCustomerManagerName(), customer.getCustomerContactNumber(), customer.getCreatedAt(),
-					customer.getUpdatedAt());
-			dtos.add(dto);
-		});
-
-		return dtos;
+	public List<Customer> findAllCustomers() {
+		return customerRepo.findAll();
 	}
 
 	public Customer saveNewCustomer(Customer customer) {
