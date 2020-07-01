@@ -31,7 +31,7 @@ public class ProviderInvoiceService {
 					invoice.getInvoiceDeadlineInNumberOfDays(), invoice.getInvoiceDeadlineDate(),
 					invoice.getInvoiceDate(), invoice.getInvoiceTotalAmount(), invoice.getInvoiceRs(),
 					invoice.getInvoiceNet(), invoice.getInvoicePayment(), invoice.getProvider().getProviderLabel(),
-					invoice.getCreatedAt(), invoice.getUpdatedAt());
+					invoice.getCreatedAt(), invoice.getUpdatedAt(), invoice.getInvoiceStatus());
 
 			dtos.add(dto);
 		});
