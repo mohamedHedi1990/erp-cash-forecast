@@ -27,8 +27,10 @@ public class ProviderDTO {
 
 	private String providerContactNumber;
 	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "Africa/Tunis")
 	protected Date createdAt;
 
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "Africa/Tunis")
 	protected Date updatedAt;
 
 }

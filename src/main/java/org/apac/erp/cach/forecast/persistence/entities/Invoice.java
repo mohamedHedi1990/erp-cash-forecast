@@ -65,6 +65,7 @@ public class Invoice extends AuditableSql implements Serializable {
 	private void persistId() {
 		if (this.createdAt == null) {
 			this.createdAt = new Date();
+			this.invoiceStatus = InvoiceStatus.CREATED;
 		}
 		this.updatedAt = new Date();
 

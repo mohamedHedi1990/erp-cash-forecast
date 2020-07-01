@@ -41,12 +41,6 @@ public class Bank extends AuditableSql implements Serializable {
 
 	private double bankInterestRateCommission;
 
-	@OneToMany
-	private List<Agency> bankAgencies;
-
-	@OneToMany
-	private List<Timeline> bankTimelines;
-
 	@PrePersist
 	private void persistId() {
 		if (this.createdAt == null) {

@@ -31,8 +31,8 @@ public class CustomerInvoiceService {
 			CustomerInvoiceDTO dto = new CustomerInvoiceDTO(invoice.getInvoiceId(), invoice.getInvoiceNumber(),
 					invoice.getInvoiceDeadlineInNumberOfDays(), invoice.getInvoiceDeadlineDate(),
 					invoice.getInvoiceDate(), invoice.getInvoiceTotalAmount(), invoice.getInvoiceRs(),
-					invoice.getInvoiceNet(), invoice.getInvoicePayment(), invoice.getCustomer().getCustomerLabel(),
-					invoice.getCreatedAt(), invoice.getUpdatedAt());
+					invoice.getInvoiceNet(), invoice.getInvoicePayment(), invoice.getCustomer(), invoice.getCustomer().getCustomerLabel(),
+					invoice.getCreatedAt(), invoice.getUpdatedAt(), invoice.getInvoiceStatus());
 
 			dtos.add(dto);
 		});
