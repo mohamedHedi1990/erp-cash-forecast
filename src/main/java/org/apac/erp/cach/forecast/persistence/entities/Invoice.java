@@ -37,11 +37,11 @@ public class Invoice extends AuditableSql implements Serializable {
 
 	private Integer invoiceDeadlineInNumberOfDays;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Africa/Tunis")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Africa/Tunis")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date invoiceDeadlineDate;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Africa/Tunis")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Africa/Tunis")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date invoiceDate;
 
@@ -58,6 +58,8 @@ public class Invoice extends AuditableSql implements Serializable {
 
 	@OneToMany
 	private List<PaymentRule> invoicePaymentRules;
+	
+	
 
 	@PrePersist
 	private void persistId() {

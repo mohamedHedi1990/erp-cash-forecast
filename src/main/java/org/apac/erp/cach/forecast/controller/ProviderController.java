@@ -29,20 +29,21 @@ public class ProviderController {
 	}
 
 	@CrossOrigin
-	@PostMapping("/company/{companyId}")
-	public Provider saveNewProvider(@RequestBody Provider provider, @PathVariable("companyId") Long companyId) {
-		return providerService.saveNewProviderToGvenCompany(provider, companyId);
+	@PostMapping()
+	public Provider saveNewProvider(@RequestBody Provider provider) {
+		return providerService.saveNewProvider(provider);
 	}
+
 	@CrossOrigin
 	@GetMapping("by-provider-id/{providerId}")
 	public Provider findProviderById(@PathVariable("providerId") Long providerId) {
 		return providerService.findProviderById(providerId);
 	}
-	
+
 	@CrossOrigin
 	@DeleteMapping("/{providerId}")
 	public void deleteCompany(@PathVariable("providerId") Long providerId) {
-		 providerService.deleteCompany(providerId);
+		providerService.deleteCompany(providerId);
 	}
 
 }

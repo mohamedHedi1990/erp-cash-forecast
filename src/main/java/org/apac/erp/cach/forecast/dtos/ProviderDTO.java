@@ -31,6 +31,4 @@ public class ProviderDTO {
 
 	protected Date updatedAt;
 
-	private String companyName;
-
 }

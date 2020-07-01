@@ -26,6 +26,4 @@ public class CustomerDTO {
 
 	protected Date updatedAt;
 	
-	private String companyName;
-
 }

@@ -38,9 +38,6 @@ public class Customer extends AuditableSql implements Serializable {
 
 	@OneToMany
 	private List<CustomerInvoice> customerInvoices;
-	
-	@ManyToOne
-	private Company customerCompany;
 
 	@PrePersist
 	private void persistId() {
