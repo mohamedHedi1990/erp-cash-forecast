@@ -33,12 +33,4 @@ public class TimelineDetails extends AuditableSql implements Serializable {
 
 	private Double timelineDetailsPrincipalAmount;
 
-	@PrePersist
-	private void persistId() {
-		if (this.createdAt == null) {
-			this.createdAt = new Date();
-		}
-		this.updatedAt = new Date();
-
-	}
 }

@@ -39,12 +39,4 @@ public class Customer extends AuditableSql implements Serializable {
 	@OneToMany
 	private List<CustomerInvoice> customerInvoices;
 
-	@PrePersist
-	private void persistId() {
-		if (this.createdAt == null) {
-			this.createdAt = new Date();
-		}
-		this.updatedAt = new Date();
-
-	}
 }

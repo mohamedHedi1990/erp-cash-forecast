@@ -40,14 +40,4 @@ public class Agency extends AuditableSql implements Serializable {
 
 	@ManyToOne
 	private Bank agencyBank;
-
-	@PrePersist
-	private void persistId() {
-		if (this.createdAt == null) {
-			this.createdAt = new Date();
-		}
-		this.updatedAt = new Date();
-
-	}
-
 }

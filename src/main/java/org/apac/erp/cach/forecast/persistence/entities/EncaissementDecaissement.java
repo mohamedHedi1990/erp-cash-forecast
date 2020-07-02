@@ -52,13 +52,4 @@ public class EncaissementDecaissement extends AuditableSql implements Serializab
 	@ManyToOne
 	private BankAccount bankAccount;
 
-	@PrePersist
-	private void persistId() {
-		if (this.createdAt == null) {
-			this.createdAt = new Date();
-		}
-		this.updatedAt = new Date();
-
-	}
-
 }
