@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import org.apac.erp.cach.forecast.enumeration.InvoiceType;
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
+import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
 import org.apac.erp.cach.forecast.persistence.repositories.InvoiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,10 +28,13 @@ public class InvoiceService {
 	public Invoice findInvoiceById(Long invoiceId) {
 		return invoiceRepo.findOne(invoiceId);
 	}
-	
-	public long betweenDates(java.util.Date date, java.util.Date date2) throws IOException
-	{
-	    return ChronoUnit.DAYS.between(date.toInstant(), date2.toInstant());
+
+	public long betweenDates(java.util.Date date, java.util.Date date2) throws IOException {
+		return ChronoUnit.DAYS.between(date.toInstant(), date2.toInstant());
+	}
+
+	public void updateInvoiceWithPaymentRule(Invoice invoice, InvoiceType invoiceType, PaymentRule paymentRule) {
+		// TODO
 	}
 
 }

@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apac.erp.cach.forecast.dtos.PaymentRuleDTO;
+import org.apac.erp.cach.forecast.enumeration.InvoiceType;
 import org.apac.erp.cach.forecast.persistence.entities.CustomerInvoice;
+import org.apac.erp.cach.forecast.persistence.entities.Invoice;
 import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
 import org.apac.erp.cach.forecast.persistence.entities.ProviderInvoice;
 import org.apac.erp.cach.forecast.persistence.repositories.PaymentRuleRepository;
@@ -23,17 +25,26 @@ public class PaymentRuleService {
 	@Autowired
 	private ProviderInvoiceService providerInvoiceService;
 
+	@Autowired
+	private InvoiceService invoiceService;
+
 	public List<PaymentRule> findAllPaymentRules() {
 		return paymentRuleRepo.findAll();
 	}
 
 	public PaymentRule saveNewPaymentRuleToCustomerInvoice(PaymentRule paymentRule, Long invoiceId) {
-		paymentRule.setInvoice(customerInvoiceService.findCustomerInvoiceById(invoiceId));
+		CustomerInvoice invoice = (CustomerInvoice) customerInvoiceService.findCustomerInvoiceById(invoiceId);
+		paymentRule.setInvoice(invoice);
+		// TODO
+		invoiceService.updateInvoiceWithPaymentRule(invoice, InvoiceType.CUSTOMER,paymentRule);
 		return paymentRuleRepo.save(paymentRule);
 	}
 
 	public PaymentRule saveNewPaymentRuleToProviderInvoice(PaymentRule paymentRule, Long invoiceId) {
-		paymentRule.setInvoice(providerInvoiceService.findProviderInvoiceById(invoiceId));
+		Invoice invoice = providerInvoiceService.findProviderInvoiceById(invoiceId);
+		paymentRule.setInvoice(invoice);
+		// TODO
+		invoiceService.updateInvoiceWithPaymentRule(invoice, InvoiceType.PROVIDER, paymentRule);
 		return paymentRuleRepo.save(paymentRule);
 	}
 
