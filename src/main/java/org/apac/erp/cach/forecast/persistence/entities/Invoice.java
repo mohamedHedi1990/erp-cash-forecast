@@ -33,7 +33,7 @@ public class Invoice extends AuditableSql implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long invoiceId;
 
-	private Integer invoiceNumber;
+	private String invoiceNumber;
 
 	private Integer invoiceDeadlineInNumberOfDays;
 

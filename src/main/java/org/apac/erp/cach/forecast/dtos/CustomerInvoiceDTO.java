@@ -18,7 +18,7 @@ import lombok.Data;
 public class CustomerInvoiceDTO {
 	private Long invoiceId;
 
-	private Integer invoiceNumber;
+	private String invoiceNumber;
 
 	private Integer invoiceDeadlineInNumberOfDays;
 

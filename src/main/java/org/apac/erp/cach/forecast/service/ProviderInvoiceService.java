@@ -22,8 +22,13 @@ public class ProviderInvoiceService {
 
 	@Autowired
 	private InvoiceService invoiceService;
-
-	public List<ProviderInvoiceDTO> findAllProviderInvoices() {
+	
+	public List<ProviderInvoice> findAllProviderInvoices() {
+		return  providerInvoiceRepo.findAll();
+	
+	}
+	
+	public List<ProviderInvoiceDTO> findAllProviderInvoicesDTO() {
 		List<ProviderInvoice> invoices = providerInvoiceRepo.findAll();
 		List<ProviderInvoiceDTO> dtos = new ArrayList<>();
 		invoices.stream().forEach(invoice -> {
