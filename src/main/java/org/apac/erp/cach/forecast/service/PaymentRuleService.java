@@ -57,7 +57,7 @@ public class PaymentRuleService {
 				PaymentRuleDTO paymentRuleDTO = new PaymentRuleDTO(paymentRule.getPaymentRuleId(),
 						paymentRule.getPaymentRulePaymentMethod(), paymentRule.getPaymentRulePaymentMethodNb(),
 						paymentRule.getPaymentRuleDeadlineDate(), paymentRule.isValidated(),
-						paymentRule.getInvoice().getInvoiceNumber(), paymentRule.getCreatedAt(),
+						paymentRule.getPaymentRuleAmount(), paymentRule.getInvoice().getInvoiceNumber(), paymentRule.getCreatedAt(),
 						paymentRule.getUpdatedAt());
 				paymentRules.add(paymentRuleDTO);
 			});
@@ -74,7 +74,7 @@ public class PaymentRuleService {
 				PaymentRuleDTO paymentRuleDTO = new PaymentRuleDTO(paymentRule.getPaymentRuleId(),
 						paymentRule.getPaymentRulePaymentMethod(), paymentRule.getPaymentRulePaymentMethodNb(),
 						paymentRule.getPaymentRuleDeadlineDate(), paymentRule.isValidated(),
-						paymentRule.getInvoice().getInvoiceNumber(), paymentRule.getCreatedAt(),
+						paymentRule.getPaymentRuleAmount(), paymentRule.getInvoice().getInvoiceNumber(), paymentRule.getCreatedAt(),
 						paymentRule.getUpdatedAt());
 				paymentRules.add(paymentRuleDTO);
 			});

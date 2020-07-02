@@ -40,6 +40,8 @@ public class PaymentRule extends AuditableSql implements Serializable {
 
 	private boolean isValidated;
 	
+	private Double paymentRuleAmount;
+	
 	@ManyToOne
 	private Invoice invoice;
 	

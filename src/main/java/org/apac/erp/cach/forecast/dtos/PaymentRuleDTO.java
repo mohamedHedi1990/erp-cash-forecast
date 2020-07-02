@@ -24,6 +24,9 @@ public class PaymentRuleDTO {
 	private Date paymentRuleDeadlineDate;
 
 	private boolean isValidated;
+	
+	private Double paymentRuleAmount;
+
 
 	private String customerInvoiceNumber;
 	
