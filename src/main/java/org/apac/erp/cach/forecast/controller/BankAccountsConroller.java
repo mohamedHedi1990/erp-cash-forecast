@@ -2,8 +2,8 @@ package org.apac.erp.cach.forecast.controller;
 
 import java.util.List;
 
+import org.apac.erp.cach.forecast.dtos.AccountsByBankDTO;
 import org.apac.erp.cach.forecast.dtos.BankAccountDTO;
-import org.apac.erp.cach.forecast.persistence.entities.Agency;
 import org.apac.erp.cach.forecast.persistence.entities.BankAccount;
 import org.apac.erp.cach.forecast.service.BankAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,19 +28,23 @@ public class BankAccountsConroller {
 	public List<BankAccountDTO> findAllBankAccounts() {
 		return bankAccountService.findAllBankAccounts();
 	}
-	
+
+	@CrossOrigin
+	@GetMapping("/by/bank")
+	public List<AccountsByBankDTO> findBankAccountsByBank() {
+		return bankAccountService.findBankAccountsByBank();
+	}
+
 	@CrossOrigin
 	@PostMapping("/agency/{agencyId}")
 	public BankAccount saveNewBankAccount(@PathVariable("agencyId") Long agencyId, @RequestBody BankAccount account) {
 		return bankAccountService.saveNewAgencyToGivenAgency(account, agencyId);
 	}
-	
+
 	@CrossOrigin
 	@DeleteMapping("/{accountId}")
 	public void deleteBankAccount(@PathVariable("accountId") Long accountId) {
 		bankAccountService.deleteAccount(accountId);
 	}
-
-
 
 }

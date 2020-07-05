@@ -9,9 +9,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "erp_bank")
+@EqualsAndHashCode(callSuper = false)
 @Data
 public class Bank extends AuditableSql implements Serializable {
 

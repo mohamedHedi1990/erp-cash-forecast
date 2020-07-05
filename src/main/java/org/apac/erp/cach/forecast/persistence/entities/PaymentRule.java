@@ -33,8 +33,10 @@ public class PaymentRule extends AuditableSql implements Serializable {
 	private PaymentMethod paymentRulePaymentMethod;
 
 	private Integer paymentRulePaymentMethodNb;
+	
+	private String paymentRuleNumber;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Africa/Tunis")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Africa/Tunis")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date paymentRuleDeadlineDate;
 
