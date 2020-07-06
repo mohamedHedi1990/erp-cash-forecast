@@ -17,7 +17,7 @@ import lombok.Data;
 public class ProviderInvoiceDTO {
 	private Long invoiceId;
 
-	private Integer invoiceNumber;
+	private String invoiceNumber;
 
 	private Integer invoiceDeadlineInNumberOfDays;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "Africa/Tunis")

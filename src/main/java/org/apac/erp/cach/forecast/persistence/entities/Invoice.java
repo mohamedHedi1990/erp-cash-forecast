@@ -33,7 +33,7 @@ public class Invoice extends AuditableSql implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long invoiceId;
 
-	private Integer invoiceNumber;
+	private String invoiceNumber;
 
 	private Integer invoiceDeadlineInNumberOfDays;
 
@@ -58,17 +58,5 @@ public class Invoice extends AuditableSql implements Serializable {
 
 	@OneToMany
 	private List<PaymentRule> invoicePaymentRules;
-	
-	
-
-	@PrePersist
-	private void persistId() {
-		if (this.createdAt == null) {
-			this.createdAt = new Date();
-			this.invoiceStatus = InvoiceStatus.CREATED;
-		}
-		this.updatedAt = new Date();
-
-	}
 
 }

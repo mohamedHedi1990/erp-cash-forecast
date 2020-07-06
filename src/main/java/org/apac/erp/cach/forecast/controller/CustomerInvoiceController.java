@@ -26,7 +26,7 @@ public class CustomerInvoiceController {
 	@CrossOrigin
 	@GetMapping()
 	public List<CustomerInvoiceDTO> findAllProviderInvoices() {
-		return customerInvoiceService.findAllCustomerInvoices();
+		return customerInvoiceService.findAllCustomerInvoicesDTO();
 	}
 
 	@CrossOrigin

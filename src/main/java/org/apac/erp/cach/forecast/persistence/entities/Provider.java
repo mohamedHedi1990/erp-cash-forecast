@@ -39,12 +39,4 @@ public class Provider extends AuditableSql implements Serializable {
 	@OneToMany
 	private List<ProviderInvoice> providerInvoices;
 
-	@PrePersist
-	private void persistId() {
-		if (this.createdAt == null) {
-			this.createdAt = new Date();
-		}
-		this.updatedAt = new Date();
-
-	}
 }
