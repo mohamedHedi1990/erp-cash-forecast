@@ -1,5 +1,6 @@
 package org.apac.erp.cach.forecast.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apac.erp.cach.forecast.persistence.entities.EncaissementDecaissement;
@@ -16,4 +17,25 @@ public class EncaissementDecaissementService {
 	public List<EncaissementDecaissement> findAllEncaissementDecaissements() {
 		return encaissementDecaissementRepo.findAll();
 	}
+
+	public EncaissementDecaissement saveNewEncaissementDecaissement(EncaissementDecaissement encDec) {
+		return encaissementDecaissementRepo.save(encDec);
+	}
+
+	public List<EncaissementDecaissement> findAllEncaissementsBetweenTwoDates(Date startDate, Date endDate) {
+		// TODO add type
+		return encaissementDecaissementRepo
+				.findByEncaissementDecaissementDeadlineDateGreaterThanEqualAndEncaissementDecaissementDeadlineDateLessThanEqual(
+						startDate, endDate);
+
+	}
+
+	public List<EncaissementDecaissement> findAllDecaissementsBetweenTwoDates(Date startDate, Date endDate) {
+		// TODO add type
+		return encaissementDecaissementRepo
+				.findByEncaissementDecaissementDeadlineDateGreaterThanEqualAndEncaissementDecaissementDeadlineDateLessThanEqual(
+						startDate, endDate);
+	}
+
+	
 }
