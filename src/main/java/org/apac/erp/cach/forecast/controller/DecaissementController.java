@@ -25,7 +25,7 @@ public class DecaissementController {
 	@CrossOrigin
 	@GetMapping()
 	public List<EncaissementDecaissement> findAll() {
-		return encaissementDecaissementService.findAllEncaissementDecaissements();
+		return encaissementDecaissementService.findAllDecaissements();
 	}
 
 	@CrossOrigin
