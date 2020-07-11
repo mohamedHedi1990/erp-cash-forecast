@@ -34,19 +34,11 @@ public class PaymentRuleService {
 		return paymentRuleRepo.findAll();
 	}
 
-	public PaymentRule saveNewPaymentRuleToCustomerInvoice(PaymentRule paymentRule, Long invoiceId, Long accountId) {
-		CustomerInvoice invoice = (CustomerInvoice) customerInvoiceService.findCustomerInvoiceById(invoiceId);
+	public PaymentRule saveNewPaymentRuleToInvoice(PaymentRule paymentRule, Long invoiceId, Long accountId) {
+		Invoice invoice = invoiceService.findInvoiceById(invoiceId);
 		paymentRule.setInvoice(invoice);
 		// TODO use correct formula of commissions applications
 		invoiceService.updateInvoiceWithPaymentRule(invoice, InvoiceType.CUSTOMER, paymentRule, accountId);
-		return paymentRuleRepo.save(paymentRule);
-	}
-
-	public PaymentRule saveNewPaymentRuleToProviderInvoice(PaymentRule paymentRule, Long invoiceId) {
-		Invoice invoice = providerInvoiceService.findProviderInvoiceById(invoiceId);
-		paymentRule.setInvoice(invoice);
-		// TODO
-		invoiceService.updateInvoiceWithPaymentRule(invoice, InvoiceType.PROVIDER, paymentRule, invoiceId);
 		return paymentRuleRepo.save(paymentRule);
 	}
 
@@ -83,7 +75,13 @@ public class PaymentRuleService {
 		ArrayList<PaymentRuleDTO> paymentRules = new ArrayList<>();
 		List<ProviderInvoice> providerInvoices = providerInvoiceService.findAllProviderInvoices();
 		providerInvoices.stream().forEach(invoice -> {
-			List<PaymentRule> invoicePaymentRules = invoice.getInvoicePaymentRules();
+			List<PaymentRule> invoicePaymentRules = new ArrayList<>();
+			List<PaymentRule> paymenRules = paymentRuleRepo.findAll();
+			paymenRules.stream().forEach(payment -> {
+				if (payment.getInvoice() == invoice) {
+					invoicePaymentRules.add(payment);
+				}
+			});
 			PaymentRuleDTO paymentRuleDTO = new PaymentRuleDTO(invoice.getInvoiceId(), invoice.getInvoiceNumber(),
 					invoice.getInvoiceDeadlineInNumberOfDays(), invoice.getInvoiceDeadlineDate(),
 					invoice.getInvoiceDate(), invoice.getInvoiceTotalAmount(), invoice.getInvoiceRs(),

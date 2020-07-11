@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
 import org.apac.erp.cach.forecast.enumeration.InvoiceType;
 import org.apac.erp.cach.forecast.persistence.entities.Bank;
 import org.apac.erp.cach.forecast.persistence.entities.BankAccount;
@@ -62,7 +63,11 @@ public class InvoiceService {
 				break;
 			}
 		
-		invoice.setInvoicePayment(invoice.getInvoicePayment() + paymentAmountAfterCommission);
+		Double payment = invoice.getInvoicePayment() + paymentAmountAfterCommission;
+		invoice.setInvoicePayment(payment);
+		if (payment == invoice.getInvoiceTotalAmount()) {
+			invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
+		}
 		invoiceRepo.save(invoice);
 	}
 
