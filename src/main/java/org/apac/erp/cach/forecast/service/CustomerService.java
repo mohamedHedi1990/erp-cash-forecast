@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apac.erp.cach.forecast.dtos.CustomerDTO;
-import org.apac.erp.cach.forecast.persistence.entities.Company;
+import org.apac.erp.cach.forecast.persistence.entities.Contact;
 import org.apac.erp.cach.forecast.persistence.entities.Customer;
 import org.apac.erp.cach.forecast.persistence.repositories.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class CustomerService {
 	private CustomerRepository customerRepo;
 
 	@Autowired
-	private CompanyService companyService;
+	private ContactService contactService;
 
 	public List<CustomerDTO> findAllCustomers() {
 		List<CustomerDTO> dtos = new ArrayList<CustomerDTO>();
@@ -34,6 +34,9 @@ public class CustomerService {
 	}
 
 	public Customer saveNewCustomer(Customer customer) {
+		List<Contact> contacts = customer.getCustomerContacts();
+		contacts.stream().forEach(contact -> contactService.saveNewContact(contact));
+
 		return customerRepo.save(customer);
 
 	}

@@ -6,6 +6,7 @@ import java.util.List;
 import org.apac.erp.cach.forecast.dtos.CustomerDTO;
 import org.apac.erp.cach.forecast.dtos.ProviderDTO;
 import org.apac.erp.cach.forecast.persistence.entities.Company;
+import org.apac.erp.cach.forecast.persistence.entities.Contact;
 import org.apac.erp.cach.forecast.persistence.entities.Customer;
 import org.apac.erp.cach.forecast.persistence.entities.Provider;
 import org.apac.erp.cach.forecast.persistence.repositories.ProviderRepository;
@@ -19,7 +20,7 @@ public class ProviderService {
 	private ProviderRepository providerRepo;
 
 	@Autowired
-	private CompanyService companyService;
+	private ContactService contactService;
 
 	public List<ProviderDTO> findAllProvides() {
 
@@ -37,6 +38,9 @@ public class ProviderService {
 	}
 
 	public Provider saveNewProvider(Provider provider) {
+		List<Contact> contacts = provider.getProviderContacts();
+		contacts.stream().forEach(contact -> contactService.saveNewContact(contact));
+		
 		return providerRepo.save(provider);
 	}
 
