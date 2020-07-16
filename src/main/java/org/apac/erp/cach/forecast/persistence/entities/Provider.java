@@ -38,5 +38,8 @@ public class Provider extends AuditableSql implements Serializable {
 
 	@OneToMany
 	private List<ProviderInvoice> providerInvoices;
+	
+	@OneToMany
+	private List<Contact> providerContacts;
 
 }

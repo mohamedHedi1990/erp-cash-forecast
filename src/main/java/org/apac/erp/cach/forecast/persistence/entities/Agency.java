@@ -40,4 +40,7 @@ public class Agency extends AuditableSql implements Serializable {
 
 	@ManyToOne
 	private Bank agencyBank;
+	
+	@OneToMany
+	private List<Contact> agencyContacts;
 }
