@@ -23,6 +23,8 @@ public class BankAccountDTO {
 
 	private String bankAccountAgencyName;
 	
+	private String bankAccountCurrency;
+	
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "Africa/Tunis")
 	protected Date createdAt;
 

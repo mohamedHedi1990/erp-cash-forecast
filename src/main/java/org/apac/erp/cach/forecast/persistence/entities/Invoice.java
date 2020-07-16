@@ -54,7 +54,7 @@ public class Invoice extends AuditableSql implements Serializable {
 	private Double invoicePayment;
 
 	@Enumerated(EnumType.STRING)
-	private InvoiceStatus invoiceStatus = InvoiceStatus.CREATED;
+	private InvoiceStatus invoiceStatus;
 
 	@OneToMany
 	private List<PaymentRule> invoicePaymentRules;

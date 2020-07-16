@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apac.erp.cach.forecast.dtos.CustomerInvoiceDTO;
+import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
 import org.apac.erp.cach.forecast.persistence.entities.CustomerInvoice;
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
 import org.apac.erp.cach.forecast.persistence.repositories.CustomerInvoiceRepository;
@@ -45,6 +46,7 @@ public class CustomerInvoiceService {
 
 	public CustomerInvoice saveNewCustomerInvoice(CustomerInvoice invoice, Long customerId) {
 		invoice.setCustomer(customerService.findCustomerById(customerId));
+		invoice.setInvoiceStatus(InvoiceStatus.OPENED);
 		invoice.setInvoiceTotalAmount(invoice.getInvoiceNet() + invoice.getInvoiceRs());
 
 		try {
