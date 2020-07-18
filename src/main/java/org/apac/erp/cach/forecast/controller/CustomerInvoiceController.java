@@ -31,7 +31,7 @@ public class CustomerInvoiceController {
 
 	@CrossOrigin
 	@PostMapping("{customerId}")
-	public CustomerInvoice saveNewProviderInvoice(@RequestBody CustomerInvoice invoice,
+	public CustomerInvoice saveNewCustomerInvoice(@RequestBody CustomerInvoice invoice,
 			@PathVariable("customerId") Long customerId) {
 		return customerInvoiceService.saveNewCustomerInvoice(invoice, customerId);
 	}

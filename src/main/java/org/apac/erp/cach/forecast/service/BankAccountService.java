@@ -32,7 +32,7 @@ public class BankAccountService {
 		accounts.stream().forEach(account -> {
 			BankAccountDTO dto = new BankAccountDTO(account.getBankAccountId(), account.getBankAccountLabel(),
 					account.getBankAccountNumber(), account.getBankAccountChargeCustomerName(),
-					account.getBankAccountChargeCustomerPhoneNumber(), account.getBankAccountAgency().getAgencyName(),
+					account.getBankAccountChargeCustomerPhoneNumber(), account.getBankAccountAgency().getAgencyName(), account.getBankAccountCurrency(),
 					account.getCreatedAt(), account.getUpdatedAt());
 			dtos.add(dto);
 		});

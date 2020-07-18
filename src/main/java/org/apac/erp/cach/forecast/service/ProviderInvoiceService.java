@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apac.erp.cach.forecast.dtos.ProviderInvoiceDTO;
+import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
 import org.apac.erp.cach.forecast.persistence.entities.ProviderInvoice;
 import org.apac.erp.cach.forecast.persistence.repositories.ProviderInvoiceRepository;
@@ -45,6 +46,7 @@ public class ProviderInvoiceService {
 
 	public ProviderInvoice saveNewProviderInvoice(ProviderInvoice invoice, Long providerId) {
 		invoice.setProvider(providerService.findProviderById(providerId));
+		invoice.setInvoiceStatus(InvoiceStatus.OPENED);
 		invoice.setInvoiceTotalAmount(invoice.getInvoiceNet() + invoice.getInvoiceRs());
 		try {
 			long days = invoiceService.betweenDates(invoice.getInvoiceDate(), invoice.getInvoiceDeadlineDate());

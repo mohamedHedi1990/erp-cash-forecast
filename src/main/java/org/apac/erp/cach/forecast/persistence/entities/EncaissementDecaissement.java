@@ -50,6 +50,9 @@ public class EncaissementDecaissement extends AuditableSql implements Serializab
 	private Double encaissementDecaissementAmount;
 	
 	private String invoiceNumber;
+	
+	private String encaissementDecaissementDetails;
+
 		
 	@ManyToOne
 	private BankAccount bankAccount;

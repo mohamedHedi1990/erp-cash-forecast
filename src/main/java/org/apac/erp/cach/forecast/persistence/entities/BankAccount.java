@@ -32,6 +32,8 @@ public class BankAccount extends AuditableSql implements Serializable {
 	private String bankAccountChargeCustomerName;
 
 	private String bankAccountChargeCustomerPhoneNumber;
+	
+	private String bankAccountCurrency;
 
 	@ManyToOne
 	private Agency bankAccountAgency;
