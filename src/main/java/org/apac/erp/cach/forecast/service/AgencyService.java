@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apac.erp.cach.forecast.dtos.AgencyDTO;
 import org.apac.erp.cach.forecast.persistence.entities.Agency;
+import org.apac.erp.cach.forecast.persistence.entities.Contact;
 import org.apac.erp.cach.forecast.persistence.repositories.AgencyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,9 @@ public class AgencyService {
 	private AgencyRepository agencyRepo;
 
 	@Autowired
+	private ContactService contactService;
+
+	@Autowired
 	private BankService bankService;
 
 	public List<AgencyDTO> findAllAgencies() {
@@ -23,7 +27,7 @@ public class AgencyService {
 		List<Agency> agencies = agencyRepo.findAll();
 		agencies.stream().forEach(agency -> {
 			AgencyDTO dto = new AgencyDTO(agency.getAgencyId(), agency.getAgencyName(), agency.getAgencyAddress(),
-					agency.getAgencyPhoneNumber(), agency.getAgencyEmail(), agency.getAgencyBank().getBankName(),
+					agency.getAgencyPhoneNumber(), agency.getAgencyEmail(), agency.getAgencyBank().getBankName(), agency.getAgencyContacts(),
 					agency.getCreatedAt(), agency.getUpdatedAt());
 			dtos.add(dto);
 		});
@@ -32,10 +36,13 @@ public class AgencyService {
 	}
 
 	public Agency saveNewAgencyToGivenBank(Agency agency, Long bankId) {
+		List<Contact> contacts = agency.getAgencyContacts();
+		contacts.stream().forEach(contact -> contactService.saveNewContact(contact));
+
 		agency.setAgencyBank(bankService.findBankById(bankId));
 		return agencyRepo.save(agency);
 	}
-	
+
 	public Agency findOneById(Long agencyId) {
 		return agencyRepo.findOne(agencyId);
 	}

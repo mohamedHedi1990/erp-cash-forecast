@@ -30,7 +30,7 @@ public class DecaissementController {
 
 	@CrossOrigin
 	@GetMapping("/{startDate}/{endDate}")
-	public List<EncaissementDecaissement> findAllEncaissementsBetweenTwoDates(@PathVariable("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startDate,
+	public List<EncaissementDecaissement> findAllDecaissementsBetweenTwoDates(@PathVariable("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startDate,
 			@PathVariable("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endDate) {
 		return encaissementDecaissementService.findAllDecaissementsBetweenTwoDates(startDate, endDate);
 	}

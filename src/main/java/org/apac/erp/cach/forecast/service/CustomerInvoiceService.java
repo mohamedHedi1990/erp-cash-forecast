@@ -20,6 +20,7 @@ public class CustomerInvoiceService {
 
 	@Autowired
 	private CustomerService customerService;
+	
 	@Autowired
 	private InvoiceService invoiceService;
 
