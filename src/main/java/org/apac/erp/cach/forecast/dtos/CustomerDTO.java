@@ -1,6 +1,9 @@
 package org.apac.erp.cach.forecast.dtos;
 
 import java.util.Date;
+import java.util.List;
+
+import org.apac.erp.cach.forecast.persistence.entities.Contact;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -23,6 +26,8 @@ public class CustomerDTO {
 	private String customerManagerName;
 
 	private String customerContactNumber;
+	
+	private List<Contact> customerContacts;
 	
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "Africa/Tunis")
 	protected Date createdAt;

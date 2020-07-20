@@ -29,7 +29,9 @@ public class ProviderService {
 		providers.stream().forEach(provider -> {
 			ProviderDTO dto = new ProviderDTO(provider.getProviderId(), provider.getProviderLabel(),
 					provider.getProviderAddress(), provider.getProviderUniqueIdentifier(),
-					provider.getProviderManagerName(), provider.getProviderContactNumber(), provider.getCreatedAt(),
+					provider.getProviderManagerName(), provider.getProviderContactNumber(),
+					provider.getProviderContacts(),
+					provider.getCreatedAt(),
 					provider.getUpdatedAt());
 			dtos.add(dto);
 		});

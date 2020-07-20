@@ -25,7 +25,9 @@ public class CustomerService {
 		customers.stream().forEach(customer -> {
 			CustomerDTO dto = new CustomerDTO(customer.getCustomerId(), customer.getCustomerLabel(),
 					customer.getCustomerAddress(), customer.getCustomerUniqueIdentifier(),
-					customer.getCustomerManagerName(), customer.getCustomerContactNumber(), customer.getCreatedAt(),
+					customer.getCustomerManagerName(), customer.getCustomerContactNumber(), 
+					customer.getCustomerContacts(),
+					customer.getCreatedAt(),
 					customer.getUpdatedAt());
 			dtos.add(dto);
 		});

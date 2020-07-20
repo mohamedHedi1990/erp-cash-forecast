@@ -33,6 +33,7 @@ public class EncaissementDecaissementService {
 		List<EncaissementDecaissementType> encTypes = new ArrayList<EncaissementDecaissementType>();
 		encTypes.add(EncaissementDecaissementType.ENCAISSEMENT_AUTRE);
 		encTypes.add(EncaissementDecaissementType.ENCAISSEMENT_PLAN_COMPTABLE_TIERS);
+		encTypes.add(EncaissementDecaissementType.ENCAISSEMENT_FACTURE_CLIENT);
 
 		return encDecs.stream().filter(encDec -> encTypes.contains(encDec.getEncaissementDecaissementType()))
 				.collect(Collectors.toList());
@@ -50,6 +51,7 @@ public class EncaissementDecaissementService {
 		decTypes.add(EncaissementDecaissementType.DECAISSEMENT_BANK_COMMISSION);
 		decTypes.add(EncaissementDecaissementType.DECAISSEMENT_INTERESTS);
 		decTypes.add(EncaissementDecaissementType.DECAISSEMENT_PLAN_COMPTABLE_TIERS);
+		decTypes.add(EncaissementDecaissementType.DECAISSEMENT_FACTURE_FOURNISSEUR);
 		decTypes.add(EncaissementDecaissementType.DECAISSEMENT_SALAIRE);
 
 		return encDecs.stream().filter(encDec -> decTypes.contains(encDec.getEncaissementDecaissementType()))
