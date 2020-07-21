@@ -35,7 +35,7 @@ public class CustomerInvoiceService {
 		invoices.stream().forEach(invoice -> {
 			CustomerInvoiceDTO dto = new CustomerInvoiceDTO(invoice.getInvoiceId(), invoice.getInvoiceNumber(),
 					invoice.getInvoiceDeadlineInNumberOfDays(), invoice.getInvoiceDeadlineDate(),
-					invoice.getInvoiceDate(), invoice.getInvoiceTotalAmount(), invoice.getInvoiceRs(),
+					invoice.getInvoiceDate(), invoice.getInvoiceTotalAmount(), invoice.getInvoiceRs(),invoice.getInvoiceRsType(),
 					invoice.getInvoiceNet(), invoice.getInvoicePayment(), invoice.getCustomer(),
 					invoice.getCustomer().getCustomerLabel(), invoice.getCreatedAt(), invoice.getUpdatedAt(),
 					invoice.getInvoiceStatus());

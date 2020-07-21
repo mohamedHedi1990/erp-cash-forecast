@@ -6,6 +6,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
+import org.apac.erp.cach.forecast.enumeration.RsTypeSaisie;
+import org.apac.erp.cach.forecast.persistence.entities.Provider;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -29,12 +31,16 @@ public class ProviderInvoiceDTO {
 	private Double invoiceTotalAmount;
 
 	private Double invoiceRs;
+	
+	private RsTypeSaisie invoiceRsType;
 
 	private Double invoiceNet;
 
 	private Double invoicePayment;
 
 	private String providerLabel;
+	
+	private Provider provider;
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "Africa/Tunis")
 	protected Date createdAt;
