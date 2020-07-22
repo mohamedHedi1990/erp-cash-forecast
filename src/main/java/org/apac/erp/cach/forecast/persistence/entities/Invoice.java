@@ -11,12 +11,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
+import org.apac.erp.cach.forecast.enumeration.RsTypeSaisie;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -48,6 +48,8 @@ public class Invoice extends AuditableSql implements Serializable {
 	private Double invoiceTotalAmount;
 
 	private Double invoiceRs;
+
+	private RsTypeSaisie invoiceRsType;
 
 	private Double invoiceNet;
 

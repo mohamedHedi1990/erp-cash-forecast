@@ -35,8 +35,8 @@ public class ProviderInvoiceService {
 		invoices.stream().forEach(invoice -> {
 			ProviderInvoiceDTO dto = new ProviderInvoiceDTO(invoice.getInvoiceId(), invoice.getInvoiceNumber(),
 					invoice.getInvoiceDeadlineInNumberOfDays(), invoice.getInvoiceDeadlineDate(),
-					invoice.getInvoiceDate(), invoice.getInvoiceTotalAmount(), invoice.getInvoiceRs(),
-					invoice.getInvoiceNet(), invoice.getInvoicePayment(), invoice.getProvider().getProviderLabel(),
+					invoice.getInvoiceDate(), invoice.getInvoiceTotalAmount(), invoice.getInvoiceRs(),invoice.getInvoiceRsType(),
+					invoice.getInvoiceNet(), invoice.getInvoicePayment(), invoice.getProvider().getProviderLabel(),invoice.getProvider(),
 					invoice.getCreatedAt(), invoice.getUpdatedAt(), invoice.getInvoiceStatus());
 
 			dtos.add(dto);

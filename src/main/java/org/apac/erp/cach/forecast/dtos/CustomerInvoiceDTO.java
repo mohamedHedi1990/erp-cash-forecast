@@ -6,6 +6,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
+import org.apac.erp.cach.forecast.enumeration.RsTypeSaisie;
 import org.apac.erp.cach.forecast.persistence.entities.Customer;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -31,6 +32,9 @@ public class CustomerInvoiceDTO {
 	private Double invoiceTotalAmount;
 
 	private Double invoiceRs;
+	
+	private RsTypeSaisie invoiceRsType;
+
 
 	private Double invoiceNet;
 
