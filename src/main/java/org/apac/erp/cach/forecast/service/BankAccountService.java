@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apac.erp.cach.forecast.dtos.AccountsByBankDTO;
 import org.apac.erp.cach.forecast.dtos.BankAccountDTO;
+import org.apac.erp.cach.forecast.persistence.entities.Agency;
 import org.apac.erp.cach.forecast.persistence.entities.Bank;
 import org.apac.erp.cach.forecast.persistence.entities.BankAccount;
 import org.apac.erp.cach.forecast.persistence.repositories.BankAccountRepository;
@@ -49,7 +50,8 @@ public class BankAccountService {
 
 	public BankAccount saveNewAgencyToGivenAgency(BankAccount account, Long agencyId) {
 
-		account.setBankAccountAgency(agencyService.findOneById(agencyId));
+		Agency agency = agencyService.findOneById(agencyId);
+		account.setBankAccountAgency(agency);
 		return bankAccountRepo.save(account);
 	}
 

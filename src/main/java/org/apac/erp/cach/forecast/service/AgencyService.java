@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apac.erp.cach.forecast.dtos.AgencyDTO;
 import org.apac.erp.cach.forecast.persistence.entities.Agency;
+import org.apac.erp.cach.forecast.persistence.entities.Bank;
 import org.apac.erp.cach.forecast.persistence.entities.Contact;
 import org.apac.erp.cach.forecast.persistence.repositories.AgencyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,8 @@ public class AgencyService {
 		List<Contact> contacts = agency.getAgencyContacts();
 		contacts.stream().forEach(contact -> contactService.saveNewContact(contact));
 
-		agency.setAgencyBank(bankService.findBankById(bankId));
+		Bank bank = bankService.findBankById(bankId);
+		agency.setAgencyBank(bank);
 		return agencyRepo.save(agency);
 	}
 
