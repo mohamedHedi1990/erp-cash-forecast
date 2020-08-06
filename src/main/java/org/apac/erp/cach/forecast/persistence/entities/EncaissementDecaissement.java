@@ -39,6 +39,10 @@ public class EncaissementDecaissement extends AuditableSql implements Serializab
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date encaissementDecaissementDeadlineDate;
+	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Africa/Tunis")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date validationDate;
 
 	@Enumerated(EnumType.STRING)
 	private PaymentMethod encaissementDecaissementPaymentType;

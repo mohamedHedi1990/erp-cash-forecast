@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apac.erp.cach.forecast.enumeration.EncaissementDecaissementType;
+import org.apac.erp.cach.forecast.persistence.entities.BankAccount;
 import org.apac.erp.cach.forecast.persistence.entities.EncaissementDecaissement;
 import org.apac.erp.cach.forecast.persistence.repositories.EncaissementDecaissementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,11 @@ public class EncaissementDecaissementService {
 
 	public List<EncaissementDecaissement> findAllEncaissementDecaissements() {
 		return encaissementDecaissementRepo.findAll();
+	}
+	
+	public List<EncaissementDecaissement> findByBankAccountAndEncDecVlaidationDateInterval(
+			BankAccount account, Date startDate, Date endDate) {
+		return encaissementDecaissementRepo.findByBankAccountAndValidationDateGreaterThanEqualAndValidationDateLessThanEqual(account, startDate, endDate);
 	}
 
 	public EncaissementDecaissement saveNewEncaissementDecaissement(EncaissementDecaissement encDec) {

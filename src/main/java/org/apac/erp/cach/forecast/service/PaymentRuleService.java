@@ -2,11 +2,14 @@ package org.apac.erp.cach.forecast.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.apac.erp.cach.forecast.dtos.PaymentRuleDTO;
 import org.apac.erp.cach.forecast.enumeration.InvoiceType;
 import org.apac.erp.cach.forecast.enumeration.PaymentMethod;
+import org.apac.erp.cach.forecast.enumeration.TransactionType;
+import org.apac.erp.cach.forecast.persistence.entities.BankAccount;
 import org.apac.erp.cach.forecast.persistence.entities.CustomerInvoice;
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
 import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
@@ -29,19 +32,16 @@ public class PaymentRuleService {
 
 	@Autowired
 	private InvoiceService invoiceService;
+	
+	
+	@Autowired
+	private BankAccountService bankAccountService;
 
 	public List<PaymentRule> findAllPaymentRules() {
 		return paymentRuleRepo.findAll();
 	}
 
-	public PaymentRule saveNewPaymentRuleToInvoice(PaymentRule paymentRule, Long invoiceId, Long accountId) {
-		Invoice invoice = invoiceService.findInvoiceById(invoiceId);
-		paymentRule.setInvoice(invoice);
-		// TODO use correct formula of commissions applications
-		invoiceService.updateInvoiceWithPaymentRule(invoice, InvoiceType.CUSTOMER, paymentRule, accountId);
-		return paymentRuleRepo.save(paymentRule);
-	}
-
+	
 	public List<PaymentRuleDTO> findAllCustomerInvoicesPaymentRules() {
 		ArrayList<PaymentRuleDTO> paymentRules = new ArrayList<>();
 		List<CustomerInvoice> customerInvoices = customerInvoiceService.findAllCustomerInvoices();
@@ -99,6 +99,43 @@ public class PaymentRuleService {
 		List<PaymentMethod> list = new ArrayList<PaymentMethod>();
 		Collections.addAll(list, methodsArray);
 		return list;
+	}
+
+	public List<PaymentRule> findAllPaymentRulesByDateIntervalAndBankAccount(Date startDate, Date endDate, Long accountId) {
+		BankAccount bankAccount = bankAccountService.findById(accountId);
+		return paymentRuleRepo.findByAccountAndPaymentValidationDateGreaterThanEqualAndPaymentValidationDateLessThanEqual(bankAccount, startDate, endDate);		
+	}
+
+	public PaymentRule saveNewPaymentRuleToCustomerInvoice(PaymentRule paymentRule, Long invoiceId, Long accountId) {
+		Invoice invoice = customerInvoiceService.findCustomerInvoiceById(invoiceId);
+		BankAccount bankAccount = bankAccountService.findById(accountId);
+		paymentRule.setAccount(bankAccount);
+		paymentRule.setInvoice(invoice);
+		paymentRule.setPaymentRuleType(TransactionType.ENC_CLIENT);
+
+		// TODO use correct formula of commissions applications
+		invoiceService.updateInvoiceWithPaymentRule(invoice, InvoiceType.CUSTOMER, paymentRule, accountId);
+		return paymentRuleRepo.save(paymentRule);
+	}
+
+
+	public PaymentRule saveNewPaymentRuleToProviderInvoice(PaymentRule paymentRule, Long invoiceId, Long accountId) {
+		Invoice invoice = providerInvoiceService.findProviderInvoiceById(invoiceId);
+		paymentRule.setInvoice(invoice);	
+		BankAccount bankAccount = bankAccountService.findById(accountId);
+		paymentRule.setAccount(bankAccount);
+
+		// TODO use correct formula of commissions applications
+		invoiceService.updateInvoiceWithPaymentRule(invoice, InvoiceType.CUSTOMER, paymentRule, accountId);
+		return paymentRuleRepo.save(paymentRule);
+	}
+
+
+	public PaymentRule validatePaymentRule(Long paymentRuleId) {
+		PaymentRule paymentRule = paymentRuleRepo.findOne(paymentRuleId);
+		paymentRule.setValidated(true);
+		paymentRule.setPaymentValidationDate(new Date());
+		return paymentRuleRepo.save(paymentRule);
 	}
 
 }

@@ -3,6 +3,7 @@ package org.apac.erp.cach.forecast.persistence.repositories;
 import java.util.Date;
 import java.util.List;
 
+import org.apac.erp.cach.forecast.persistence.entities.BankAccount;
 import org.apac.erp.cach.forecast.persistence.entities.EncaissementDecaissement;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -12,5 +13,8 @@ public interface EncaissementDecaissementRepository extends JpaRepository<Encais
 
 	List<EncaissementDecaissement> findByEncaissementDecaissementDeadlineDateGreaterThanEqualAndEncaissementDecaissementDeadlineDateLessThanEqual(
 			Date startDate, Date endDate);
+	
+	List<EncaissementDecaissement> findByBankAccountAndValidationDateGreaterThanEqualAndValidationDateLessThanEqual(
+			BankAccount account, Date startDate, Date endDate);
 
 }

@@ -47,11 +47,26 @@ public class PaymentRuleController {
 	}
 
 	@CrossOrigin
-	@PostMapping("/invoice/{invoiceId}/account/{accountId}")
+	@PostMapping("/customer/{invoiceId}/account/{accountId}")
 	public PaymentRule saveNewPaymentRuleToCustomerInvoice(@RequestBody PaymentRule paymentRule,
 			@PathVariable("invoiceId") Long invoiceId,
 			@PathVariable("accountId") Long accountId) {
-		return paymentRuleService.saveNewPaymentRuleToInvoice(paymentRule, invoiceId, accountId);
+		return paymentRuleService.saveNewPaymentRuleToCustomerInvoice(paymentRule, invoiceId, accountId);
+	}
+	
+	@CrossOrigin
+	@PostMapping("/provider/{invoiceId}/account/{accountId}")
+	public PaymentRule saveNewPaymentRuleToProviderInvoice(@RequestBody PaymentRule paymentRule,
+			@PathVariable("invoiceId") Long invoiceId,
+			@PathVariable("accountId") Long accountId) {
+		return paymentRuleService.saveNewPaymentRuleToProviderInvoice(paymentRule, invoiceId, accountId);
+	}
+	
+	@CrossOrigin
+	@PostMapping("/validate/{paymentRuleId}")
+	public PaymentRule validatePaymentRule(
+			@PathVariable("paymentRuleId") Long paymentRuleId) {
+		return paymentRuleService.validatePaymentRule(paymentRuleId);
 	}
 
 }

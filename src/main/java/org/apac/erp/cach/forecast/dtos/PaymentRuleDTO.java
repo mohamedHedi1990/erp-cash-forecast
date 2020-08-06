@@ -7,6 +7,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
+import org.apac.erp.cach.forecast.enumeration.TransactionType;
 import org.apac.erp.cach.forecast.persistence.entities.Customer;
 import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
 
@@ -40,6 +41,8 @@ public class PaymentRuleDTO {
 	private Double invoiceNet;
 
 	private Double invoicePayment;
+	
+	private TransactionType type;
 
 	private String ownerLabel;
 
