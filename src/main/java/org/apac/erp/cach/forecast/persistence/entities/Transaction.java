@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -23,23 +22,20 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 @Entity
-@Table(name = "erp_encaissementDecaissement")
+@Table(name = "erp_transaction")
 @Data
-public class EncaissementDecaissement extends AuditableSql implements Serializable {
-
+public class Transaction  extends AuditableSql implements Serializable {
+	
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long encaissementDecaissementId;
-
-	@Enumerated(EnumType.STRING)
-	private EncaissementDecaissementType encaissementDecaissementType;
+	private Long transactionId;
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date encaissementDecaissementDeadlineDate;
-
+	private Date transactionDeadlineDate;
+	
 	@Enumerated(EnumType.STRING)
 	private PaymentMethod encaissementDecaissementPaymentType;
 
@@ -49,13 +45,8 @@ public class EncaissementDecaissement extends AuditableSql implements Serializab
 
 	private Double encaissementDecaissementAmount;
 	
-	private String invoiceNumber;
-	
 	private String encaissementDecaissementDetails;
 	
-	@ManyToOne
-	private Invoice invoice;
-		
 	@ManyToOne
 	private BankAccount bankAccount;
 
