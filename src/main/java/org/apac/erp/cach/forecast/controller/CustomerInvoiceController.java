@@ -1,8 +1,10 @@
 package org.apac.erp.cach.forecast.controller;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.apac.erp.cach.forecast.dtos.CustomerInvoiceDTO;
+import org.apac.erp.cach.forecast.persistence.entities.Customer;
 import org.apac.erp.cach.forecast.persistence.entities.CustomerInvoice;
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
 import org.apac.erp.cach.forecast.service.CustomerInvoiceService;
@@ -25,9 +27,16 @@ public class CustomerInvoiceController {
 
 	@CrossOrigin
 	@GetMapping()
-	public List<CustomerInvoiceDTO> findAllProviderInvoices() {
+	public List<CustomerInvoiceDTO> findAllCustomerInvoices() {
 		return customerInvoiceService.findAllCustomerInvoicesDTO();
 	}
+	
+	@CrossOrigin
+	@GetMapping("/sorted")
+	public HashMap<Customer, List<CustomerInvoice>> findAllInvoicesByCustomer() {
+		return customerInvoiceService.findAllInvoicesByCustomer();
+	}
+
 
 	@CrossOrigin
 	@PostMapping("{customerId}")

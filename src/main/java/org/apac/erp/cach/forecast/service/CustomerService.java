@@ -19,20 +19,14 @@ public class CustomerService {
 	@Autowired
 	private ContactService contactService;
 
-	public List<CustomerDTO> findAllCustomers() {
-		List<CustomerDTO> dtos = new ArrayList<CustomerDTO>();
-		List<Customer> customers = customerRepo.findAll();
-		customers.stream().forEach(customer -> {
-			CustomerDTO dto = new CustomerDTO(customer.getCustomerId(), customer.getCustomerLabel(),
-					customer.getCustomerAddress(), customer.getCustomerUniqueIdentifier(),
-					customer.getCustomerManagerName(), customer.getCustomerContactNumber(), 
-					customer.getCustomerContacts(),
-					customer.getCreatedAt(),
-					customer.getUpdatedAt());
-			dtos.add(dto);
-		});
+	public List<Customer> findAllCustomers() {
+		return customerRepo.findAll();
+	
+	}
+	
+	public Customer updateCustomer(Customer customer) {
+		return customerRepo.save(customer);
 
-		return dtos;
 	}
 
 	public Customer saveNewCustomer(Customer customer) {
@@ -49,6 +43,22 @@ public class CustomerService {
 
 	public void deleteCustomer(Long customerId) {
 		customerRepo.delete(customerId);
+	}
+
+	public List<CustomerDTO> findAllCustomersDTO() {
+		List<CustomerDTO> dtos = new ArrayList<CustomerDTO>();
+		List<Customer> customers = customerRepo.findAll();
+		customers.stream().forEach(customer -> {
+			CustomerDTO dto = new CustomerDTO(customer.getCustomerId(), customer.getCustomerLabel(),
+					customer.getCustomerAddress(), customer.getCustomerUniqueIdentifier(),
+					customer.getCustomerManagerName(), customer.getCustomerContactNumber(), 
+					customer.getCustomerContacts(),
+					customer.getCreatedAt(),
+					customer.getUpdatedAt());
+			dtos.add(dto);
+		});
+
+		return dtos;
 	}
 
 }
