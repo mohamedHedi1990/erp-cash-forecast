@@ -33,7 +33,7 @@ public class TimeLine extends AuditableSql implements Serializable {
 	
 	private String timeLineLabel;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	private BankAccount timeLineAccount;
 
 	private String timeLineCreditNumber;

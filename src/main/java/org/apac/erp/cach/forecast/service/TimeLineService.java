@@ -9,24 +9,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TimelineService {
+public class TimeLineService {
 
 	@Autowired
 	private TimeLineRepository timeLineRepo;
 
-	public TimeLine saveBankAccount(TimeLine timeLine) {
+	public TimeLine saveTimeLine(TimeLine timeLine) {
 		return this.timeLineRepo.save(timeLine);
 	}
 	
-	public List<TimeLine> getAllTarifsBancaires() {
+	public List<TimeLine> getAllTimeLines() {
 		return this.timeLineRepo.findAll();
 	}
 	
-	public TimeLine getTarifById(Long timeLineId) {
+	public TimeLine fetTimeLineById(Long timeLineId) {
 		return this.timeLineRepo.findOne(timeLineId);
 	}
 
-	public void deleteTarifBancaire(Long timeLineId) {
+	public void deleteTimeLine(Long timeLineId) {
 		 this.timeLineRepo.delete(timeLineId);
 		
 	}

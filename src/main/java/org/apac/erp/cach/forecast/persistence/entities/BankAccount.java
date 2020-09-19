@@ -3,6 +3,7 @@ package org.apac.erp.cach.forecast.persistence.entities;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -45,7 +46,7 @@ public class BankAccount extends AuditableSql implements Serializable {
 	
 	private String accountRIB;
 
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL)
 	private List<Contact> accountContacts;
 	
 }

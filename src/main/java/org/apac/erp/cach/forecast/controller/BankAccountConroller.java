@@ -38,12 +38,12 @@ public class BankAccountConroller {
 
 	@CrossOrigin
 	@GetMapping("/{accountId}")
-	public BankAccount getAccountById(@PathVariable("tarifId") Long accountId) {
+	public BankAccount getAccountById(@PathVariable("accountId") Long accountId) {
 		return this.bankAccountService.getAccountById(accountId);
 	}
 	@CrossOrigin
 	@DeleteMapping("/{accountId}")
-	public void deleteAccount(@PathVariable("tarifId") Long accountId) {
+	public void deleteAccount(@PathVariable("accountId") Long accountId) {
 		bankAccountService.deleteAccount(accountId);
 	}
 }
