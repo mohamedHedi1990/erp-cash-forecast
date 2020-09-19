@@ -3,6 +3,7 @@ package org.apac.erp.cach.forecast.persistence.entities;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -33,12 +34,14 @@ public class Customer extends AuditableSql implements Serializable {
 
 	private String customerManagerName;
 
-	private String customerContactNumber;
+	private String customerTel;
+	
+	private String customerEmail;
 
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL)
 	private List<CustomerInvoice> customerInvoices;
 
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL)
 	private List<Contact> customerContacts;
 
 }

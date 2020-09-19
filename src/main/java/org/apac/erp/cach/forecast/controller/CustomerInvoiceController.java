@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/customer/invoice")
 public class CustomerInvoiceController {
-
+/*
 	@Autowired
 	private CustomerInvoiceService customerInvoiceService;
 
@@ -56,5 +56,5 @@ public class CustomerInvoiceController {
 	public void deleteInvoice(@PathVariable("customerId") Long customerId) {
 		customerInvoiceService.deleteInvoice(customerId);
 	}
-
+*/
 }

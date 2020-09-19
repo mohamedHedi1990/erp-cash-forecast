@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/encaissement")
 public class EncaissementController {
-
+/*
 	@Autowired
 	private EncaissementDecaissementService encaissementDecaissementService;
 	
@@ -44,5 +44,5 @@ public class EncaissementController {
 	public EncaissementDecaissement saveNewEncaissement(@RequestBody EncaissementDecaissement encDec) {
 		return encaissementDecaissementService.saveNewEncaissementDecaissement(encDec);
 	}
-
+*/
 }

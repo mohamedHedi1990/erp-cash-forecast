@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,35 +16,38 @@ import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
+import org.apac.erp.cach.forecast.enumeration.Annuity;
+
 import lombok.Data;
 
 @Entity
-@Table(name = "erp_provider")
+@Table(name = "erp_timeline")
 @Data
-public class Provider extends AuditableSql implements Serializable {
+public class TimeLine extends AuditableSql implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long providerId;
-
-	private String providerLabel;
-
-	private String providerAddress;
-
-	private String providerUniqueIdentifier;
-
-	private String providerManagerName;
-
-	private String providerTel;
+	private Long timeLineId;
 	
-	private String providerEmail;
+	private String timeLineLabel;
+	
+	@ManyToOne
+	private BankAccount timeLineAccount;
 
-	@OneToMany(cascade = CascadeType.ALL)
-	private List<ProviderInvoice> providerInvoices;
+	private String timeLineCreditNumber;
+	
+	private Double timeLineInitialAmount;
+	
+	private Integer timeLineYearNumber;
+	
+	@Enumerated(EnumType.STRING)
+	private Annuity timeLineAnnuity;
+	
+	private Double timeLineInterestRate;
 	
 	@OneToMany(cascade = CascadeType.ALL)
-	private List<Contact> providerContacts;
+	private List<TimeLineEntry> timeLineTable;
 
 }

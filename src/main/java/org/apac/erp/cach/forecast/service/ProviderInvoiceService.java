@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ProviderInvoiceService {
-
+/*
 	@Autowired
 	private ProviderInvoiceRepository providerInvoiceRepo;
 
@@ -64,5 +64,5 @@ public class ProviderInvoiceService {
 	public void deleteInvoice(Long invoiceId) {
 		providerInvoiceRepo.delete(invoiceId);
 	}
-
+*/
 }

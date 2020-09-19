@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/provider/invoice")
 public class ProviderInvoiceController {
-
+/*
 	@Autowired
 	private ProviderInvoiceService providerInvoiceService;
 
@@ -47,4 +47,5 @@ public class ProviderInvoiceController {
 	public void deleteBank(@PathVariable("invoiceId") Long invoiceId) {
 		providerInvoiceService.deleteInvoice(invoiceId);
 	}
+	*/
 }

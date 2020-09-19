@@ -3,6 +3,7 @@ package org.apac.erp.cach.forecast.controller;
 import java.util.List;
 
 import org.apac.erp.cach.forecast.dtos.ProviderDTO;
+import org.apac.erp.cach.forecast.persistence.entities.Customer;
 import org.apac.erp.cach.forecast.persistence.entities.Provider;
 import org.apac.erp.cach.forecast.service.ProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,26 +25,24 @@ public class ProviderController {
 
 	@CrossOrigin
 	@GetMapping()
-	public List<ProviderDTO> findAllUsers() {
-		return providerService.findAllProvides();
+	public List<Provider> getAllProviders() {
+		return this.providerService.getAllProviders();
 	}
 
 	@CrossOrigin
 	@PostMapping()
-	public Provider saveNewProvider(@RequestBody Provider provider) {
-		return providerService.saveNewProvider(provider);
+	public Provider saveProvider(@RequestBody Provider provider) {
+		return providerService.saveProvider(provider);
 	}
 
 	@CrossOrigin
-	@GetMapping("by-provider-id/{providerId}")
-	public Provider findProviderById(@PathVariable("providerId") Long providerId) {
-		return providerService.findProviderById(providerId);
+	@GetMapping("/{customerId}")
+	public Provider getProviderById(@PathVariable("providerId") Long providerId) {
+		return this.providerService.getProviderById(providerId);
 	}
-
 	@CrossOrigin
-	@DeleteMapping("/{providerId}")
-	public void deleteCompany(@PathVariable("providerId") Long providerId) {
-		providerService.deleteCompany(providerId);
+	@DeleteMapping("/{customerId}")
+	public void deleteProvider(@PathVariable("providerId") Long providerId) {
+		providerService.deleteProvider(providerId);
 	}
-
 }

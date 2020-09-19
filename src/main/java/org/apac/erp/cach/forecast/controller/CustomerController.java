@@ -3,6 +3,7 @@ package org.apac.erp.cach.forecast.controller;
 import java.util.List;
 
 import org.apac.erp.cach.forecast.dtos.CustomerDTO;
+import org.apac.erp.cach.forecast.persistence.entities.BankAccount;
 import org.apac.erp.cach.forecast.persistence.entities.Customer;
 import org.apac.erp.cach.forecast.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,34 +25,24 @@ public class CustomerController {
 
 	@CrossOrigin
 	@GetMapping()
-	public List<CustomerDTO> findAllCustomersDTO() {
-		return customerService.findAllCustomersDTO();
+	public List<Customer> getAllCustomers() {
+		return this.customerService.getAllCustomers();
 	}
-	
-	@CrossOrigin
-	@GetMapping("/full")
-	public List<Customer> findAllCustomers() {
-		return customerService.findAllCustomers();
-	}
-
 
 	@CrossOrigin
 	@PostMapping()
-	public Customer saveNewCustomer(@RequestBody Customer customer) {
-		return customerService.saveNewCustomer(customer);
+	public Customer saveCustomer(@RequestBody Customer customer) {
+		return customerService.saveCustomer(customer);
 	}
 
 	@CrossOrigin
-	@GetMapping("by-customer-id/{customerId}")
-	public Customer findCustomerById(@PathVariable("customerId") Long customerId) {
-		return customerService.findCustomerById(customerId);
+	@GetMapping("/{customerId}")
+	public Customer getCustomerById(@PathVariable("customerId") Long customerId) {
+		return this.customerService.getCustomerById(customerId);
 	}
-	
 	@CrossOrigin
 	@DeleteMapping("/{customerId}")
-	public void deleteCompany(@PathVariable("customerId") Long customerId) {
+	public void deleteCustomer(@PathVariable("customerId") Long customerId) {
 		customerService.deleteCustomer(customerId);
 	}
-
-
 }

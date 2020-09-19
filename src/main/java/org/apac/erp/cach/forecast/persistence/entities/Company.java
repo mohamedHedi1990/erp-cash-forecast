@@ -33,5 +33,7 @@ public class Company extends AuditableSql implements Serializable {
 	private String campanyUniqueIdentifier;
 
 	private String campanyPhoneNumber;
+	
+	private String campanyEmail;
 
 }

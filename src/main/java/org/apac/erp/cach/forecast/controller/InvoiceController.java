@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/invoice")
 public class InvoiceController {
-
+/*
 	@Autowired
 	private InvoiceService invoiceService;
 
@@ -37,5 +37,5 @@ public class InvoiceController {
 	public Invoice findInvoiceById(@PathVariable("invoiceId") Long invoiceId) {
 		return invoiceService.findInvoiceById(invoiceId);
 	}
-
+*/
 }

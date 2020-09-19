@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class EncaissementDecaissementService {
-
+/*
 	@Autowired
 	private EncaissementDecaissementRepository encaissementDecaissementRepo;
 
@@ -83,5 +83,5 @@ public class EncaissementDecaissementService {
 
 	}
 
-
+*/
 }

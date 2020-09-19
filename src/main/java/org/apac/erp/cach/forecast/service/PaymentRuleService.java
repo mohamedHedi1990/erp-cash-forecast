@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PaymentRuleService {
-
+/*
 	@Autowired
 	private PaymentRuleRepository paymentRuleRepo;
 
@@ -100,5 +100,5 @@ public class PaymentRuleService {
 		Collections.addAll(list, methodsArray);
 		return list;
 	}
-
+*/
 }

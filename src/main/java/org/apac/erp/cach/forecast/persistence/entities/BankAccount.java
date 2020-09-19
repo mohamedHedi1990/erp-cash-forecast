@@ -1,15 +1,13 @@
 package org.apac.erp.cach.forecast.persistence.entities;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.Data;
@@ -23,19 +21,31 @@ public class BankAccount extends AuditableSql implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long bankAccountId;
+	private Long accountId;
 
-	private String bankAccountLabel;
-
-	private String bankAccountNumber;
-
-	private String bankAccountChargeCustomerName;
-
-	private String bankAccountChargeCustomerPhoneNumber;
+	private String accountLabel;
 	
-	private String bankAccountCurrency;
+	private String accountBank;
+	
+	private String accountBankAdress;
+	
+	private String accountAgency;
+	
+	private String accountAgencyAdress;
 
-	@ManyToOne
-	private Agency bankAccountAgency;
+	private String accountChargeCustomerName;
+
+	private String accountChargeCustomerPhoneNumber;
+	
+	private String accountChargeCustomerEmail;
+	
+	private String accountCurrency;
+	
+	private String accountNumber;
+	
+	private String accountRIB;
+
+	@OneToMany
+	private List<Contact> accountContacts;
 	
 }

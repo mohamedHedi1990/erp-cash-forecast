@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CustomerInvoiceService {
-
+/*
 	@Autowired
 	private CustomerInvoiceRepository customerInvoiceRepo;
 	
@@ -93,4 +93,5 @@ public class CustomerInvoiceService {
 		
 		return map;
 	}
+	*/
 }

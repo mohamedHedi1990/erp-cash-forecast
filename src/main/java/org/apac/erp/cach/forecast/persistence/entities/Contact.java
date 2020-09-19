@@ -25,10 +25,10 @@ public class Contact extends AuditableSql implements Serializable {
 
 	private String contactName;
 
-	private String contactFunction;
+	private String contactPost;
 
 	private String contactEmail;
 
-	private String contactPhoneNumber;
+	private String contactTel;
 
 }

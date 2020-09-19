@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/paymentRule")
 public class PaymentRuleController {
-
+/*
 	@Autowired
 	private PaymentRuleService paymentRuleService;
 
@@ -53,5 +53,5 @@ public class PaymentRuleController {
 			@PathVariable("accountId") Long accountId) {
 		return paymentRuleService.saveNewPaymentRuleToInvoice(paymentRule, invoiceId, accountId);
 	}
-
+*/
 }
