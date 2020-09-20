@@ -33,7 +33,7 @@ public class TarifBancaire extends AuditableSql implements Serializable {
 	
 	private String tarifLabel;
 	
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	private BankAccount tarifAccount;
 	
 	@OneToMany(cascade = CascadeType.ALL)

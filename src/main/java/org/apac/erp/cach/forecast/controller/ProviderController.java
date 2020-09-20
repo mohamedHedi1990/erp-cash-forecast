@@ -36,12 +36,12 @@ public class ProviderController {
 	}
 
 	@CrossOrigin
-	@GetMapping("/{customerId}")
+	@GetMapping("/{providerId}")
 	public Provider getProviderById(@PathVariable("providerId") Long providerId) {
 		return this.providerService.getProviderById(providerId);
 	}
 	@CrossOrigin
-	@DeleteMapping("/{customerId}")
+	@DeleteMapping("/{providerId}")
 	public void deleteProvider(@PathVariable("providerId") Long providerId) {
 		providerService.deleteProvider(providerId);
 	}
