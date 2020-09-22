@@ -38,9 +38,6 @@ public class Provider extends AuditableSql implements Serializable {
 	private String providerTel;
 	
 	private String providerEmail;
-
-	@OneToMany(cascade = CascadeType.ALL)
-	private List<ProviderInvoice> providerInvoices;
 	
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Contact> providerContacts;

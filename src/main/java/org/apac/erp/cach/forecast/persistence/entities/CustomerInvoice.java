@@ -11,14 +11,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Entity
-@Table(name = "erp_customerInvoice")
 @Data
 public class CustomerInvoice extends Invoice implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne
-	@JsonIgnore
 	private Customer customer;
 
 }

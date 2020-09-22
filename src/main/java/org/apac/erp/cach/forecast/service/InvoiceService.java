@@ -1,9 +1,30 @@
 package org.apac.erp.cach.forecast.service;
 
+import java.io.IOException;
+import java.time.temporal.ChronoUnit;
+
+import org.apac.erp.cach.forecast.persistence.entities.Invoice;
+import org.apac.erp.cach.forecast.persistence.repositories.InvoiceRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class InvoiceService {
+	
+	@Autowired
+	private InvoiceRepository invoiceRepo;
+	
+	public long betweenDates(java.util.Date date, java.util.Date date2) throws IOException {
+		return ChronoUnit.DAYS.between(date.toInstant(), date2.toInstant());
+	}
+	
+	public Invoice findInvoiceById(Long invoiceId) {
+		return invoiceRepo.findOne(invoiceId);
+	}
+	
+	public void deleteInvoice(Long invoiceId) {
+		invoiceRepo.delete(invoiceId);
+	}
 /*
 	@Autowired
 	private InvoiceRepository invoiceRepo;
