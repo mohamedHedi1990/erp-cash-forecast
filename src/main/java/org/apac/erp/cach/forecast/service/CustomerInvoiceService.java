@@ -26,11 +26,11 @@ public class CustomerInvoiceService {
 		return customerInvoiceRepo.findAll();
 	}
 
-	public CustomerInvoice saveCustomerInvoice(CustomerInvoice invoice, Long customerId) {
-		Customer customer = customerService.getCustomerById(customerId);
-		invoice.setCustomer(customer);
+	public CustomerInvoice saveCustomerInvoice(CustomerInvoice invoice) {
+		// Customer customer = customerService.getCustomerById(customerId);
+		// invoice.setCustomer(customer);
 		invoice.setInvoiceStatus(InvoiceStatus.OPENED);
-		invoice.setInvoiceTotalAmount(invoice.getInvoiceNet() + invoice.getInvoiceRs());
+		// invoice.setInvoiceTotalAmount(invoice.getInvoiceNet() + invoice.getInvoiceRs());
 
 		try {
 			long days = invoiceService.betweenDates(invoice.getInvoiceDate(), invoice.getInvoiceDeadlineDate());

@@ -145,7 +145,7 @@
 				<executions>
 					<execution>
 						<configuration>
-							<mainClass>org.proway.otlobni.OtlobniApplication</mainClass>
+							<mainClass>org.apac.erp.cach.forecast.ErpCachForecastApplication</mainClass>
 						</configuration>
 					</execution>
 				</executions>

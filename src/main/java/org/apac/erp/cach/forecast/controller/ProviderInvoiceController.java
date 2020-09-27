@@ -27,10 +27,9 @@ public class ProviderInvoiceController {
 	}
 
 	@CrossOrigin
-	@PostMapping("{providerId}")
-	public ProviderInvoice saveNewProviderInvoice(@RequestBody ProviderInvoice invoice,
-			@PathVariable("providerId") Long providerId) {
-		return providerInvoiceService.saveProviderInvoice(invoice, providerId);
+	@PostMapping()
+	public ProviderInvoice saveNewProviderInvoice(@RequestBody ProviderInvoice invoice) {
+		return providerInvoiceService.saveProviderInvoice(invoice);
 	}
 
 }

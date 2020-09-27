@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -37,11 +38,11 @@ public class Invoice extends AuditableSql implements Serializable {
 
 	private Integer invoiceDeadlineInNumberOfDays;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Africa/Tunis")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date invoiceDeadlineDate;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Africa/Tunis")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date invoiceDate;
 
@@ -60,5 +61,12 @@ public class Invoice extends AuditableSql implements Serializable {
 
 	@OneToMany
 	private List<PaymentRule> invoicePaymentRules;
+	
+	@PrePersist
+	public void initInvoice() {
+		if (this.invoiceId == null) {
+			this.invoicePayment = 0.0;
+		}
+	}
 
 }

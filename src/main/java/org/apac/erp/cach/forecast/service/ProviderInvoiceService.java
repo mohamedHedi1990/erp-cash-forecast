@@ -25,11 +25,11 @@ public class ProviderInvoiceService {
 		return providerInvoiceRepo.findAll();
 	}
 
-	public ProviderInvoice saveProviderInvoice(ProviderInvoice invoice, Long providerId) {
-		Provider provider = providerService.getProviderById(providerId);
-		invoice.setProvider(provider);
+	public ProviderInvoice saveProviderInvoice(ProviderInvoice invoice) {
+		//Provider provider = providerService.getProviderById(providerId);
+		//invoice.setProvider(provider);
 		invoice.setInvoiceStatus(InvoiceStatus.OPENED);
-		invoice.setInvoiceTotalAmount(invoice.getInvoiceNet() + invoice.getInvoiceRs());
+		//invoice.setInvoiceTotalAmount(invoice.getInvoiceNet() + invoice.getInvoiceRs());
 
 		try {
 			long days = invoiceService.betweenDates(invoice.getInvoiceDate(), invoice.getInvoiceDeadlineDate());
