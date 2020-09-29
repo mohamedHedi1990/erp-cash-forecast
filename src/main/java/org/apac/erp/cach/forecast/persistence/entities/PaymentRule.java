@@ -8,7 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -46,5 +46,8 @@ public class PaymentRule extends AuditableSql implements Serializable {
 	
 	@ManyToOne
 	private Invoice invoice;
+	
+	@OneToOne
+	private BankAccount paymentRuleAccount;
 	
 }

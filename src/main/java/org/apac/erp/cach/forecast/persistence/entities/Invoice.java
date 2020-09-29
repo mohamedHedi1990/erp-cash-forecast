@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -38,7 +39,7 @@ public class Invoice extends AuditableSql implements Serializable {
 
 	private Integer invoiceDeadlineInNumberOfDays;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Africa/Tunis")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date invoiceDeadlineDate;
 
@@ -59,7 +60,7 @@ public class Invoice extends AuditableSql implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private InvoiceStatus invoiceStatus;
 
-	@OneToMany
+	@OneToMany(cascade= CascadeType.ALL)
 	private List<PaymentRule> invoicePaymentRules;
 	
 	@PrePersist

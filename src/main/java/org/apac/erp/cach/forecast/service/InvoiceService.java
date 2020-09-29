@@ -2,8 +2,11 @@ package org.apac.erp.cach.forecast.service;
 
 import java.io.IOException;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
+import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
 import org.apac.erp.cach.forecast.persistence.repositories.InvoiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -80,4 +83,16 @@ public class InvoiceService {
 		invoiceRepo.save(invoice);
 	}
 */
+
+	public Invoice addPaymentRuleForInvoice(Long invoiceId, PaymentRule paymentRule) {
+		Invoice  invoice = findInvoiceById(invoiceId);
+		List<PaymentRule> paymentRules = invoice.getInvoicePaymentRules();
+		if(paymentRules == null) {
+			paymentRules = new ArrayList<PaymentRule>();
+		}
+		paymentRules.add(paymentRule);
+		invoice.setInvoicePaymentRules(paymentRules);
+		
+		return this.invoiceRepo.save(invoice);
+	}
 }
