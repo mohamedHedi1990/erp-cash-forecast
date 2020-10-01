@@ -1,5 +1,8 @@
 package org.apac.erp.cach.forecast.controller;
 
+import java.util.List;
+
+import org.apac.erp.cach.forecast.dtos.InvoicesPayment;
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
 import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
 import org.apac.erp.cach.forecast.service.InvoiceService;
@@ -51,5 +54,12 @@ public class InvoiceController {
 	public Invoice addPaymentRuleForInvoice(@PathVariable("invoiceId") Long invoiceId,
 			@RequestBody PaymentRule paymentRule) {
 		return invoiceService.addPaymentRuleForInvoice(invoiceId, paymentRule);
+	}
+	
+	@CrossOrigin
+	@PostMapping("/pay")
+	public List<Invoice>  payInvoices(
+			@RequestBody InvoicesPayment invoicePayment) {
+		return invoiceService.payInvoices(invoicePayment);
 	}
 }

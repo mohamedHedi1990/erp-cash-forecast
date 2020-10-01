@@ -5,6 +5,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apac.erp.cach.forecast.dtos.InvoicesPayment;
+import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
 import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
 import org.apac.erp.cach.forecast.persistence.repositories.InvoiceRepository;
@@ -92,7 +94,23 @@ public class InvoiceService {
 		}
 		paymentRules.add(paymentRule);
 		invoice.setInvoicePaymentRules(paymentRules);
-		
+		invoice.setInvoicePayment(invoice.getInvoicePayment() + paymentRule.getPaymentRuleAmount());
+		if(invoice.getInvoicePayment() == invoice.getInvoiceTotalAmount()) {
+			invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
+		}
 		return this.invoiceRepo.save(invoice);
+	}
+
+	public List<Invoice> payInvoices(InvoicesPayment invoicePayment) {
+		invoicePayment.getSelectedInvoices().stream().forEach(invoice -> {
+			List<PaymentRule> paymentRules = invoice.getInvoicePaymentRules();
+			if(paymentRules == null) {
+				paymentRules = new ArrayList<PaymentRule>();
+			}
+			paymentRules.add(invoicePayment.getPaymentRule());
+			invoice.setInvoicePayment(invoice.getInvoiceTotalAmount());
+			invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
+		});
+		return this.invoiceRepo.save(invoicePayment.getSelectedInvoices());
 	}
 }
