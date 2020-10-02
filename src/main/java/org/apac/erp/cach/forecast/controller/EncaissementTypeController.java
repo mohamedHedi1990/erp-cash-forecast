@@ -2,9 +2,8 @@ package org.apac.erp.cach.forecast.controller;
 
 import java.util.List;
 
-import org.apac.erp.cach.forecast.persistence.entities.Decaissement;
-import org.apac.erp.cach.forecast.persistence.entities.Encaissement;
-import org.apac.erp.cach.forecast.service.DecaissementService;
+import org.apac.erp.cach.forecast.persistence.entities.EncaissementType;
+import org.apac.erp.cach.forecast.service.EncaissementTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,16 +15,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/decaissement")
-public class DecaissementController {
+@RequestMapping("/api/encaissement-type")
+public class EncaissementTypeController {
 
 	@Autowired
-	private DecaissementService decaissementService;
+	private EncaissementTypeService encaissementTypeService;
 
 	@CrossOrigin
 	@GetMapping()
-	public List<Decaissement> findAll() {
-		return decaissementService.findAllDecaissements();
+	public List<EncaissementType> findAll() {
+		return encaissementTypeService.findAllEncaissementTypes();
 	}
 
 	/*
@@ -44,19 +43,19 @@ public class DecaissementController {
 	 */
 	@CrossOrigin
 	@PostMapping()
-	public Decaissement saveDecaissement(@RequestBody Decaissement encDec) {
-		return decaissementService.saveDecaissement(encDec);
+	public EncaissementType saveNewEncaissement(@RequestBody EncaissementType encaissementType) {
+		return encaissementTypeService.saveEncaissementType(encaissementType);
 	}
 
 	@CrossOrigin
-	@GetMapping("/{decaissementId}")
-	public Decaissement findDecaissementBYId(@PathVariable("decaissementId") Long decaissementId) {
-		return decaissementService.getDecaissementById(decaissementId);
+	@GetMapping("/{encaissementTypeId}")
+	public EncaissementType findEncaissementBYId(@PathVariable("encaissementTypeId") Long encaissementTypeId) {
+		return encaissementTypeService.getEncaissementTypeById(encaissementTypeId);
 	}
 
 	@CrossOrigin
-	@DeleteMapping("/{decaissementId}")
-	public void deleteDecaissement(@PathVariable("decaissementId") Long decaissementId) {
-		decaissementService.deleteDecaissement(decaissementId);
+	@DeleteMapping("/{encaissementTypeId}")
+	public void deleteEncaissement(@PathVariable("encaissementTypeId") Long encaissementTypeId) {
+		encaissementTypeService.deleteEncaissementType(encaissementTypeId);
 	}
 }
