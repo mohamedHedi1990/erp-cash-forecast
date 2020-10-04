@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EncaissementRepository extends JpaRepository<Encaissement, Long> {
-
+/*
 	List<Encaissement> findByEncaissementDecaissementDeadlineDateGreaterThanEqualAndEncaissementDecaissementDeadlineDateLessThanEqual(
-			Date startDate, Date endDate);
+			Date startDate, Date endDate); */
 
 }
