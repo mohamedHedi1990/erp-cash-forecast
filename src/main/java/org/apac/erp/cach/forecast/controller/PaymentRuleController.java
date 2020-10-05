@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,16 +18,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/paymentRule")
 public class PaymentRuleController {
-/*
+
 	@Autowired
 	private PaymentRuleService paymentRuleService;
 
 	@CrossOrigin
-	@GetMapping()
-	public List<PaymentRule> findAllPaymentRules() {
-		return paymentRuleService.findAllPaymentRules();
+	@PutMapping("/{paymentRuleId}")
+	public PaymentRule validatePaymentRule(@PathVariable("paymentRuleId") Long paymentRuleId) {
+		return paymentRuleService.validatePaymentRule(paymentRuleId);
 	}
-
+/*
 	@CrossOrigin
 	@GetMapping("/methods")
 	public List<PaymentMethod> findAllPaymentMethods() {

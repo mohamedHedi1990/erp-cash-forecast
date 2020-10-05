@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apac.erp.cach.forecast.dtos.PaymentRuleDTO;
+import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
 import org.apac.erp.cach.forecast.enumeration.InvoiceType;
 import org.apac.erp.cach.forecast.enumeration.PaymentMethod;
 import org.apac.erp.cach.forecast.persistence.entities.CustomerInvoice;
@@ -17,22 +18,80 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PaymentRuleService {
-/*
+
 	@Autowired
 	private PaymentRuleRepository paymentRuleRepo;
 
 	@Autowired
-	private CustomerInvoiceService customerInvoiceService;
-
-	@Autowired
-	private ProviderInvoiceService providerInvoiceService;
-
-	@Autowired
 	private InvoiceService invoiceService;
-
-	public List<PaymentRule> findAllPaymentRules() {
-		return paymentRuleRepo.findAll();
+	
+	public PaymentRule findPaymentRuleBYId(Long paymentRuleId) {
+		return paymentRuleRepo.findOne(paymentRuleId);
 	}
+	
+	public PaymentRule validatePaymentRule(Long paymentRuleId) {
+		
+		PaymentRule paymentRule = findPaymentRuleBYId(paymentRuleId);
+		if(paymentRule != null) {
+			paymentRule.setIsValidated(true);
+			return this.paymentRuleRepo.save(paymentRule);
+		}
+		return null;
+		
+	}
+	
+	public PaymentRule modifyPaymentRule(PaymentRule newPaymentRule) {
+		PaymentRule paymentRule = findPaymentRuleBYId(newPaymentRule.getPaymentRuleId());
+		if(paymentRule != null ) {
+			if(paymentRule.getPaymentRuleAmount() != newPaymentRule.getPaymentRuleAmount()) {
+				List<Long> paymentRuleInvoices = paymentRule.getPaymentRuleInvoices();
+				paymentRuleInvoices.stream().forEach(invoiceId -> {
+					Invoice invoice = invoiceService.findInvoiceById(paymentRule.getPaymentRuleInvoiceId());
+					invoice.setInvoicePayment(invoice.getInvoicePayment() - paymentRule.getPaymentRuleAmount());
+					invoice.setInvoicePayment(invoice.getInvoicePayment() + newPaymentRule.getPaymentRuleAmount());
+					if(invoice.getInvoicePayment() == invoice.getInvoiceTotalAmount()) {
+						invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
+					} else {
+						invoice.setInvoiceStatus(InvoiceStatus.OPENED);
+					}
+					invoiceService.saveInvoice(invoice);
+				});
+				
+				
+				
+				
+				
+			}
+		}
+		
+		
+		return paymentRuleRepo.save(newPaymentRule);
+	}
+	
+	public void deletePaymentRule(Long paymentRuleId) {
+		PaymentRule paymentRule = findPaymentRuleBYId(paymentRuleId);
+		if(paymentRule != null ) {
+			List<Long> paymentRuleInvoices = paymentRule.getPaymentRuleInvoices();
+			paymentRuleInvoices.stream().forEach(invoiceId -> {
+				Invoice invoice = invoiceService.findInvoiceById(paymentRule.getPaymentRuleInvoiceId());
+				invoice.setInvoicePayment(invoice.getInvoicePayment() - paymentRule.getPaymentRuleAmount());
+				invoice.setInvoicePayment(invoice.getInvoicePayment() + newPaymentRule.getPaymentRuleAmount());
+				if(invoice.getInvoicePayment() == invoice.getInvoiceTotalAmount()) {
+					invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
+				} else {
+					invoice.setInvoiceStatus(InvoiceStatus.OPENED);
+				}
+				invoiceService.saveInvoice(invoice);
+			});
+				
+			
+		}
+		
+		
+		paymentRuleRepo.delete(paymentRuleId);
+	}
+	
+	/*
 
 	public PaymentRule saveNewPaymentRuleToInvoice(PaymentRule paymentRule, Long invoiceId, Long accountId) {
 		Invoice invoice = invoiceService.findInvoiceById(invoiceId);
