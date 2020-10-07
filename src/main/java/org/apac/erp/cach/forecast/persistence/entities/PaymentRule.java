@@ -53,7 +53,7 @@ public class PaymentRule extends AuditableSql implements Serializable {
 	@OneToOne
 	private BankAccount paymentRuleAccount;
 	
-	private List<Long> paymentRuleInvoices;
+	private String paymentRuleInvoices;
 
 	
 	

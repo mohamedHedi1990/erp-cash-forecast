@@ -17,6 +17,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apac.erp.cach.forecast.constants.Utils;
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
 import org.apac.erp.cach.forecast.enumeration.RsTypeSaisie;
 
@@ -39,7 +40,7 @@ public class Invoice extends AuditableSql implements Serializable {
 
 	private Integer invoiceDeadlineInNumberOfDays;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Africa/Tunis")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date invoiceDeadlineDate;
 
@@ -48,6 +49,8 @@ public class Invoice extends AuditableSql implements Serializable {
 	private Date invoiceDate;
 
 	private Double invoiceTotalAmount;
+	
+	private String invoiceTotalAmountS;
 
 	private Double invoiceRs;
 
@@ -56,9 +59,13 @@ public class Invoice extends AuditableSql implements Serializable {
 	private Double invoiceNet;
 
 	private Double invoicePayment;
+	
+	private String invoicePaymentS;
 
 	@Enumerated(EnumType.STRING)
 	private InvoiceStatus invoiceStatus;
+	
+	private String invoiceCurrency;
 
 	@OneToMany(cascade= CascadeType.ALL)
 	private List<PaymentRule> invoicePaymentRules;
@@ -68,6 +75,9 @@ public class Invoice extends AuditableSql implements Serializable {
 		if (this.invoiceId == null) {
 			this.invoicePayment = 0.0;
 		}
+		this.invoiceTotalAmountS = Utils.convertAmountToString(this.invoiceTotalAmount);
+		this.invoicePaymentS = Utils.convertAmountToString(this.invoicePayment);
+		
 	}
 
 }

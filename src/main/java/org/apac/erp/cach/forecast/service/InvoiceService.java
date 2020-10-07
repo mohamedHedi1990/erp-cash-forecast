@@ -90,9 +90,7 @@ public class InvoiceService {
 */
 
 	public Invoice addPaymentRuleForInvoice(Long invoiceId, PaymentRule paymentRule) {
-		List<Long> paymentRuleInvoices = new ArrayList<Long>();
-		paymentRuleInvoices.add(invoiceId);
-		paymentRule.setPaymentRuleInvoices(paymentRuleInvoices);
+		paymentRule.setPaymentRuleInvoices(""+invoiceId);
 		Invoice  invoice = findInvoiceById(invoiceId);
 		List<PaymentRule> paymentRules = invoice.getInvoicePaymentRules();
 		if(paymentRules == null) {
@@ -109,18 +107,20 @@ public class InvoiceService {
 	}
 
 	public List<Invoice> payInvoices(InvoicesPayment invoicePayment) {
-		List<Long> paymentRuleInvoices = new ArrayList<Long>();
 				invoicePayment.getSelectedInvoices().stream().forEach(invoice -> {
 			List<PaymentRule> paymentRules = invoice.getInvoicePaymentRules();
 			if(paymentRules == null) {
 				paymentRules = new ArrayList<PaymentRule>();
 			}
-			paymentRuleInvoices.add(invoice.getInvoiceId());
+			if(invoicePayment.getPaymentRule().getPaymentRuleInvoices() == null) {
+				invoicePayment.getPaymentRule().setPaymentRuleInvoices(""+invoice.getInvoiceId());
+			} else {
+				invoicePayment.getPaymentRule().setPaymentRuleInvoices(invoicePayment.getPaymentRule().getPaymentRuleInvoices() + ","+invoice.getInvoiceId());
+			}
 			paymentRules.add(invoicePayment.getPaymentRule());
 			invoice.setInvoicePayment(invoice.getInvoiceTotalAmount());
 			invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
 		});
-				invoicePayment.getPaymentRule().setPaymentRuleInvoices(paymentRuleInvoices);
 
 		return this.invoiceRepo.save(invoicePayment.getSelectedInvoices());
 	}

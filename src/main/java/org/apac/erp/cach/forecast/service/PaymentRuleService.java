@@ -1,6 +1,7 @@
 package org.apac.erp.cach.forecast.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,9 +45,11 @@ public class PaymentRuleService {
 		PaymentRule paymentRule = findPaymentRuleBYId(newPaymentRule.getPaymentRuleId());
 		if(paymentRule != null ) {
 			if(paymentRule.getPaymentRuleAmount() != newPaymentRule.getPaymentRuleAmount()) {
-				List<Long> paymentRuleInvoices = paymentRule.getPaymentRuleInvoices();
-				paymentRuleInvoices.stream().forEach(invoiceId -> {
-					Invoice invoice = invoiceService.findInvoiceById(paymentRule.getPaymentRuleInvoiceId());
+				String paymentRuleInvoices = paymentRule.getPaymentRuleInvoices();
+				String [] splitTab = paymentRuleInvoices.split(",");
+				Arrays.stream(splitTab).forEach(invoiceIdS -> {
+					long invoiceId = Long.parseLong(invoiceIdS);
+					Invoice invoice = invoiceService.findInvoiceById(invoiceId);
 					invoice.setInvoicePayment(invoice.getInvoicePayment() - paymentRule.getPaymentRuleAmount());
 					invoice.setInvoicePayment(invoice.getInvoicePayment() + newPaymentRule.getPaymentRuleAmount());
 					if(invoice.getInvoicePayment() == invoice.getInvoiceTotalAmount()) {
@@ -71,11 +74,12 @@ public class PaymentRuleService {
 	public void deletePaymentRule(Long paymentRuleId) {
 		PaymentRule paymentRule = findPaymentRuleBYId(paymentRuleId);
 		if(paymentRule != null ) {
-			List<Long> paymentRuleInvoices = paymentRule.getPaymentRuleInvoices();
-			paymentRuleInvoices.stream().forEach(invoiceId -> {
-				Invoice invoice = invoiceService.findInvoiceById(paymentRule.getPaymentRuleInvoiceId());
+			String paymentRuleInvoices = paymentRule.getPaymentRuleInvoices();
+			String [] splitTab = paymentRuleInvoices.split(",");
+			Arrays.stream(splitTab).forEach(invoiceIdS -> {
+				long invoiceId = Long.parseLong(invoiceIdS);
+				Invoice invoice = invoiceService.findInvoiceById(invoiceId);
 				invoice.setInvoicePayment(invoice.getInvoicePayment() - paymentRule.getPaymentRuleAmount());
-				invoice.setInvoicePayment(invoice.getInvoicePayment() + newPaymentRule.getPaymentRuleAmount());
 				if(invoice.getInvoicePayment() == invoice.getInvoiceTotalAmount()) {
 					invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
 				} else {
