@@ -40,12 +40,12 @@ public class Invoice extends AuditableSql implements Serializable {
 
 	private Integer invoiceDeadlineInNumberOfDays;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
-	@Temporal(TemporalType.TIMESTAMP)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Africa/Tunis")
+	@Temporal(TemporalType.DATE)
 	private Date invoiceDeadlineDate;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
-	@Temporal(TemporalType.TIMESTAMP)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Africa/Tunis")
+	@Temporal(TemporalType.DATE)
 	private Date invoiceDate;
 
 	private Double invoiceTotalAmount;
