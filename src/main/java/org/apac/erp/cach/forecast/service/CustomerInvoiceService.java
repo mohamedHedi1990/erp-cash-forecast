@@ -9,6 +9,7 @@ import org.apac.erp.cach.forecast.persistence.entities.CustomerInvoice;
 import org.apac.erp.cach.forecast.persistence.repositories.CustomerInvoiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.apac.erp.cach.forecast.dtos.InvoicesCustomerPayment;
 
 @Service
 public class CustomerInvoiceService {
@@ -42,5 +43,27 @@ public class CustomerInvoiceService {
 
 		return savedInvoice;
 	}
+	
+	public List<Invoice> payInvoices(InvoicesCustomerPayment invoicePayment) {
+				invoicePayment.getSelectedInvoices().stream().forEach(invoice -> {
+			List<PaymentRule> paymentRules = invoice.getInvoicePaymentRules();
+			if(paymentRules == null) {
+				paymentRules = new ArrayList<PaymentRule>();
+			}
+			if(invoicePayment.getPaymentRule().getPaymentRuleInvoices() == null) {
+				invoicePayment.getPaymentRule().setPaymentRuleInvoices(""+invoice.getInvoiceId());
+			} else {
+				invoicePayment.getPaymentRule().setPaymentRuleInvoices(invoicePayment.getPaymentRule().getPaymentRuleInvoices() + ","+invoice.getInvoiceId());
+			}
+			paymentRules.add(invoicePayment.getPaymentRule());
+			invoice.setInvoicePayment(invoice.getInvoiceTotalAmount());
+			invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
+			invoice.setInvoicePaymentRules(paymentRules);
+		});
+
+		return this.customerInvoiceRepo.save(invoicePayment.getSelectedInvoices());
+	}
+	
+	
 
 }

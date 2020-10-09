@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.apac.erp.cach.forecast.dtos.InvoicesCustomerPayment;
+
 
 @RestController
 @RequestMapping("/api/invoice-customer")
@@ -30,6 +32,13 @@ public class CustomerInvoiceController {
 	@PostMapping()
 	public CustomerInvoice saveNewCustomerInvoice(@RequestBody CustomerInvoice invoice) {
 		return customerInvoiceService.saveCustomerInvoice(invoice);
+	}
+	
+	@CrossOrigin
+	@PostMapping("/pay")
+	public List<Invoice>  payInvoices(
+			@RequestBody InvoicesCustomerPayment invoicePayment) {
+		return customerInvoiceService.payInvoices(invoicePayment);
 	}
 
 }

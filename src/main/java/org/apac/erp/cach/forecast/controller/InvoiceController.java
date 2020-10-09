@@ -56,10 +56,5 @@ public class InvoiceController {
 		return invoiceService.addPaymentRuleForInvoice(invoiceId, paymentRule);
 	}
 	
-	@CrossOrigin
-	@PostMapping("/pay")
-	public List<Invoice>  payInvoices(
-			@RequestBody InvoicesPayment invoicePayment) {
-		return invoiceService.payInvoices(invoicePayment);
-	}
+	
 }
