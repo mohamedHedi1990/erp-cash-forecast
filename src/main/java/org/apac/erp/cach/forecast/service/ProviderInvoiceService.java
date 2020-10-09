@@ -2,6 +2,8 @@ package org.apac.erp.cach.forecast.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.ArrayList;
+
 
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
 import org.apac.erp.cach.forecast.persistence.entities.Provider;
@@ -10,6 +12,8 @@ import org.apac.erp.cach.forecast.persistence.repositories.ProviderInvoiceReposi
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.apac.erp.cach.forecast.dtos.InvoicesProviderPayment;
+import org.apac.erp.cach.forecast.persistence.entities.Invoice;
+import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
 
 
 @Service
@@ -44,7 +48,7 @@ public class ProviderInvoiceService {
 		return savedInvoice;
 	}
 	
-	public List<Invoice> payInvoices(InvoicesProviderPayment invoicePayment) {
+	public List<ProviderInvoice> payInvoices(InvoicesProviderPayment invoicePayment) {
 				invoicePayment.getSelectedInvoices().stream().forEach(invoice -> {
 			List<PaymentRule> paymentRules = invoice.getInvoicePaymentRules();
 			if(paymentRules == null) {

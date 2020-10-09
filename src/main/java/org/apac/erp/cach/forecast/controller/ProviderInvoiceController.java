@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.apac.erp.cach.forecast.dtos.InvoicesProviderPayment;
+import org.apac.erp.cach.forecast.persistence.entities.Invoice;
 
 @RestController
 @RequestMapping("/api/invoice-provider")
@@ -35,7 +36,7 @@ public class ProviderInvoiceController {
 	
 	@CrossOrigin
 	@PostMapping("/pay")
-	public List<Invoice>  payInvoices(
+	public List<ProviderInvoice>  payInvoices(
 			@RequestBody InvoicesProviderPayment invoicePayment) {
 		return providerInvoiceService.payInvoices(invoicePayment);
 	}

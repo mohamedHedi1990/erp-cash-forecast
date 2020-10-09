@@ -2,7 +2,6 @@ package org.apac.erp.cach.forecast.controller;
 
 import java.util.List;
 
-import org.apac.erp.cach.forecast.dtos.InvoicesPayment;
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
 import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
 import org.apac.erp.cach.forecast.service.InvoiceService;
