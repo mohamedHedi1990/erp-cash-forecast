@@ -120,6 +120,7 @@ public class InvoiceService {
 			paymentRules.add(invoicePayment.getPaymentRule());
 			invoice.setInvoicePayment(invoice.getInvoiceTotalAmount());
 			invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
+			invoice.setInvoicePaymentRules(paymentRules);
 		});
 
 		return this.invoiceRepo.save(invoicePayment.getSelectedInvoices());
