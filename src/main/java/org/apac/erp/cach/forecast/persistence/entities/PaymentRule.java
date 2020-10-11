@@ -15,7 +15,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+
 import org.apac.erp.cach.forecast.enumeration.PaymentMethod;
+
+import org.apac.erp.cach.forecast.constants.Utils;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -49,11 +54,25 @@ public class PaymentRule extends AuditableSql implements Serializable {
 	private Boolean isValidated;
 	
 	private Double paymentRuleAmount;
+
+	private String paymentRuleAmountS;
 	
 	@OneToOne
 	private BankAccount paymentRuleAccount;
 	
 	private String paymentRuleInvoices;
+
+	@PrePersist
+	public void initPR() {
+		
+		this.paymentRuleAmountS = Utils.convertAmountToString(this.paymentRuleAmount);
+		
+	}
+
+	@PreUpdate
+	public void preUpdate() {
+		this.paymentRuleAmountS = Utils.convertAmountToString(this.paymentRuleAmount);
+	}
 
 	
 	

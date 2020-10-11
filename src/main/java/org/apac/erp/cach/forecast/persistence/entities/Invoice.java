@@ -22,6 +22,7 @@ import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
 import org.apac.erp.cach.forecast.enumeration.RsTypeSaisie;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import javax.persistence.PreUpdate;
 
 import lombok.Data;
 
@@ -78,6 +79,11 @@ public class Invoice extends AuditableSql implements Serializable {
 		this.invoiceTotalAmountS = Utils.convertAmountToString(this.invoiceTotalAmount);
 		this.invoicePaymentS = Utils.convertAmountToString(this.invoicePayment);
 		
+	}
+
+	@PreUpdate
+	public void preUpdate() {
+		this.invoicePaymentS = Utils.convertAmountToString(this.invoicePayment);
 	}
 
 }
