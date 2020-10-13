@@ -98,7 +98,7 @@ public class InvoiceService {
 		paymentRules.add(paymentRule);
 		invoice.setInvoicePaymentRules(paymentRules);
 		invoice.setInvoicePayment(invoice.getInvoicePayment() + paymentRule.getPaymentRuleAmount());
-		if(invoice.getInvoicePayment() == invoice.getInvoiceTotalAmount()) {
+		if(Double.compare(invoice.getInvoicePayment(),invoice.getInvoiceTotalAmount()) == 0) {
 			invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
 		}
 		Invoice savedInvoice =  this.invoiceRepo.save(invoice);
