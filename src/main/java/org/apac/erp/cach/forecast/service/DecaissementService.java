@@ -29,10 +29,33 @@ public class DecaissementService {
 				invoice.setInvoicePayment(invoice.getInvoicePayment() + decaissement.getDecaissementAmount());
 				if(Double.compare(invoice.getInvoicePayment(), invoice.getInvoiceTotalAmount()) == 0) {
 					invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
+				} else {
+					invoice.setInvoiceStatus(InvoiceStatus.OPENED);
 				}
 			this.invoiceService.saveInvoice(invoice);
 			}
 		}
+		return decaissementRepo.save(decaissement);
+	}
+	
+	public Decaissement modifyDecaissement(Decaissement decaissement) {
+		Decaissement oldDecaissement = getDecaissementById(decaissement.getDecaissementId());
+		if(oldDecaissement != null) {
+			if(oldDecaissement.getDecaissementType().getDecaissementType().equals(Constants.DECAISSEMENT_PAIEMENT_FACTURE_FOURNISSEUR)) {
+				Invoice invoice = oldDecaissement.getDecaissementInvoice();
+				if(invoice != null) {
+					invoice.setInvoicePayment(invoice.getInvoicePayment() - oldDecaissement.getDecaissementAmount());
+					invoice.setInvoicePayment(invoice.getInvoicePayment() + decaissement.getDecaissementAmount());
+					if(Double.compare(invoice.getInvoicePayment(), invoice.getInvoiceTotalAmount()) == 0) {
+						invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
+					} else {
+						invoice.setInvoiceStatus(InvoiceStatus.OPENED);
+					}
+				this.invoiceService.saveInvoice(invoice);
+				}
+			}
+		}
+		
 		return decaissementRepo.save(decaissement);
 	}
 	
@@ -41,6 +64,19 @@ public class DecaissementService {
 	}
 	
 	public void deleteDecaissement(Long decaissementId) {
+		Decaissement decaissement = getDecaissementById(decaissementId);
+		if(decaissement.getDecaissementType().getDecaissementType().equals(Constants.DECAISSEMENT_PAIEMENT_FACTURE_FOURNISSEUR)) {
+			Invoice invoice = decaissement.getDecaissementInvoice();
+			if(invoice != null) {
+				invoice.setInvoicePayment(invoice.getInvoicePayment() - decaissement.getDecaissementAmount());
+				if(Double.compare(invoice.getInvoicePayment(), invoice.getInvoiceTotalAmount()) == 0) {
+					invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
+				} else {
+					invoice.setInvoiceStatus(InvoiceStatus.OPENED);
+				}
+			this.invoiceService.saveInvoice(invoice);
+			}
+		}
 		this.decaissementRepo.delete(decaissementId);
 	}
 
