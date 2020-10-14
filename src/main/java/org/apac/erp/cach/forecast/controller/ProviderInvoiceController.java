@@ -27,6 +27,12 @@ public class ProviderInvoiceController {
 	public List<ProviderInvoice> findAllProviderInvoices() {
 		return providerInvoiceService.findAllProviderInvoices();
 	}
+	
+	@CrossOrigin
+	@GetMapping("by-provider-id/{providerId}")
+	public List<ProviderInvoice> findAllProviderInvoicesByProviderId(@PathVariable("providerId") Long providerId) {
+		return providerInvoiceService.findAllProviderInvoicesByProviderId(providerId);
+	}
 
 	@CrossOrigin
 	@PostMapping()

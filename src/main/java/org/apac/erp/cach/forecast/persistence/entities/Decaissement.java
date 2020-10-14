@@ -3,6 +3,7 @@ package org.apac.erp.cach.forecast.persistence.entities;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -57,11 +58,14 @@ public class Decaissement extends AuditableSql implements Serializable {
 	
 	private String decaissementDetails;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	private Invoice decaissementInvoice ;
 		
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	private BankAccount decaissementBankAccount;
+	
+	@ManyToOne(cascade = CascadeType.PERSIST)
+	private Provider decaissementProvider;
 	
 	@PrePersist
 	public void initPR() {

@@ -67,4 +67,12 @@ public class ProviderInvoiceService {
 
 		return this.providerInvoiceRepo.save(invoicePayment.getSelectedInvoices());
 	}
+
+	public List<ProviderInvoice> findAllProviderInvoicesByProviderId(Long providerId) {
+		Provider provider = providerService.getProviderById(providerId);
+		if(provider != null) {
+			return this.providerInvoiceRepo.findByProvider(provider);
+		}
+		else return null;
+	}
 }
