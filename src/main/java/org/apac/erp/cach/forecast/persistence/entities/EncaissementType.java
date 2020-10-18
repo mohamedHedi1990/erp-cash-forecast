@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apac.erp.cach.forecast.constants.Utils;
 import org.apac.erp.cach.forecast.enumeration.EncaissementDecaissementType;
 import org.apac.erp.cach.forecast.enumeration.PaymentMethod;
 
@@ -33,6 +34,14 @@ public class EncaissementType extends AuditableSql implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long encaissementTypeId;
 
-	String encaissementType;
+	String encaissementTypeLabel;
+	
+	String encaissementTypeValue;
+	
+	@PrePersist
+	public void initInvoice() {
+		this.encaissementTypeValue = this.encaissementTypeLabel.toUpperCase().replace(" ", "_");
+		
+	}
 
 }

@@ -23,7 +23,7 @@ public class DecaissementService {
 	}
 
 	public Decaissement saveDecaissement(Decaissement decaissement) {
-		if(decaissement.getDecaissementType().getDecaissementType().equals(Constants.DECAISSEMENT_PAIEMENT_FACTURE_FOURNISSEUR)) {
+		if(decaissement.getDecaissementType().getDecaissementTypeValue().equals(Constants.DECAISSEMENT_PAIEMENT_FACTURE_FOURNISSEUR)) {
 			Invoice invoice = decaissement.getDecaissementInvoice();
 			if(invoice != null) {
 				invoice.setInvoicePayment(invoice.getInvoicePayment() + decaissement.getDecaissementAmount());
@@ -41,7 +41,7 @@ public class DecaissementService {
 	public Decaissement modifyDecaissement(Decaissement decaissement) {
 		Decaissement oldDecaissement = getDecaissementById(decaissement.getDecaissementId());
 		if(oldDecaissement != null) {
-			if(oldDecaissement.getDecaissementType().getDecaissementType().equals(Constants.DECAISSEMENT_PAIEMENT_FACTURE_FOURNISSEUR)) {
+			if(oldDecaissement.getDecaissementType().getDecaissementTypeValue().equals(Constants.DECAISSEMENT_PAIEMENT_FACTURE_FOURNISSEUR)) {
 				Invoice invoice = oldDecaissement.getDecaissementInvoice();
 				if(invoice != null) {
 					invoice.setInvoicePayment(invoice.getInvoicePayment() - oldDecaissement.getDecaissementAmount());
@@ -65,7 +65,7 @@ public class DecaissementService {
 	
 	public void deleteDecaissement(Long decaissementId) {
 		Decaissement decaissement = getDecaissementById(decaissementId);
-		if(decaissement.getDecaissementType().getDecaissementType().equals(Constants.DECAISSEMENT_PAIEMENT_FACTURE_FOURNISSEUR)) {
+		if(decaissement.getDecaissementType().getDecaissementTypeValue().equals(Constants.DECAISSEMENT_PAIEMENT_FACTURE_FOURNISSEUR)) {
 			Invoice invoice = decaissement.getDecaissementInvoice();
 			if(invoice != null) {
 				invoice.setInvoicePayment(invoice.getInvoicePayment() - decaissement.getDecaissementAmount());

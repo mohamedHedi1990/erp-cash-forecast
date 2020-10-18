@@ -33,6 +33,14 @@ public class DecaissementType extends AuditableSql implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long decaissementTypeId;
 
-	String decaissementType;
+	String decaissementTypeLabel;
+	
+	String decaissementTypeValue;
+	
+	@PrePersist
+	public void initInvoice() {
+		this.decaissementTypeValue = this.decaissementTypeLabel.toUpperCase().replace(" ", "_");
+		
+	}
 
 }

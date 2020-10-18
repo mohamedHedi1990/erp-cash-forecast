@@ -9,7 +9,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+
+import org.apac.erp.cach.forecast.constants.Utils;
 
 import lombok.Data;
 
@@ -32,6 +36,10 @@ public class BankAccount extends AuditableSql implements Serializable {
 	
 	private String accountAgency;
 	
+	private double accountInitialAmount;
+	
+	private String accountInitialAmountS;
+	
 	private String accountAgencyAdress;
 
 	private String accountChargeCustomerName;
@@ -48,5 +56,16 @@ public class BankAccount extends AuditableSql implements Serializable {
 
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Contact> accountContacts;
+	
+	@PrePersist
+	public void initInvoice() {
+		this.accountInitialAmountS = Utils.convertAmountToString(this.accountInitialAmount);
+		
+	}
+
+	@PreUpdate
+	public void preUpdate() {
+		this.accountInitialAmountS = Utils.convertAmountToString(this.accountInitialAmount);
+	}
 	
 }
