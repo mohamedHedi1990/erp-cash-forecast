@@ -58,13 +58,13 @@ public class Decaissement extends AuditableSql implements Serializable {
 	
 	private String decaissementDetails;
 	
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne(cascade = CascadeType.ALL)
 	private Invoice decaissementInvoice ;
 		
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne(cascade = CascadeType.ALL)
 	private BankAccount decaissementBankAccount;
 	
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne(cascade = CascadeType.ALL)
 	private Provider decaissementProvider;
 	
 	@PrePersist
