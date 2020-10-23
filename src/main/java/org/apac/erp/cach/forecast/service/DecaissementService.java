@@ -1,11 +1,14 @@
 package org.apac.erp.cach.forecast.service;
 
+import java.util.Date;
 import java.util.List;
 
 import  org.apac.erp.cach.forecast.constants.Constants;
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
 import org.apac.erp.cach.forecast.persistence.entities.Decaissement;
+import org.apac.erp.cach.forecast.persistence.entities.Encaissement;
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
+import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
 import org.apac.erp.cach.forecast.persistence.repositories.DecaissementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -97,6 +100,18 @@ public class DecaissementService {
 
 	} */
 
+	List<Decaissement> findDecaissementsBetwwenTwoDates(Date startDate, Date endDate) {
+		return this.decaissementRepo.findByCreatedAtBetweenOrderByCreatedAtAsc(startDate, endDate);
+	}
+
+	public Decaissement validateDecaissement(Long decaissementId) {
+		Decaissement decaissement = getDecaissementById(decaissementId);
+		if(decaissement != null) {
+			decaissement.setIsValidated(true);
+			return this.decaissementRepo.save(decaissement);
+		}
+		return null;
+	}
 	
 
 	

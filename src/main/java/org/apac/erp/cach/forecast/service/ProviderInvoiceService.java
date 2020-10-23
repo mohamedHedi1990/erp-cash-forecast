@@ -75,4 +75,8 @@ public class ProviderInvoiceService {
 		}
 		else return null;
 	}
+	
+	public ProviderInvoice getProviderInvoiceById(Long invoiceId) {
+		return this.providerInvoiceRepo.findOne(invoiceId);
+	}
 }

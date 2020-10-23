@@ -67,6 +67,10 @@ public class Decaissement extends AuditableSql implements Serializable {
 	@ManyToOne(cascade = CascadeType.ALL)
 	private Provider decaissementProvider;
 	
+	private Boolean isValidated;
+	
+	private String decaissementCurrency;
+	
 	@PrePersist
 	public void initPR() {
 		

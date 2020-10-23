@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,6 +20,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
+import org.apac.erp.cach.forecast.enumeration.OperationType;
 import org.apac.erp.cach.forecast.enumeration.PaymentMethod;
 
 import org.apac.erp.cach.forecast.constants.Utils;
@@ -61,6 +64,9 @@ public class PaymentRule extends AuditableSql implements Serializable {
 	private BankAccount paymentRuleAccount;
 	
 	private String paymentRuleInvoices;
+	
+	@Enumerated(EnumType.STRING)
+	private OperationType paymentRuleOperationType;
 
 	@PrePersist
 	public void initPR() {

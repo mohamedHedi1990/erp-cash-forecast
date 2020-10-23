@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.apac.erp.cach.forecast.dtos.InvoicesCustomerPayment;
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
 import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
+import org.apac.erp.cach.forecast.persistence.entities.ProviderInvoice;
 
 @Service
 public class CustomerInvoiceService {
@@ -67,6 +68,9 @@ public class CustomerInvoiceService {
 		return this.customerInvoiceRepo.save(invoicePayment.getSelectedInvoices());
 	}
 	
+	public CustomerInvoice getCustomerInvoiceById(Long invoiceId) {
+		return this.customerInvoiceRepo.findOne(invoiceId);
+	}
 	
 
 }

@@ -1,18 +1,12 @@
 package org.apac.erp.cach.forecast.service;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
-import org.apac.erp.cach.forecast.dtos.PaymentRuleDTO;
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
-import org.apac.erp.cach.forecast.enumeration.InvoiceType;
-import org.apac.erp.cach.forecast.enumeration.PaymentMethod;
-import org.apac.erp.cach.forecast.persistence.entities.CustomerInvoice;
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
 import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
-import org.apac.erp.cach.forecast.persistence.entities.ProviderInvoice;
 import org.apac.erp.cach.forecast.persistence.repositories.PaymentRuleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -93,6 +87,10 @@ public class PaymentRuleService {
 		
 		
 		paymentRuleRepo.delete(paymentRuleId);
+	}
+	
+	public List<PaymentRule> getAllPaymentRuleBetwwenTwoDates(Date startDate, Date endDate) {
+		return this.paymentRuleRepo.findByCreatedAtBetweenOrderByCreatedAtAsc(startDate, endDate);
 	}
 	
 	/*
