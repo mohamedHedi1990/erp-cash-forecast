@@ -27,7 +27,7 @@ public class DecaissementService {
 
 	public Decaissement saveDecaissement(Decaissement decaissement) {
 		if(decaissement.getDecaissementType().getDecaissementTypeValue().equals(Constants.DECAISSEMENT_PAIEMENT_FACTURE_FOURNISSEUR)) {
-			Invoice invoice = decaissement.getDecaissementInvoice();
+			Invoice invoice = this.invoiceService.findInvoiceById(decaissement.getDecaissementInvoice().getInvoiceId());
 			if(invoice != null) {
 				invoice.setInvoicePayment(invoice.getInvoicePayment() + decaissement.getDecaissementAmount());
 				if(Double.compare(invoice.getInvoicePayment(), invoice.getInvoiceTotalAmount()) == 0) {
@@ -35,7 +35,8 @@ public class DecaissementService {
 				} else {
 					invoice.setInvoiceStatus(InvoiceStatus.OPENED);
 				}
-			this.invoiceService.saveInvoice(invoice);
+			invoice = this.invoiceService.saveInvoice(invoice);
+			decaissement.setDecaissementInvoice(invoice);
 			}
 		}
 		return decaissementRepo.save(decaissement);
