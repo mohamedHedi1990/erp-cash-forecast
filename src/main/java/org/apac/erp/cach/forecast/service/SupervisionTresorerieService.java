@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.apac.erp.cach.forecast.dtos.OperationTreserorieDto;
 import org.apac.erp.cach.forecast.enumeration.OperationType;
+import org.apac.erp.cach.forecast.persistence.entities.BankAccount;
 import org.apac.erp.cach.forecast.persistence.entities.CustomerInvoice;
 import org.apac.erp.cach.forecast.persistence.entities.Decaissement;
 import org.apac.erp.cach.forecast.persistence.entities.Encaissement;
@@ -35,23 +36,28 @@ public class SupervisionTresorerieService {
 
 	@Autowired
 	private EncaissementService encaissementService;
+	
+	@Autowired
+	private BankAccountService bankAccountService;
 
-	public List<OperationTreserorieDto> globalSupervision(Date startDate, Date endDate) {
+	public List<OperationTreserorieDto> globalSupervision(Long accountId, Date startDate, Date endDate) {
 		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
-
+		
+		
+		BankAccount bankAccount = bankAccountService.getAccountById(accountId);
 		// Trouver tout kles réglements sur cette intervalle
-		List<PaymentRule> paymentRules = paymentRuleService.getAllPaymentRuleBetwwenTwoDates(startDate, endDate);
+		List<PaymentRule> paymentRules = paymentRuleService.getAllPaymentRuleBetwwenTwoDates(bankAccount,startDate, endDate);
 		List<OperationTreserorieDto> paymentRuleOperations = convertPaymentRulesToOperationTreserorieList(paymentRules);
 		operations.addAll(paymentRuleOperations);
 
 		// Trouver tout les decaissements sur cette période
-		List<Decaissement> decaissements = decaissementService.findDecaissementsBetwwenTwoDates(startDate, endDate);
+		List<Decaissement> decaissements = decaissementService.findDecaissementsBetwwenTwoDates(bankAccount,startDate, endDate);
 		List<OperationTreserorieDto> decaissementOperations = convertDecaissementsToOperationTreserorieList(
 				decaissements);
 		operations.addAll(decaissementOperations);
 
 		// Trouver tout les encaissements sur cette période
-		List<Encaissement> encaissements = encaissementService.findEncaissementsBetwwenTwoDates(startDate, endDate);
+		List<Encaissement> encaissements = encaissementService.findEncaissementsBetwwenTwoDates(bankAccount, startDate, endDate);
 		List<OperationTreserorieDto> encaissementOperations = convertEncaissementsToOperationTreserorieList(
 				encaissements);
 		operations.addAll(encaissementOperations);
@@ -67,7 +73,7 @@ public class SupervisionTresorerieService {
 		paymentRules.forEach(paymentRule -> {
 			OperationTreserorieDto operation = new OperationTreserorieDto();
 			operation.setOpperationType(paymentRule.getPaymentRuleOperationType());
-			operation.setOperationDate(paymentRule.getCreatedAt());
+			operation.setOperationDate(paymentRule.getPaymentRuleDeadlineDate());
 			operation.setOperationAmountS(paymentRule.getPaymentRuleAmountS());
 
 			List<String> detailsPayements = new ArrayList<String>();
@@ -121,8 +127,9 @@ public class SupervisionTresorerieService {
 		decaissements.forEach(decaissement -> {
 			OperationTreserorieDto operation = new OperationTreserorieDto();
 			operation.setOpperationType(OperationType.DECAISSEMENT);
-			operation.setOperationDate(decaissement.getCreatedAt());
+			operation.setOperationDate(decaissement.getDecaissementDeadlineDate());
 			operation.setOperationAmountS(decaissement.getDecaissementAmountS());
+			operation.setOpperationCurrency(decaissement.getDecaissementCurrency());
 
 			List<String> detailsPayements = new ArrayList<String>();
 			detailsPayements.add(decaissement.getDecaissementPaymentType().toString());
@@ -150,7 +157,7 @@ public class SupervisionTresorerieService {
 		encaissements.forEach(encaissement -> {
 			OperationTreserorieDto operation = new OperationTreserorieDto();
 			operation.setOpperationType(OperationType.ENCAISSEMENT);
-			operation.setOperationDate(encaissement.getCreatedAt());
+			operation.setOperationDate(encaissement.getEncaissementDeadlineDate());
 			operation.setOperationAmountS(encaissement.getEncaissementAmountS());
 
 			List<String> detailsPayements = new ArrayList<String>();

@@ -18,6 +18,6 @@ public class OperationTreserorieDto {
 	private String opperationFacultatifLabel;
 	private List<String> opperationDetails;
 	private OperationType opperationType;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Africa/Tunis")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
 	private Date operationDate;
 }

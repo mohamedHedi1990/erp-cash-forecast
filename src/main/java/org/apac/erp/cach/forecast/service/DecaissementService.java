@@ -5,6 +5,7 @@ import java.util.List;
 
 import  org.apac.erp.cach.forecast.constants.Constants;
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
+import org.apac.erp.cach.forecast.persistence.entities.BankAccount;
 import org.apac.erp.cach.forecast.persistence.entities.Decaissement;
 import org.apac.erp.cach.forecast.persistence.entities.Encaissement;
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
@@ -101,8 +102,8 @@ public class DecaissementService {
 
 	} */
 
-	List<Decaissement> findDecaissementsBetwwenTwoDates(Date startDate, Date endDate) {
-		return this.decaissementRepo.findByCreatedAtBetweenOrderByCreatedAtAsc(startDate, endDate);
+	List<Decaissement> findDecaissementsBetwwenTwoDates(BankAccount bankAccount, Date startDate, Date endDate) {
+		return this.decaissementRepo.findByDecaissementBankAccountAndDecaissementDeadlineDateBetweenOrderByDecaissementDeadlineDateAsc(bankAccount, startDate, endDate);
 	}
 
 	public Decaissement validateDecaissement(Long decaissementId) {

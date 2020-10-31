@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
+import org.apac.erp.cach.forecast.persistence.entities.BankAccount;
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
 import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
 import org.apac.erp.cach.forecast.persistence.repositories.PaymentRuleRepository;
@@ -89,8 +90,8 @@ public class PaymentRuleService {
 		paymentRuleRepo.delete(paymentRuleId);
 	}
 	
-	public List<PaymentRule> getAllPaymentRuleBetwwenTwoDates(Date startDate, Date endDate) {
-		return this.paymentRuleRepo.findByCreatedAtBetweenOrderByCreatedAtAsc(startDate, endDate);
+	public List<PaymentRule> getAllPaymentRuleBetwwenTwoDates(BankAccount bankAccount, Date startDate, Date endDate) {
+		return this.paymentRuleRepo.findByPaymentRuleAccountAndPaymentRuleDeadlineDateBetweenOrderByPaymentRuleDeadlineDateAsc(bankAccount,startDate, endDate);
 	}
 	
 	/*

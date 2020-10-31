@@ -22,10 +22,10 @@ public class SupervisionTresorerieController {
 	private SupervisionTresorerieService supervisionTresorerieService;
 	
 	@CrossOrigin
-	@GetMapping("global/{startDate}/{endDate}")
-	public List<OperationTreserorieDto> findGlobalSupervision(@PathVariable("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+	@GetMapping("global/{accountId}/{startDate}/{endDate}")
+	public List<OperationTreserorieDto> findGlobalSupervision(@PathVariable("accountId") Long accountId,  @PathVariable("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
 			@PathVariable("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-		return supervisionTresorerieService.globalSupervision(startDate, endDate);
+		return supervisionTresorerieService.globalSupervision(accountId, startDate, endDate);
 
 	}
 }

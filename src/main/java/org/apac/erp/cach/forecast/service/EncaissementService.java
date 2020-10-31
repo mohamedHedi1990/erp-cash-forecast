@@ -3,6 +3,7 @@ package org.apac.erp.cach.forecast.service;
 import java.util.Date;
 import java.util.List;
 
+import org.apac.erp.cach.forecast.persistence.entities.BankAccount;
 import org.apac.erp.cach.forecast.persistence.entities.Decaissement;
 import org.apac.erp.cach.forecast.persistence.entities.Encaissement;
 import org.apac.erp.cach.forecast.persistence.repositories.EncaissementRepository;
@@ -31,8 +32,8 @@ public class EncaissementService {
 		this.encaissementRepo.delete(encaissementId);
 	}
 
-	List<Encaissement> findEncaissementsBetwwenTwoDates(Date startDate, Date endDate) {
-		return this.encaissementRepo.findByCreatedAtBetweenOrderByCreatedAtAsc(startDate, endDate);
+	List<Encaissement> findEncaissementsBetwwenTwoDates(BankAccount bankAccount, Date startDate, Date endDate) {
+		return this.encaissementRepo.findByEncaissementBankAccountAndEncaissementDeadlineDateBetweenOrderByEncaissementDeadlineDateAsc(bankAccount, startDate, endDate);
 	}
 
 	
