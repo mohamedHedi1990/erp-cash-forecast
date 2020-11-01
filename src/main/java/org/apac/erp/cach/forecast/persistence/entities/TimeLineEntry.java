@@ -59,6 +59,8 @@ public class TimeLineEntry extends AuditableSql implements Serializable {
 	
 	private Double timeLineInterestRate;
 	
+	private String timeLineCreditNumber;
+	
 	@PrePersist
 	public void initInvoice() {
 		this.totalS = Utils.convertAmountToString(this.total);
