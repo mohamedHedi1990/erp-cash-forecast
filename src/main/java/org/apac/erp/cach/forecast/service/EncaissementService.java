@@ -15,6 +15,9 @@ public class EncaissementService {
 
 	@Autowired
 	private EncaissementRepository encaissementRepo;
+	
+	@Autowired
+	private BankAccountService accountService;
 
 	public List<Encaissement> findAllEncaissements() {
 		return encaissementRepo.findAll();
@@ -41,7 +44,12 @@ public class EncaissementService {
 		Encaissement encaissement = getEncaissementById(encaissementId);
 		if(encaissement != null) {
 			encaissement.setIsValidated(true);
-			return this.encaissementRepo.save(encaissement);
+			encaissement =  this.encaissementRepo.save(encaissement);
+			
+			BankAccount account = encaissement.getEncaissementBankAccount();
+			account.setAccountInitialAmount(account.getAccountInitialAmount() + encaissement.getEncaissementAmount());
+			accountService.saveAccount(account);
+			return encaissement;
 		}
 		return null;
 	}

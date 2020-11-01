@@ -7,9 +7,7 @@ import  org.apac.erp.cach.forecast.constants.Constants;
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
 import org.apac.erp.cach.forecast.persistence.entities.BankAccount;
 import org.apac.erp.cach.forecast.persistence.entities.Decaissement;
-import org.apac.erp.cach.forecast.persistence.entities.Encaissement;
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
-import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
 import org.apac.erp.cach.forecast.persistence.repositories.DecaissementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +19,9 @@ public class DecaissementService {
 	
 	@Autowired
 	private InvoiceService invoiceService;
+	
+	@Autowired
+	private BankAccountService accounttService;
 
 	public List<Decaissement> findAllDecaissements() {
 		return decaissementRepo.findAll();
@@ -110,7 +111,11 @@ public class DecaissementService {
 		Decaissement decaissement = getDecaissementById(decaissementId);
 		if(decaissement != null) {
 			decaissement.setIsValidated(true);
-			return this.decaissementRepo.save(decaissement);
+			decaissement =  this.decaissementRepo.save(decaissement);
+			BankAccount account = decaissement.getDecaissementBankAccount();
+			account.setAccountInitialAmount(account.getAccountInitialAmount() - decaissement.getDecaissementAmount());
+			accounttService.saveAccount(account);
+			return decaissement;
 		}
 		return null;
 	}

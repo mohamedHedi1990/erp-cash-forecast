@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
+import org.apac.erp.cach.forecast.enumeration.OperationType;
 import org.apac.erp.cach.forecast.persistence.entities.BankAccount;
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
 import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
@@ -21,6 +22,10 @@ public class PaymentRuleService {
 	@Autowired
 	private InvoiceService invoiceService;
 	
+	@Autowired
+	private BankAccountService accounttService;
+
+	
 	public PaymentRule findPaymentRuleBYId(Long paymentRuleId) {
 		return paymentRuleRepo.findOne(paymentRuleId);
 	}
@@ -29,8 +34,19 @@ public class PaymentRuleService {
 		
 		PaymentRule paymentRule = findPaymentRuleBYId(paymentRuleId);
 		if(paymentRule != null) {
+			
 			paymentRule.setIsValidated(true);
-			return this.paymentRuleRepo.save(paymentRule);
+			paymentRule = this.paymentRuleRepo.save(paymentRule);
+			
+			BankAccount account = paymentRule.getPaymentRuleAccount();
+			if(paymentRule.getPaymentRuleOperationType() == OperationType.DECAISSEMENT) {
+				account.setAccountInitialAmount(account.getAccountInitialAmount() - paymentRule.getPaymentRuleAmount());
+			} else {
+				account.setAccountInitialAmount(account.getAccountInitialAmount() + paymentRule.getPaymentRuleAmount());
+			}
+			accounttService.saveAccount(account);
+			
+			return paymentRule;
 		}
 		return null;
 		

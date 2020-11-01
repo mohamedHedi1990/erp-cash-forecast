@@ -29,20 +29,6 @@ public class EncaissementController {
 		return encaissementService.findAllEncaissements();
 	}
 
-	/*
-	 * @CrossOrigin
-	 * 
-	 * @GetMapping("/{startDate}/{endDate}") public
-	 * List<EncaissementDecaissement> findAllEncaissementsBetweenTwoDates(
-	 * 
-	 * @PathVariable("startDate") @DateTimeFormat(pattern =
-	 * "yyyy-MM-dd HH:mm:ss") Date startDate,
-	 * 
-	 * @PathVariable("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	 * Date endDate) { return
-	 * encaissementDecaissementService.findAllEncaissementsBetweenTwoDates(
-	 * startDate, endDate); }
-	 */
 	@CrossOrigin
 	@PostMapping()
 	public Encaissement saveNewEncaissement(@RequestBody Encaissement encDec) {

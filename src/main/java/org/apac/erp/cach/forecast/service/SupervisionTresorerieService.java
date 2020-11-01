@@ -8,8 +8,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apac.erp.cach.forecast.dtos.OperationTreserorieDto;
+import org.apac.erp.cach.forecast.enumeration.ComissionType;
 import org.apac.erp.cach.forecast.enumeration.OperationType;
+import org.apac.erp.cach.forecast.enumeration.PaymentMethod;
 import org.apac.erp.cach.forecast.persistence.entities.BankAccount;
+import org.apac.erp.cach.forecast.persistence.entities.Comission;
 import org.apac.erp.cach.forecast.persistence.entities.CustomerInvoice;
 import org.apac.erp.cach.forecast.persistence.entities.Decaissement;
 import org.apac.erp.cach.forecast.persistence.entities.Encaissement;
@@ -18,6 +21,8 @@ import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
 import org.apac.erp.cach.forecast.persistence.entities.ProviderInvoice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import org.apac.erp.cach.forecast.enumeration.Operation;
 
 @Service
 public class SupervisionTresorerieService {
@@ -39,15 +44,19 @@ public class SupervisionTresorerieService {
 	
 	@Autowired
 	private BankAccountService bankAccountService;
+	
+	@Autowired
+	private TarifBancaireService tarifBancaireService;
 
 	public List<OperationTreserorieDto> globalSupervision(Long accountId, Date startDate, Date endDate) {
 		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
 		
 		
 		BankAccount bankAccount = bankAccountService.getAccountById(accountId);
+		List<Comission> comissions = this.tarifBancaireService.findByTarifAccount(bankAccount).get(0).getComissions();
 		// Trouver tout kles réglements sur cette intervalle
 		List<PaymentRule> paymentRules = paymentRuleService.getAllPaymentRuleBetwwenTwoDates(bankAccount,startDate, endDate);
-		List<OperationTreserorieDto> paymentRuleOperations = convertPaymentRulesToOperationTreserorieList(paymentRules);
+		List<OperationTreserorieDto> paymentRuleOperations = convertPaymentRulesToOperationTreserorieList(paymentRules, comissions);
 		operations.addAll(paymentRuleOperations);
 
 		// Trouver tout les decaissements sur cette période
@@ -68,7 +77,7 @@ public class SupervisionTresorerieService {
 		return operations;
 	}
 
-	private List<OperationTreserorieDto> convertPaymentRulesToOperationTreserorieList(List<PaymentRule> paymentRules) {
+	private List<OperationTreserorieDto> convertPaymentRulesToOperationTreserorieList(List<PaymentRule> paymentRules, List<Comission> comissions) {
 		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
 		paymentRules.forEach(paymentRule -> {
 			OperationTreserorieDto operation = new OperationTreserorieDto();
@@ -113,6 +122,27 @@ public class SupervisionTresorerieService {
 			operation.setOpperationLabel(label);
 
 			operations.add(operation);
+			
+			// Ajouter une opération rélative au comission de type de paiement
+			
+			if(paymentRule.getPaymentRulePaymentMethod() == PaymentMethod.CHEQUE) {
+				List<Comission> chequeComissions = comissions.stream().filter(comission -> comission.getComissionOperation() == Operation.REMISE_CHHEQUE).collect(Collectors.toList());
+				
+				chequeComissions.stream().forEach(com -> {
+					OperationTreserorieDto operationCom = new OperationTreserorieDto();
+					operationCom.setOpperationType(OperationType.DECAISSEMENT);
+					operationCom.setOperationDate(paymentRule.getPaymentRuleDeadlineDate());
+					operationCom.setOperationAmountS(com.getComissionValueS());
+					operationCom.setOpperationLabel("Comission remise chèque");
+					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
+					List<String> detailsPayementsCom = new ArrayList<String>();
+					detailsPayements.add("Comission de remise de chèque numéro " + paymentRule.getPaymentRuleNumber());
+					operationCom.setOpperationDetails(detailsPayements);
+					operations.add(operationCom);
+				});
+				
+				
+			}
 
 		});
 

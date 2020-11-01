@@ -2,6 +2,7 @@ package org.apac.erp.cach.forecast.service;
 
 import java.util.List;
 
+import org.apac.erp.cach.forecast.persistence.entities.BankAccount;
 import org.apac.erp.cach.forecast.persistence.entities.TarifBancaire;
 import org.apac.erp.cach.forecast.persistence.repositories.TarifBancaireRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,5 +30,8 @@ public class TarifBancaireService {
 	public void deleteTarifBancaire(Long tarifId) {
 		 this.tarifBancaireRepo.delete(tarifId);
 		
+	}
+	public List<TarifBancaire>findByTarifAccount(BankAccount account) {
+		return this.tarifBancaireRepo.findByTarifAccount(account);
 	}
 }
