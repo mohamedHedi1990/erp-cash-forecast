@@ -13,10 +13,12 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apac.erp.cach.forecast.constants.Utils;
 import org.apac.erp.cach.forecast.enumeration.Annuity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -39,16 +41,39 @@ public class TimeLineEntry extends AuditableSql implements Serializable {
 	private Date lineDate;
 	
 	private Double  initialAmount;
+	
+	private String  initialAmountS;
 
 	private Double interests;
+	
+	private String interestsS;
 	
 	private Double tva;
 	
 	private Double total;
 	
+	private String totalS;
+	
 	@Enumerated(EnumType.STRING)
 	private Annuity timeLineAnnuity;
 	
 	private Double timeLineInterestRate;
+	
+	@PrePersist
+	public void initInvoice() {
+		this.totalS = Utils.convertAmountToString(this.total);
+		this.initialAmountS = Utils.convertAmountToString(this.initialAmount);
+		this.interestsS = Utils.convertAmountToString(this.interests);
+
+		
+	}
+
+	@PreUpdate
+	public void preUpdate() {
+		this.totalS = Utils.convertAmountToString(this.total);
+		this.initialAmountS = Utils.convertAmountToString(this.initialAmount);
+		this.interestsS = Utils.convertAmountToString(this.interests);
+	}
+	
 	
 }
