@@ -58,13 +58,13 @@ public class Encaissement extends AuditableSql implements Serializable {
 
 	private String encaissementDetails;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	private Invoice encaissementInvoice;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	private BankAccount encaissementBankAccount;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	private Customer encaissementCustomer;
 
 	private Boolean isValidated;

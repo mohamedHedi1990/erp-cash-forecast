@@ -55,7 +55,11 @@ public class SupervisionTresorerieService {
 		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
 
 		BankAccount bankAccount = bankAccountService.getAccountById(accountId);
-		List<Comission> comissions = this.tarifBancaireService.findByTarifAccount(bankAccount).get(0).getComissions();
+		List<Comission> comissions = new ArrayList<Comission>();
+		if(this.tarifBancaireService.findByTarifAccount(bankAccount) != null && !this.tarifBancaireService.findByTarifAccount(bankAccount).isEmpty()) {
+			comissions = this.tarifBancaireService.findByTarifAccount(bankAccount).get(0).getComissions();
+		}
+		 
 		// Trouver tout kles réglements sur cette intervalle
 		List<PaymentRule> paymentRules = paymentRuleService.getAllPaymentRuleBetwwenTwoDates(bankAccount, startDate,
 				endDate);

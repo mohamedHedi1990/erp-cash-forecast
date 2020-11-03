@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.apac.erp.cach.forecast.dtos.InvoicesCustomerPayment;
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
+import org.apac.erp.cach.forecast.persistence.entities.ProviderInvoice;
 
 @RestController
 @RequestMapping("/api/invoice-customer")
@@ -40,5 +41,12 @@ public class CustomerInvoiceController {
 			@RequestBody InvoicesCustomerPayment invoicePayment) {
 		return customerInvoiceService.payInvoices(invoicePayment);
 	}
+	
+	@CrossOrigin
+	@GetMapping("by-customer-id/{customerId}")
+	public List<CustomerInvoice> findAllCustomerInvoicesByCustomerId(@PathVariable("customerId") Long customerId) {
+		return customerInvoiceService.findAllCustomerInvoicesByCustomerId(customerId);
+	}
+
 
 }
