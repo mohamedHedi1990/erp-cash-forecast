@@ -60,6 +60,7 @@ public class DecaissementService {
 				this.invoiceService.saveInvoice(invoice);
 				}
 			}
+			
 		}
 		
 		return decaissementRepo.save(decaissement);

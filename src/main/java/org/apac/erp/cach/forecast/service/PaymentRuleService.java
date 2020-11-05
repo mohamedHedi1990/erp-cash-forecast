@@ -72,6 +72,21 @@ public class PaymentRuleService {
 				});
 				
 				
+				BankAccount account = paymentRule.getPaymentRuleAccount();
+				BankAccount newAccount = newPaymentRule.getPaymentRuleAccount();
+				if(account.getAccountId() != newAccount.getAccountId()) {
+					account.setAccountInitialAmount(account.getAccountInitialAmount() - paymentRule.getPaymentRuleAmount());
+					newAccount.setAccountInitialAmount(newAccount.getAccountInitialAmount() + paymentRule.getPaymentRuleAmount());
+					accounttService.saveAccount(account);
+					accounttService.saveAccount(newAccount);
+
+				} else {
+					account.setAccountInitialAmount(account.getAccountInitialAmount() - paymentRule.getPaymentRuleAmount());
+					account.setAccountInitialAmount(account.getAccountInitialAmount() + paymentRule.getPaymentRuleAmount());
+					accounttService.saveAccount(account);
+					accounttService.saveAccount(account);
+				}
+				
 				
 				
 				
