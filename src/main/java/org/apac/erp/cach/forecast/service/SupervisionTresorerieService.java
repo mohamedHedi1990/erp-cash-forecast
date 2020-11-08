@@ -51,7 +51,7 @@ public class SupervisionTresorerieService {
 	@Autowired
 	private TimeLineService timeLineService;
 
-	public List<OperationTreserorieDto> globalSupervision(Long accountId, Date startDate, Date endDate) {
+	public List<OperationTreserorieDto> globalSupervisionEngage(Long accountId, Date startDate, Date endDate, Boolean isValidated) {
 		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
 
 		BankAccount bankAccount = bankAccountService.getAccountById(accountId);
@@ -63,6 +63,11 @@ public class SupervisionTresorerieService {
 		// Trouver tout kles réglements sur cette intervalle
 		List<PaymentRule> paymentRules = paymentRuleService.getAllPaymentRuleBetwwenTwoDates(bankAccount, startDate,
 				endDate);
+		if(isValidated)
+		{
+			paymentRules = paymentRules.stream().filter(paymentRule -> paymentRule.getIsValidated() == isValidated).collect(Collectors.toList());
+
+		}
 		List<OperationTreserorieDto> paymentRuleOperations = convertPaymentRulesToOperationTreserorieList(paymentRules,
 				comissions);
 		operations.addAll(paymentRuleOperations);
@@ -70,6 +75,9 @@ public class SupervisionTresorerieService {
 		// Trouver tout les decaissements sur cette période
 		List<Decaissement> decaissements = decaissementService.findDecaissementsBetwwenTwoDates(bankAccount, startDate,
 				endDate);
+		if(isValidated) {
+			decaissements = decaissements.stream().filter(decaissement -> decaissement.getIsValidated() == isValidated).collect(Collectors.toList());
+		}
 		List<OperationTreserorieDto> decaissementOperations = convertDecaissementsToOperationTreserorieList(
 				decaissements, comissions);
 		operations.addAll(decaissementOperations);
@@ -77,6 +85,9 @@ public class SupervisionTresorerieService {
 		// Trouver tout les encaissements sur cette période
 		List<Encaissement> encaissements = encaissementService.findEncaissementsBetwwenTwoDates(bankAccount, startDate,
 				endDate);
+		if(isValidated) {
+			encaissements = encaissements.stream().filter(encaissement -> encaissement.getIsValidated() == isValidated).collect(Collectors.toList());
+		}
 		List<OperationTreserorieDto> encaissementOperations = convertEncaissementsToOperationTreserorieList(
 				encaissements, comissions);
 		operations.addAll(encaissementOperations);
@@ -96,7 +107,8 @@ public class SupervisionTresorerieService {
 
 		return operations;
 	}
-
+	
+	
 	private List<OperationTreserorieDto> convertTimeLineEntriesToOperationsTreserorieList(List<TimeLineEntry> entries) {
 		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
 		entries.stream().forEach(entry -> {
