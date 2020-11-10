@@ -49,6 +49,7 @@ public class TimeLineEntry extends AuditableSql implements Serializable {
 	private String interestsS;
 	
 	private Double tva;
+	private String tvaS;
 	
 	private Double total;
 	
@@ -66,7 +67,7 @@ public class TimeLineEntry extends AuditableSql implements Serializable {
 		this.totalS = Utils.convertAmountToString(this.total);
 		this.initialAmountS = Utils.convertAmountToString(this.initialAmount);
 		this.interestsS = Utils.convertAmountToString(this.interests);
-
+		this.tvaS = Utils.convertAmountToString(this.tva);
 		
 	}
 
@@ -75,6 +76,8 @@ public class TimeLineEntry extends AuditableSql implements Serializable {
 		this.totalS = Utils.convertAmountToString(this.total);
 		this.initialAmountS = Utils.convertAmountToString(this.initialAmount);
 		this.interestsS = Utils.convertAmountToString(this.interests);
+		this.tvaS = Utils.convertAmountToString(this.tva);
+		
 	}
 	
 	

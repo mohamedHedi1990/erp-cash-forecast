@@ -83,6 +83,7 @@ public class Invoice extends AuditableSql implements Serializable {
 
 	@PreUpdate
 	public void preUpdate() {
+		this.invoiceTotalAmountS = Utils.convertAmountToString(this.invoiceTotalAmount);
 		this.invoicePaymentS = Utils.convertAmountToString(this.invoicePayment);
 	}
 

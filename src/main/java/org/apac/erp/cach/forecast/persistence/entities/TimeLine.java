@@ -14,8 +14,10 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
+import org.apac.erp.cach.forecast.constants.Utils;
 import org.apac.erp.cach.forecast.enumeration.Annuity;
 
 import lombok.Data;
@@ -40,14 +42,31 @@ public class TimeLine extends AuditableSql implements Serializable {
 	
 	private Double timeLineInitialAmount;
 	
+	private String timeLineInitialAmountS;
+	
 	private Integer timeLineYearNumber;
 	
 	@Enumerated(EnumType.STRING)
 	private Annuity timeLineAnnuity;
 	
 	private Double timeLineInterestRate;
+	private String timeLineInterestRateS;
 	
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<TimeLineEntry> timeLineTable;
+	
+	@PrePersist
+	public void initInvoice() {
+		
+		this.timeLineInitialAmountS = Utils.convertAmountToString(this.timeLineInitialAmount);
+		this.timeLineInterestRateS = Utils.convertAmountToString(this.timeLineInterestRate);
+		
+	}
+
+	@PreUpdate
+	public void preUpdate() {
+		this.timeLineInitialAmountS = Utils.convertAmountToString(this.timeLineInitialAmount);
+		this.timeLineInterestRateS = Utils.convertAmountToString(this.timeLineInterestRate);
+	}
 
 }
