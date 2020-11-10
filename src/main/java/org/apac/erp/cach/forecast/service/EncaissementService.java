@@ -6,6 +6,7 @@ import java.util.List;
 import org.apac.erp.cach.forecast.persistence.entities.BankAccount;
 import org.apac.erp.cach.forecast.persistence.entities.Decaissement;
 import org.apac.erp.cach.forecast.persistence.entities.Encaissement;
+import org.apac.erp.cach.forecast.persistence.entities.HistoricAccountSold;
 import org.apac.erp.cach.forecast.persistence.repositories.EncaissementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,9 @@ public class EncaissementService {
 	
 	@Autowired
 	private BankAccountService accountService;
+	
+	@Autowired
+	private HistoricAccountSoldService historicAccountSoldService;
 
 	public List<Encaissement> findAllEncaissements() {
 		return encaissementRepo.findAll();
@@ -49,6 +53,8 @@ public class EncaissementService {
 			BankAccount account = encaissement.getEncaissementBankAccount();
 			account.setAccountInitialAmount(account.getAccountInitialAmount() + encaissement.getEncaissementAmount());
 			accountService.saveAccount(account);
+			HistoricAccountSold historicSolde = new HistoricAccountSold(account, account.getAccountInitialAmount());
+			historicAccountSoldService.saveHistoricSolde(historicSolde);
 			return encaissement;
 		}
 		return null;

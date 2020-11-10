@@ -22,7 +22,7 @@ public class HistoricAccountSoldController {
 	
 	@CrossOrigin
 	@GetMapping("/{accountId}/{startDate}")
-	public List<HistoricAccountSold> findTheBeginningSold(@PathVariable("accountId") Long accountId,  @PathVariable("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate) {
+	public HistoricAccountSold findTheBeginningSold(@PathVariable("accountId") Long accountId,  @PathVariable("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate) {
 		return historicAccountSoldService.findTheBeginningSold(accountId, startDate);
 	}
 

@@ -7,6 +7,7 @@ import  org.apac.erp.cach.forecast.constants.Constants;
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
 import org.apac.erp.cach.forecast.persistence.entities.BankAccount;
 import org.apac.erp.cach.forecast.persistence.entities.Decaissement;
+import org.apac.erp.cach.forecast.persistence.entities.HistoricAccountSold;
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
 import org.apac.erp.cach.forecast.persistence.repositories.DecaissementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class DecaissementService {
 	
 	@Autowired
 	private BankAccountService accounttService;
+	
+	@Autowired
+	private HistoricAccountSoldService historicAccountSoldService;
 
 	public List<Decaissement> findAllDecaissements() {
 		return decaissementRepo.findAll();
@@ -116,6 +120,8 @@ public class DecaissementService {
 			BankAccount account = decaissement.getDecaissementBankAccount();
 			account.setAccountInitialAmount(account.getAccountInitialAmount() - decaissement.getDecaissementAmount());
 			accounttService.saveAccount(account);
+			HistoricAccountSold historicSolde = new HistoricAccountSold(account, account.getAccountInitialAmount());
+			historicAccountSoldService.saveHistoricSolde(historicSolde);
 			return decaissement;
 		}
 		return null;

@@ -7,6 +7,7 @@ import java.util.List;
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
 import org.apac.erp.cach.forecast.enumeration.OperationType;
 import org.apac.erp.cach.forecast.persistence.entities.BankAccount;
+import org.apac.erp.cach.forecast.persistence.entities.HistoricAccountSold;
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
 import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
 import org.apac.erp.cach.forecast.persistence.repositories.PaymentRuleRepository;
@@ -24,6 +25,9 @@ public class PaymentRuleService {
 	
 	@Autowired
 	private BankAccountService accounttService;
+	
+	@Autowired
+	private HistoricAccountSoldService historicAccountSoldService;
 
 	
 	public PaymentRule findPaymentRuleBYId(Long paymentRuleId) {
@@ -45,6 +49,8 @@ public class PaymentRuleService {
 				account.setAccountInitialAmount(account.getAccountInitialAmount() + paymentRule.getPaymentRuleAmount());
 			}
 			accounttService.saveAccount(account);
+			HistoricAccountSold historicSolde = new HistoricAccountSold(account, account.getAccountInitialAmount());
+			historicAccountSoldService.saveHistoricSolde(historicSolde);
 			
 			return paymentRule;
 		}
@@ -70,7 +76,8 @@ public class PaymentRuleService {
 					}
 					invoiceService.saveInvoice(invoice);
 				});
-				
+			
+				/*
 				
 				BankAccount account = paymentRule.getPaymentRuleAccount();
 				BankAccount newAccount = newPaymentRule.getPaymentRuleAccount();
@@ -87,7 +94,7 @@ public class PaymentRuleService {
 					accounttService.saveAccount(account);
 				}
 				
-				
+				*/
 				
 				
 			}

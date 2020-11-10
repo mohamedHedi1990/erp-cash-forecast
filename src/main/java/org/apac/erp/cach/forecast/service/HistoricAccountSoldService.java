@@ -26,9 +26,17 @@ public class HistoricAccountSoldService {
 		return this.historicAccountSoldRepo.findFirstByBankAccountAndCreatedAtGreaterThanEqualOrderByCreatedAtAsc(bankAccount, startDate);
 	}
 
-	public List<HistoricAccountSold> findTheBeginningSold(Long accountId, Date startDate) {
+	public HistoricAccountSold findTheBeginningSold(Long accountId, Date startDate) {
 		BankAccount bankAccount = this.accountService.getAccountById(accountId);
-		return null;
+		HistoricAccountSold beginSoldeHistoric = findFirstByBankAccountAndCreatedAtLessThanEqualOrderByCreatedAtDesc(bankAccount, startDate);
+		if(beginSoldeHistoric == null) {
+			beginSoldeHistoric = findFirstByBankAccountAndCreatedAtGreaterThanEqualOrderByCreatedAtAsc(bankAccount, startDate);
+		}
+		
+		return beginSoldeHistoric;
 	}
 
+	public HistoricAccountSold saveHistoricSolde(HistoricAccountSold historicSolde) {
+		return this.historicAccountSoldRepo.save(historicSolde);
+	}
 }

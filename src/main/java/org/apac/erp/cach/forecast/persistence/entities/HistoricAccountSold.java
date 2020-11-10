@@ -30,6 +30,11 @@ public class HistoricAccountSold extends AuditableSql implements Serializable {
 	
 	private String soldeS;
 	
+	public HistoricAccountSold(BankAccount bankAccount, Double solde) {
+		this.bankAccount = bankAccount;
+		this.solde = solde;
+	}
+	
 	@PrePersist
 	public void initInvoice() {
 		this.soldeS = Utils.convertAmountToString(this.solde);
