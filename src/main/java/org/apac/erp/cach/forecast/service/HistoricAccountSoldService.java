@@ -19,11 +19,11 @@ public class HistoricAccountSoldService {
 	private BankAccountService accountService;
 	
 	public HistoricAccountSold findFirstByBankAccountAndCreatedAtLessThanEqualOrderByCreatedAtDesc(BankAccount bankAccount, Date endDate) {
-		return this.historicAccountSoldRepo.findFirstByBankAccountAndCreatedAtLessThanEqualOrderByCreatedAtDesc(bankAccount, endDate);
+		return this.historicAccountSoldRepo.findFirstByBankAccountAndDateLessThanEqualOrderByDateDesc(bankAccount, endDate);
 	}
 	
 	public HistoricAccountSold findFirstByBankAccountAndCreatedAtGreaterThanEqualOrderByCreatedAtAsc(BankAccount bankAccount, Date startDate) {
-		return this.historicAccountSoldRepo.findFirstByBankAccountAndCreatedAtGreaterThanEqualOrderByCreatedAtAsc(bankAccount, startDate);
+		return this.historicAccountSoldRepo.findFirstByBankAccountAndDateGreaterThanEqualOrderByDateAsc(bankAccount, startDate);
 	}
 
 	public HistoricAccountSold findTheBeginningSold(Long accountId, Date startDate) {

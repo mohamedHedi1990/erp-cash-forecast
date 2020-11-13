@@ -53,7 +53,7 @@ public class EncaissementService {
 			BankAccount account = encaissement.getEncaissementBankAccount();
 			account.setAccountInitialAmount(account.getAccountInitialAmount() + encaissement.getEncaissementAmount());
 			accountService.saveAccount(account);
-			HistoricAccountSold historicSolde = new HistoricAccountSold(account, account.getAccountInitialAmount());
+			HistoricAccountSold historicSolde = new HistoricAccountSold(account, account.getAccountInitialAmount(), new Date());
 			historicAccountSoldService.saveHistoricSolde(historicSolde);
 			return encaissement;
 		}

@@ -1,5 +1,6 @@
 package org.apac.erp.cach.forecast.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apac.erp.cach.forecast.persistence.entities.BankAccount;
@@ -19,7 +20,7 @@ public class BankAccountService {
 
 	public BankAccount saveAccount(BankAccount account) {
 		BankAccount accountB = this.bankAccountRepo.save(account);
-		HistoricAccountSold historicSolde = new HistoricAccountSold(account, account.getAccountInitialAmount());
+		HistoricAccountSold historicSolde = new HistoricAccountSold(account, account.getAccountInitialAmount(), new Date());
 		historicAccountSoldService.saveHistoricSolde(historicSolde);
 		return accountB;
 	}

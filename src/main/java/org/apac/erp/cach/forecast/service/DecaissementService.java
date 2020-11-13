@@ -120,7 +120,7 @@ public class DecaissementService {
 			BankAccount account = decaissement.getDecaissementBankAccount();
 			account.setAccountInitialAmount(account.getAccountInitialAmount() - decaissement.getDecaissementAmount());
 			accounttService.saveAccount(account);
-			HistoricAccountSold historicSolde = new HistoricAccountSold(account, account.getAccountInitialAmount());
+			HistoricAccountSold historicSolde = new HistoricAccountSold(account, account.getAccountInitialAmount(), new Date());
 			historicAccountSoldService.saveHistoricSolde(historicSolde);
 			return decaissement;
 		}

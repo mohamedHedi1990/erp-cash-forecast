@@ -120,12 +120,14 @@ public class SupervisionTresorerieService {
 			List<String> detailsPayements = new ArrayList<String>();
 			detailsPayements.add("Paiement écheance principal - Crédit No " + entry.getTimeLineCreditNumber());
 			operation.setOpperationDetails(detailsPayements);
+			operation.setOperationAmount(entry.getInitialAmount());
 			operations.add(operation);
 			
 			OperationTreserorieDto operation2 = new OperationTreserorieDto();
 			operation2.setOpperationType(OperationType.DECAISSEMENT);
 			operation2.setOperationDate(entry.getLineDate());
 			operation2.setOperationAmountS(entry.getInterestsS());
+			operation2.setOperationAmount(entry.getInterests());
 			operation2.setOpperationLabel("Paiement écheance intérets");
 			List<String> detailsPayements2 = new ArrayList<String>();
 			detailsPayements2.add("Paiement écheance intérets - Crédit No " + entry.getTimeLineCreditNumber());
@@ -143,6 +145,7 @@ public class SupervisionTresorerieService {
 			operation.setOpperationType(paymentRule.getPaymentRuleOperationType());
 			operation.setOperationDate(paymentRule.getPaymentRuleDeadlineDate());
 			operation.setOperationAmountS(paymentRule.getPaymentRuleAmountS());
+			operation.setOperationAmount(paymentRule.getPaymentRuleAmount());
 
 			List<String> detailsPayements = new ArrayList<String>();
 			detailsPayements.add(paymentRule.getPaymentRulePaymentMethod().toString());
@@ -161,11 +164,13 @@ public class SupervisionTresorerieService {
 					ProviderInvoice providerInvoice = providerInvoiceService
 							.getProviderInvoiceById(Long.parseLong(invoiceId));
 					operation.setOpperationCurrency(providerInvoice.getInvoiceCurrency());
+					operation.setOpperationType(OperationType.DECAISSEMENT);
 					invoices.add(providerInvoice);
 				} else {
 					CustomerInvoice customerInvoice = customerInvoiceService
 							.getCustomerInvoiceById(Long.parseLong(invoiceId));
 					operation.setOpperationCurrency(customerInvoice.getInvoiceCurrency());
+					operation.setOpperationType(OperationType.ENCAISSEMENT);
 					invoices.add(customerInvoice);
 				}
 
@@ -194,6 +199,7 @@ public class SupervisionTresorerieService {
 					operationCom.setOpperationType(OperationType.DECAISSEMENT);
 					operationCom.setOperationDate(paymentRule.getPaymentRuleDeadlineDate());
 					operationCom.setOperationAmountS(com.getComissionValueS());
+					operationCom.setOperationAmount(com.getComissionValue());
 					operationCom.setOpperationLabel("Comission remise chèque");
 					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
 					List<String> detailsPayementsCom = new ArrayList<String>();
@@ -212,6 +218,7 @@ public class SupervisionTresorerieService {
 					operationCom.setOpperationType(OperationType.DECAISSEMENT);
 					operationCom.setOperationDate(paymentRule.getPaymentRuleDeadlineDate());
 					operationCom.setOperationAmountS(com.getComissionValueS());
+					operationCom.setOperationAmount(com.getComissionValue());
 					operationCom.setOpperationLabel("Comission virement");
 					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
 					List<String> detailsPayementsCom = new ArrayList<String>();
@@ -230,6 +237,7 @@ public class SupervisionTresorerieService {
 					operationCom.setOpperationType(OperationType.DECAISSEMENT);
 					operationCom.setOperationDate(paymentRule.getPaymentRuleDeadlineDate());
 					operationCom.setOperationAmountS(com.getComissionValueS());
+					operationCom.setOperationAmount(com.getComissionValue());
 					operationCom.setOpperationLabel("Comission remise traite");
 					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
 					List<String> detailsPayementsCom = new ArrayList<String>();
@@ -248,6 +256,7 @@ public class SupervisionTresorerieService {
 					operationCom.setOpperationType(OperationType.DECAISSEMENT);
 					operationCom.setOperationDate(paymentRule.getPaymentRuleDeadlineDate());
 					operationCom.setOperationAmountS(com.getComissionValueS());
+					operationCom.setOperationAmount(com.getComissionValue());
 					operationCom.setOpperationLabel("Comission remise effet d'encaissement");
 					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
 					List<String> detailsPayementsCom = new ArrayList<String>();
@@ -266,6 +275,7 @@ public class SupervisionTresorerieService {
 					operationCom.setOpperationType(OperationType.DECAISSEMENT);
 					operationCom.setOperationDate(paymentRule.getPaymentRuleDeadlineDate());
 					operationCom.setOperationAmountS(com.getComissionValueS());
+					operationCom.setOperationAmount(com.getComissionValue());
 					operationCom.setOpperationLabel("Comission remise effet d'escompte");
 					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
 					List<String> detailsPayementsCom = new ArrayList<String>();
@@ -291,6 +301,7 @@ public class SupervisionTresorerieService {
 			operation.setOpperationType(OperationType.DECAISSEMENT);
 			operation.setOperationDate(decaissement.getDecaissementDeadlineDate());
 			operation.setOperationAmountS(decaissement.getDecaissementAmountS());
+			operation.setOperationAmount(decaissement.getDecaissementAmount());
 			operation.setOpperationCurrency(decaissement.getDecaissementCurrency());
 
 			List<String> detailsPayements = new ArrayList<String>();
@@ -318,6 +329,7 @@ public class SupervisionTresorerieService {
 					operationCom.setOpperationType(OperationType.DECAISSEMENT);
 					operationCom.setOperationDate(decaissement.getDecaissementDeadlineDate());
 					operationCom.setOperationAmountS(com.getComissionValueS());
+					operationCom.setOperationAmount(com.getComissionValue());
 					operationCom.setOpperationLabel("Comission remise chèque");
 					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
 					List<String> detailsPayementsCom = new ArrayList<String>();
@@ -337,6 +349,7 @@ public class SupervisionTresorerieService {
 					operationCom.setOpperationType(OperationType.DECAISSEMENT);
 					operationCom.setOperationDate(decaissement.getDecaissementDeadlineDate());
 					operationCom.setOperationAmountS(com.getComissionValueS());
+					operationCom.setOperationAmount(com.getComissionValue());
 					operationCom.setOpperationLabel("Comission virement");
 					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
 					List<String> detailsPayementsCom = new ArrayList<String>();
@@ -355,6 +368,7 @@ public class SupervisionTresorerieService {
 					operationCom.setOpperationType(OperationType.DECAISSEMENT);
 					operationCom.setOperationDate(decaissement.getDecaissementDeadlineDate());
 					operationCom.setOperationAmountS(com.getComissionValueS());
+					operationCom.setOperationAmount(com.getComissionValue());
 					operationCom.setOpperationLabel("Comission remise traite");
 					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
 					List<String> detailsPayementsCom = new ArrayList<String>();
@@ -374,6 +388,7 @@ public class SupervisionTresorerieService {
 					operationCom.setOpperationType(OperationType.DECAISSEMENT);
 					operationCom.setOperationDate(decaissement.getDecaissementDeadlineDate());
 					operationCom.setOperationAmountS(com.getComissionValueS());
+					operationCom.setOperationAmount(com.getComissionValue());
 					operationCom.setOpperationLabel("Comission remise effet d'encaissement");
 					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
 					List<String> detailsPayementsCom = new ArrayList<String>();
@@ -392,6 +407,7 @@ public class SupervisionTresorerieService {
 					operationCom.setOpperationType(OperationType.DECAISSEMENT);
 					operationCom.setOperationDate(decaissement.getDecaissementDeadlineDate());
 					operationCom.setOperationAmountS(com.getComissionValueS());
+					operationCom.setOperationAmount(com.getComissionValue());
 					operationCom.setOpperationLabel("Comission remise effet d'escompte");
 					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
 					List<String> detailsPayementsCom = new ArrayList<String>();
@@ -417,7 +433,7 @@ public class SupervisionTresorerieService {
 			operation.setOpperationType(OperationType.ENCAISSEMENT);
 			operation.setOperationDate(encaissement.getEncaissementDeadlineDate());
 			operation.setOperationAmountS(encaissement.getEncaissementAmountS());
-
+			operation.setOperationAmount(encaissement.getEncaissementAmount());
 			List<String> detailsPayements = new ArrayList<String>();
 			detailsPayements.add(encaissement.getEncaissementPaymentType().toString());
 			detailsPayements.add(encaissement.getEncaissementPaymentRuleNumber());
@@ -443,6 +459,7 @@ public class SupervisionTresorerieService {
 					operationCom.setOpperationType(OperationType.DECAISSEMENT);
 					operationCom.setOperationDate(encaissement.getEncaissementDeadlineDate());
 					operationCom.setOperationAmountS(com.getComissionValueS());
+					operationCom.setOperationAmount(com.getComissionValue());
 					operationCom.setOpperationLabel("Comission remise chèque");
 					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
 					List<String> detailsPayementsCom = new ArrayList<String>();
@@ -462,6 +479,7 @@ public class SupervisionTresorerieService {
 					operationCom.setOpperationType(OperationType.DECAISSEMENT);
 					operationCom.setOperationDate(encaissement.getEncaissementDeadlineDate());
 					operationCom.setOperationAmountS(com.getComissionValueS());
+					operationCom.setOperationAmount(com.getComissionValue());
 					operationCom.setOpperationLabel("Comission virement");
 					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
 					List<String> detailsPayementsCom = new ArrayList<String>();
@@ -480,6 +498,7 @@ public class SupervisionTresorerieService {
 					operationCom.setOpperationType(OperationType.DECAISSEMENT);
 					operationCom.setOperationDate(encaissement.getEncaissementDeadlineDate());
 					operationCom.setOperationAmountS(com.getComissionValueS());
+					operationCom.setOperationAmount(com.getComissionValue());
 					operationCom.setOpperationLabel("Comission remise traite");
 					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
 					List<String> detailsPayementsCom = new ArrayList<String>();
@@ -499,6 +518,7 @@ public class SupervisionTresorerieService {
 					operationCom.setOpperationType(OperationType.DECAISSEMENT);
 					operationCom.setOperationDate(encaissement.getEncaissementDeadlineDate());
 					operationCom.setOperationAmountS(com.getComissionValueS());
+					operationCom.setOperationAmount(com.getComissionValue());
 					operationCom.setOpperationLabel("Comission remise effet d'encaissement");
 					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
 					List<String> detailsPayementsCom = new ArrayList<String>();
@@ -517,6 +537,7 @@ public class SupervisionTresorerieService {
 					operationCom.setOpperationType(OperationType.DECAISSEMENT);
 					operationCom.setOperationDate(encaissement.getEncaissementDeadlineDate());
 					operationCom.setOperationAmountS(com.getComissionValueS());
+					operationCom.setOperationAmount(com.getComissionValue());
 					operationCom.setOpperationLabel("Comission remise effet d'escompte");
 					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
 					List<String> detailsPayementsCom = new ArrayList<String>();

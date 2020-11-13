@@ -13,6 +13,7 @@ import lombok.Data;
 public class OperationTreserorieDto {
 
 	private String operationAmountS;
+	private Double operationAmount;
 	private String opperationCurrency;
 	private String opperationLabel;
 	private String opperationFacultatifLabel;

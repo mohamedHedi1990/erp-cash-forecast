@@ -11,8 +11,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface HistoricAccountSoldRepository extends JpaRepository<HistoricAccountSold, Long>{
 
-	public HistoricAccountSold findFirstByBankAccountAndCreatedAtLessThanEqualOrderByCreatedAtDesc(BankAccount bankAccount, Date endDate);
+	public HistoricAccountSold findFirstByBankAccountAndDateLessThanEqualOrderByDateDesc(BankAccount bankAccount, Date endDate);
 	
-	public HistoricAccountSold findFirstByBankAccountAndCreatedAtGreaterThanEqualOrderByCreatedAtAsc(BankAccount bankAccount, Date startDate);
+	public HistoricAccountSold findFirstByBankAccountAndDateGreaterThanEqualOrderByDateAsc(BankAccount bankAccount, Date startDate);
 
 }

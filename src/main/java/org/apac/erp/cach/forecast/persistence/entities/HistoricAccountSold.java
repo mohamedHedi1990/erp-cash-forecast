@@ -1,6 +1,7 @@
 package org.apac.erp.cach.forecast.persistence.entities;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,8 +11,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.apac.erp.cach.forecast.constants.Utils;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Data;
 
@@ -30,9 +35,18 @@ public class HistoricAccountSold extends AuditableSql implements Serializable {
 	
 	private String soldeS;
 	
-	public HistoricAccountSold(BankAccount bankAccount, Double solde) {
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
+	@Temporal(TemporalType.DATE)
+	private Date date;
+
+	
+	public HistoricAccountSold() {
+	}
+	
+	public HistoricAccountSold(BankAccount bankAccount, Double solde, Date date) {
 		this.bankAccount = bankAccount;
 		this.solde = solde;
+		this.date = date;
 	}
 	
 	@PrePersist
