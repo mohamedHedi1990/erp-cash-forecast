@@ -1,6 +1,7 @@
 package org.apac.erp.cach.forecast.persistence.entities;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -22,7 +24,6 @@ import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
 import org.apac.erp.cach.forecast.enumeration.RsTypeSaisie;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import javax.persistence.PreUpdate;
 
 import lombok.Data;
 
@@ -76,6 +77,8 @@ public class Invoice extends AuditableSql implements Serializable {
 		if (this.invoiceId == null) {
 			this.invoicePayment = 0.0;
 		}
+		this.invoiceTotalAmount =Double.parseDouble(new DecimalFormat("##.###").format(this.invoiceTotalAmount));
+		this.invoicePayment =Double.parseDouble(new DecimalFormat("##.###").format(this.invoicePayment));
 		this.invoiceTotalAmountS = Utils.convertAmountToString(this.invoiceTotalAmount);
 		this.invoicePaymentS = Utils.convertAmountToString(this.invoicePayment);
 		
@@ -83,6 +86,8 @@ public class Invoice extends AuditableSql implements Serializable {
 
 	@PreUpdate
 	public void preUpdate() {
+		this.invoiceTotalAmount =Double.parseDouble(new DecimalFormat("##.###").format(this.invoiceTotalAmount));
+		this.invoicePayment =Double.parseDouble(new DecimalFormat("##.###").format(this.invoicePayment));
 		this.invoiceTotalAmountS = Utils.convertAmountToString(this.invoiceTotalAmount);
 		this.invoicePaymentS = Utils.convertAmountToString(this.invoicePayment);
 	}

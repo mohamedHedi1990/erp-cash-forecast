@@ -1,6 +1,7 @@
 package org.apac.erp.cach.forecast.persistence.entities;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -65,7 +66,6 @@ public class PaymentRule extends AuditableSql implements Serializable {
 
 	@PrePersist
 	public void initPR() {
-		
 		this.paymentRuleAmountS = Utils.convertAmountToString(this.paymentRuleAmount);
 		
 	}
