@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TarifBancaireRepository extends JpaRepository<TarifBancaire, Long> {
-public List<TarifBancaire>findByTarifAccount(BankAccount account);
+//public List<TarifBancaire>findByTarifAccount(BankAccount account);
 }

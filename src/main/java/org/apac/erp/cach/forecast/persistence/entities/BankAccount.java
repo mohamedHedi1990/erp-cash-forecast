@@ -1,6 +1,7 @@
 package org.apac.erp.cach.forecast.persistence.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -57,9 +58,13 @@ public class BankAccount extends AuditableSql implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Contact> accountContacts;
 	
+	@OneToMany(cascade = CascadeType.ALL)
+	private List<Comission> accountComissions;
+	
 	@PrePersist
 	public void initInvoice() {
 		this.accountInitialAmountS = Utils.convertAmountToString(this.accountInitialAmount);
+		this.accountComissions = new ArrayList<Comission>();
 		
 	}
 

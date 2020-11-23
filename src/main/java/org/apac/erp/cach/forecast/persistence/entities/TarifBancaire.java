@@ -33,10 +33,10 @@ public class TarifBancaire extends AuditableSql implements Serializable {
 	
 	private String tarifLabel;
 	
-	@ManyToOne
-	private BankAccount tarifAccount;
+	//@ManyToOne
+	//private BankAccount tarifAccount;
 	
-	@OneToMany(cascade = CascadeType.ALL)
-	private List<Comission> comissions;
+	//@OneToMany(cascade = CascadeType.ALL)
+	//private List<Comission> comissions;
 
 }

@@ -31,7 +31,7 @@ public class TarifBancaireService {
 		 this.tarifBancaireRepo.delete(tarifId);
 		
 	}
-	public List<TarifBancaire>findByTarifAccount(BankAccount account) {
-		return this.tarifBancaireRepo.findByTarifAccount(account);
-	}
+//	public List<TarifBancaire>findByTarifAccount(BankAccount account) {
+//		return this.tarifBancaireRepo.findByTarifAccount(account);
+//	}
 }
