@@ -51,24 +51,28 @@ public class SupervisionTresorerieService {
 	@Autowired
 	private TimeLineService timeLineService;
 
-	public List<OperationTreserorieDto> globalSupervisionEngage(Long accountId, Date startDate, Date endDate, Boolean isValidated) {
+	public List<OperationTreserorieDto> globalSupervisionEngage(Long accountId, Date startDate, Date endDate,
+			Boolean isValidated) {
 		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
 
 		BankAccount bankAccount = bankAccountService.getAccountById(accountId);
+		Double initialAmount = bankAccount.getAccountInitialAmount();
 		List<Comission> comissions = new ArrayList<Comission>();
-		if(bankAccount.getAccountComissions() != null) {
+		if (bankAccount.getAccountComissions() != null) {
 			comissions = bankAccount.getAccountComissions();
 		}
-//		if(this.tarifBancaireService.findByTarifAccount(bankAccount) != null && !this.tarifBancaireService.findByTarifAccount(bankAccount).isEmpty()) {
-//			comissions = this.tarifBancaireService.findByTarifAccount(bankAccount).get(0).getComissions();
-//		}
-		 
+		// if(this.tarifBancaireService.findByTarifAccount(bankAccount) != null &&
+		// !this.tarifBancaireService.findByTarifAccount(bankAccount).isEmpty()) {
+		// comissions =
+		// this.tarifBancaireService.findByTarifAccount(bankAccount).get(0).getComissions();
+		// }
+
 		// Trouver tout kles réglements sur cette intervalle
 		List<PaymentRule> paymentRules = paymentRuleService.getAllPaymentRuleBetwwenTwoDates(bankAccount, startDate,
 				endDate);
-		if(isValidated)
-		{
-			paymentRules = paymentRules.stream().filter(paymentRule -> paymentRule.getIsValidated() == isValidated).collect(Collectors.toList());
+		if (isValidated) {
+			paymentRules = paymentRules.stream().filter(paymentRule -> paymentRule.getIsValidated() == isValidated)
+					.collect(Collectors.toList());
 
 		}
 		List<OperationTreserorieDto> paymentRuleOperations = convertPaymentRulesToOperationTreserorieList(paymentRules,
@@ -78,8 +82,9 @@ public class SupervisionTresorerieService {
 		// Trouver tout les decaissements sur cette période
 		List<Decaissement> decaissements = decaissementService.findDecaissementsBetwwenTwoDates(bankAccount, startDate,
 				endDate);
-		if(isValidated) {
-			decaissements = decaissements.stream().filter(decaissement -> decaissement.getIsValidated() == isValidated).collect(Collectors.toList());
+		if (isValidated) {
+			decaissements = decaissements.stream().filter(decaissement -> decaissement.getIsValidated() == isValidated)
+					.collect(Collectors.toList());
 		}
 		List<OperationTreserorieDto> decaissementOperations = convertDecaissementsToOperationTreserorieList(
 				decaissements, comissions);
@@ -88,8 +93,9 @@ public class SupervisionTresorerieService {
 		// Trouver tout les encaissements sur cette période
 		List<Encaissement> encaissements = encaissementService.findEncaissementsBetwwenTwoDates(bankAccount, startDate,
 				endDate);
-		if(isValidated) {
-			encaissements = encaissements.stream().filter(encaissement -> encaissement.getIsValidated() == isValidated).collect(Collectors.toList());
+		if (isValidated) {
+			encaissements = encaissements.stream().filter(encaissement -> encaissement.getIsValidated() == isValidated)
+					.collect(Collectors.toList());
 		}
 		List<OperationTreserorieDto> encaissementOperations = convertEncaissementsToOperationTreserorieList(
 				encaissements, comissions);
@@ -97,21 +103,36 @@ public class SupervisionTresorerieService {
 
 		// Trouver la liste des time line entries
 		List<TimeLine> timeLines = timeLineService.findByTimeLineAccount(bankAccount);
-		for(TimeLine timeLine: timeLines) {
+		for (TimeLine timeLine : timeLines) {
 			List<TimeLineEntry> entries = timeLine.getTimeLineTable();
 			entries = entries.stream().filter(entry -> entry.getLineDate().compareTo(startDate) >= 0
 					&& entry.getLineDate().compareTo(endDate) <= 0).collect(Collectors.toList());
-			List<OperationTreserorieDto> timeLineEntriesOperations = convertTimeLineEntriesToOperationsTreserorieList(entries);
+			List<OperationTreserorieDto> timeLineEntriesOperations = convertTimeLineEntriesToOperationsTreserorieList(
+					entries);
 			operations.addAll(timeLineEntriesOperations);
 		}
 
 		operations = operations.stream().sorted(Comparator.comparing(OperationTreserorieDto::getOperationDate))
 				.collect(Collectors.toList());
+		
+		for (int i=0; i<operations.size(); i++) {
+		 
+			if(i == 0) {
+				if(operations.get(i).getOpperationType() == OperationType.ENCAISSEMENT)
+				operations.get(i).setProgressiveAmount(initialAmount + operations.get(i).getOperationAmount());
+				else
+					operations.get(i).setProgressiveAmount(initialAmount - operations.get(i).getOperationAmount());
+			} else {
+				if(operations.get(i).getOpperationType() == OperationType.ENCAISSEMENT)
+					operations.get(i).setProgressiveAmount(operations.get(i-1).getOperationAmount() + operations.get(i).getOperationAmount());
+					else
+						operations.get(i).setProgressiveAmount(operations.get(i-1).getOperationAmount() - operations.get(i).getOperationAmount());
+			}
+		}
 
 		return operations;
 	}
-	
-	
+
 	private List<OperationTreserorieDto> convertTimeLineEntriesToOperationsTreserorieList(List<TimeLineEntry> entries) {
 		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
 		entries.stream().forEach(entry -> {
@@ -119,19 +140,20 @@ public class SupervisionTresorerieService {
 			operation.setOpperationType(OperationType.DECAISSEMENT);
 			operation.setOperationDate(entry.getLineDate());
 			operation.setOperationAmountS(entry.getInitialAmountS());
-			operation.setOpperationLabel("Paiement écheance principal");
+			operation.setOpperationLabel("PAIEMENT ECHEANCE PRINCIPALE CREDIT N° " + entry.getTimeLineCreditNumber());
 			List<String> detailsPayements = new ArrayList<String>();
 			detailsPayements.add("Paiement écheance principal - Crédit No " + entry.getTimeLineCreditNumber());
 			operation.setOpperationDetails(detailsPayements);
 			operation.setOperationAmount(entry.getInitialAmount());
 			operations.add(operation);
-			
+
 			OperationTreserorieDto operation2 = new OperationTreserorieDto();
 			operation2.setOpperationType(OperationType.DECAISSEMENT);
 			operation2.setOperationDate(entry.getLineDate());
 			operation2.setOperationAmountS(entry.getInterestsS());
 			operation2.setOperationAmount(entry.getInterests());
-			operation2.setOpperationLabel("Paiement écheance intérets");
+			operation2.setOpperationLabel("PAIEMENT ECHEANCE INTERETS CREDIT N° " + entry.getTimeLineCreditNumber());
+			//operation2.setOpperationLabel("Paiement écheance intérets");
 			List<String> detailsPayements2 = new ArrayList<String>();
 			detailsPayements2.add("Paiement écheance intérets - Crédit No " + entry.getTimeLineCreditNumber());
 			operation2.setOpperationDetails(detailsPayements2);
@@ -156,137 +178,149 @@ public class SupervisionTresorerieService {
 			detailsPayements.add(paymentRule.getPaymentRuleDetails());
 			operation.setOpperationDetails(detailsPayements);
 
-			// Ajouter une information sur la facture payé dans le label
-			String label = "Payement de la facture ";
-			String invoicesIds = paymentRule.getPaymentRuleInvoices();
-			List<Invoice> invoices = new ArrayList<Invoice>();
-			String[] ids = invoicesIds.split(",");
-
-			Arrays.stream(ids).forEach(invoiceId -> {
-				if (paymentRule.getPaymentRuleOperationType() == OperationType.DECAISSEMENT) {
-					ProviderInvoice providerInvoice = providerInvoiceService
-							.getProviderInvoiceById(Long.parseLong(invoiceId));
-					operation.setOpperationCurrency(providerInvoice.getInvoiceCurrency());
-					operation.setOpperationType(OperationType.DECAISSEMENT);
-					invoices.add(providerInvoice);
-				} else {
-					CustomerInvoice customerInvoice = customerInvoiceService
-							.getCustomerInvoiceById(Long.parseLong(invoiceId));
-					operation.setOpperationCurrency(customerInvoice.getInvoiceCurrency());
-					operation.setOpperationType(OperationType.ENCAISSEMENT);
-					invoices.add(customerInvoice);
-				}
-
-			});
-
-			for (int i = 0; i < invoices.size(); i++) {
-				label = label + invoices.get(i).getInvoiceNumber();
-				if (i < invoices.size() - 1) {
-					label = label + " et ";
-				}
+			if (paymentRule.getPaymentRuleOperationType() == OperationType.ENCAISSEMENT) {
+				operation.setOpperationLabel(
+						"ENCAISSEMENT " + paymentRule.getPaymentRulePaymentMethod().toString().toUpperCase() + " N° "
+								+ paymentRule.getPaymentRuleNumber().toUpperCase());
+			} else {
+				operation.setOpperationLabel(
+						"DECAISSEMENT " + paymentRule.getPaymentRulePaymentMethod().toString().toUpperCase() + " N° "
+								+ paymentRule.getPaymentRuleNumber().toUpperCase());
 			}
 
-			operation.setOpperationLabel(label);
+			// Ajouter une information sur la facture payé dans le label
+			/*
+			 * String label = "Payement de la facture "; String invoicesIds =
+			 * paymentRule.getPaymentRuleInvoices(); List<Invoice> invoices = new
+			 * ArrayList<Invoice>(); String[] ids = invoicesIds.split(",");
+			 * 
+			 * Arrays.stream(ids).forEach(invoiceId -> { if
+			 * (paymentRule.getPaymentRuleOperationType() == OperationType.DECAISSEMENT) {
+			 * ProviderInvoice providerInvoice = providerInvoiceService
+			 * .getProviderInvoiceById(Long.parseLong(invoiceId));
+			 * operation.setOpperationCurrency(providerInvoice.getInvoiceCurrency());
+			 * operation.setOpperationType(OperationType.DECAISSEMENT);
+			 * invoices.add(providerInvoice); } else { CustomerInvoice customerInvoice =
+			 * customerInvoiceService .getCustomerInvoiceById(Long.parseLong(invoiceId));
+			 * operation.setOpperationCurrency(customerInvoice.getInvoiceCurrency());
+			 * operation.setOpperationType(OperationType.ENCAISSEMENT);
+			 * invoices.add(customerInvoice); }
+			 * 
+			 * });
+			 * 
+			 * for (int i = 0; i < invoices.size(); i++) { label = label +
+			 * invoices.get(i).getInvoiceNumber(); if (i < invoices.size() - 1) { label =
+			 * label + " et "; } }
+			 * 
+			 * operation.setOpperationLabel(label);
+			 */
 
 			operations.add(operation);
 
 			// Ajouter une opération rélative au comission de type de paiement
+			if (paymentRule.getPaymentRuleOperationType() == OperationType.DECAISSEMENT) {
+				if (paymentRule.getPaymentRulePaymentMethod() == PaymentMethod.CHEQUE) {
+					List<Comission> chequeComissions = comissions.stream()
+							.filter(comission -> comission.getComissionOperation() == Operation.REMISE_CHHEQUE)
+							.collect(Collectors.toList());
 
-			if (paymentRule.getPaymentRulePaymentMethod() == PaymentMethod.CHEQUE) {
-				List<Comission> chequeComissions = comissions.stream()
-						.filter(comission -> comission.getComissionOperation() == Operation.REMISE_CHHEQUE)
-						.collect(Collectors.toList());
+					chequeComissions.stream().forEach(com -> {
+						OperationTreserorieDto operationCom = new OperationTreserorieDto();
+						operationCom.setOpperationType(OperationType.DECAISSEMENT);
+						operationCom.setOperationDate(paymentRule.getPaymentRuleDeadlineDate());
+						operationCom.setOperationAmountS(com.getComissionValueS());
+						operationCom.setOperationAmount(com.getComissionValue());
+						operationCom
+								.setOpperationLabel("COMISSION REMISE CHEQUE N° " + paymentRule.getPaymentRuleNumber());
+						operationCom.setOpperationCurrency(operation.getOpperationCurrency());
+						List<String> detailsPayementsCom = new ArrayList<String>();
+						detailsPayements
+								.add("Comission de remise de chèque numéro " + paymentRule.getPaymentRuleNumber());
+						operationCom.setOpperationDetails(detailsPayements);
+						operations.add(operationCom);
+					});
 
-				chequeComissions.stream().forEach(com -> {
-					OperationTreserorieDto operationCom = new OperationTreserorieDto();
-					operationCom.setOpperationType(OperationType.DECAISSEMENT);
-					operationCom.setOperationDate(paymentRule.getPaymentRuleDeadlineDate());
-					operationCom.setOperationAmountS(com.getComissionValueS());
-					operationCom.setOperationAmount(com.getComissionValue());
-					operationCom.setOpperationLabel("Comission remise chèque");
-					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
-					List<String> detailsPayementsCom = new ArrayList<String>();
-					detailsPayements.add("Comission de remise de chèque numéro " + paymentRule.getPaymentRuleNumber());
-					operationCom.setOpperationDetails(detailsPayements);
-					operations.add(operationCom);
-				});
+				} else if (paymentRule.getPaymentRulePaymentMethod() == PaymentMethod.VIREMENT) {
+					List<Comission> virementComissions = comissions.stream()
+							.filter(comission -> comission.getComissionOperation() == Operation.VIREMENT)
+							.collect(Collectors.toList());
 
-			} else if (paymentRule.getPaymentRulePaymentMethod() == PaymentMethod.VIREMENT) {
-				List<Comission> virementComissions = comissions.stream()
-						.filter(comission -> comission.getComissionOperation() == Operation.VIREMENT)
-						.collect(Collectors.toList());
+					virementComissions.stream().forEach(com -> {
+						OperationTreserorieDto operationCom = new OperationTreserorieDto();
+						operationCom.setOpperationType(OperationType.DECAISSEMENT);
+						operationCom.setOperationDate(paymentRule.getPaymentRuleDeadlineDate());
+						operationCom.setOperationAmountS(com.getComissionValueS());
+						operationCom.setOperationAmount(com.getComissionValue());
+						operationCom.setOpperationLabel("COMISSION VIREMENT");
+						operationCom.setOpperationCurrency(operation.getOpperationCurrency());
+						List<String> detailsPayementsCom = new ArrayList<String>();
+						detailsPayements.add("Comission de virement ");
+						operationCom.setOpperationDetails(detailsPayements);
+						operations.add(operationCom);
+					});
 
-				virementComissions.stream().forEach(com -> {
-					OperationTreserorieDto operationCom = new OperationTreserorieDto();
-					operationCom.setOpperationType(OperationType.DECAISSEMENT);
-					operationCom.setOperationDate(paymentRule.getPaymentRuleDeadlineDate());
-					operationCom.setOperationAmountS(com.getComissionValueS());
-					operationCom.setOperationAmount(com.getComissionValue());
-					operationCom.setOpperationLabel("Comission virement");
-					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
-					List<String> detailsPayementsCom = new ArrayList<String>();
-					detailsPayements.add("Comission de virement ");
-					operationCom.setOpperationDetails(detailsPayements);
-					operations.add(operationCom);
-				});
+				} else if (paymentRule.getPaymentRulePaymentMethod() == PaymentMethod.TRAITE) {
+					List<Comission> traiteComissions = comissions.stream()
+							.filter(comission -> comission.getComissionOperation() == Operation.TRAITE)
+							.collect(Collectors.toList());
 
-			} else if (paymentRule.getPaymentRulePaymentMethod() == PaymentMethod.TRAITE) {
-				List<Comission> traiteComissions = comissions.stream()
-						.filter(comission -> comission.getComissionOperation() == Operation.TRAITE)
-						.collect(Collectors.toList());
+					traiteComissions.stream().forEach(com -> {
+						OperationTreserorieDto operationCom = new OperationTreserorieDto();
+						operationCom.setOpperationType(OperationType.DECAISSEMENT);
+						operationCom.setOperationDate(paymentRule.getPaymentRuleDeadlineDate());
+						operationCom.setOperationAmountS(com.getComissionValueS());
+						operationCom.setOperationAmount(com.getComissionValue());
+						operationCom
+								.setOpperationLabel("COMISSION REMISE TRAITE N° " + paymentRule.getPaymentRuleNumber());
+						operationCom.setOpperationCurrency(operation.getOpperationCurrency());
+						List<String> detailsPayementsCom = new ArrayList<String>();
+						detailsPayements
+								.add("Comission de remise de traite numéro " + paymentRule.getPaymentRuleNumber());
+						operationCom.setOpperationDetails(detailsPayements);
+						operations.add(operationCom);
+					});
 
-				traiteComissions.stream().forEach(com -> {
-					OperationTreserorieDto operationCom = new OperationTreserorieDto();
-					operationCom.setOpperationType(OperationType.DECAISSEMENT);
-					operationCom.setOperationDate(paymentRule.getPaymentRuleDeadlineDate());
-					operationCom.setOperationAmountS(com.getComissionValueS());
-					operationCom.setOperationAmount(com.getComissionValue());
-					operationCom.setOpperationLabel("Comission remise traite");
-					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
-					List<String> detailsPayementsCom = new ArrayList<String>();
-					detailsPayements.add("Comission de remise de traite numéro " + paymentRule.getPaymentRuleNumber());
-					operationCom.setOpperationDetails(detailsPayements);
-					operations.add(operationCom);
-				});
-
-			} else if (paymentRule.getPaymentRulePaymentMethod() == PaymentMethod.EFFET_ENCAISSEMENT) {
-				List<Comission> effetEncaissementsComissions = comissions.stream()
-						.filter(comission -> comission.getComissionOperation() == Operation.REMISE_EFFET_ENCAISSEMENT)
-						.collect(Collectors.toList());
-
-				effetEncaissementsComissions.stream().forEach(com -> {
-					OperationTreserorieDto operationCom = new OperationTreserorieDto();
-					operationCom.setOpperationType(OperationType.DECAISSEMENT);
-					operationCom.setOperationDate(paymentRule.getPaymentRuleDeadlineDate());
-					operationCom.setOperationAmountS(com.getComissionValueS());
-					operationCom.setOperationAmount(com.getComissionValue());
-					operationCom.setOpperationLabel("Comission remise effet d'encaissement");
-					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
-					List<String> detailsPayementsCom = new ArrayList<String>();
-					detailsPayements.add("Comission de remise d'effet d'encaissement");
-					operationCom.setOpperationDetails(detailsPayements);
-					operations.add(operationCom);
-				});
-
-			} else if (paymentRule.getPaymentRulePaymentMethod() == PaymentMethod.EFFET_ESCOMPTE) {
-				List<Comission> effetEscomptesComissions = comissions.stream()
-						.filter(comission -> comission.getComissionOperation() == Operation.REMISE_EFFET_ESCOMPTE)
-						.collect(Collectors.toList());
-
-				effetEscomptesComissions.stream().forEach(com -> {
-					OperationTreserorieDto operationCom = new OperationTreserorieDto();
-					operationCom.setOpperationType(OperationType.DECAISSEMENT);
-					operationCom.setOperationDate(paymentRule.getPaymentRuleDeadlineDate());
-					operationCom.setOperationAmountS(com.getComissionValueS());
-					operationCom.setOperationAmount(com.getComissionValue());
-					operationCom.setOpperationLabel("Comission remise effet d'escompte");
-					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
-					List<String> detailsPayementsCom = new ArrayList<String>();
-					detailsPayements.add("Comission de remise d'effet d'escompte");
-					operationCom.setOpperationDetails(detailsPayements);
-					operations.add(operationCom);
-				});
-
+				}
+				/*
+				 * else if (paymentRule.getPaymentRulePaymentMethod() ==
+				 * PaymentMethod.EFFET_ENCAISSEMENT) { List<Comission>
+				 * effetEncaissementsComissions = comissions.stream() .filter(comission ->
+				 * comission.getComissionOperation() == Operation.REMISE_EFFET_ENCAISSEMENT)
+				 * .collect(Collectors.toList());
+				 * 
+				 * effetEncaissementsComissions.stream().forEach(com -> { OperationTreserorieDto
+				 * operationCom = new OperationTreserorieDto();
+				 * operationCom.setOpperationType(OperationType.DECAISSEMENT);
+				 * operationCom.setOperationDate(paymentRule.getPaymentRuleDeadlineDate());
+				 * operationCom.setOperationAmountS(com.getComissionValueS());
+				 * operationCom.setOperationAmount(com.getComissionValue());
+				 * operationCom.setOpperationLabel("Comission remise effet d'encaissement");
+				 * operationCom.setOpperationCurrency(operation.getOpperationCurrency());
+				 * List<String> detailsPayementsCom = new ArrayList<String>();
+				 * detailsPayements.add("Comission de remise d'effet d'encaissement");
+				 * operationCom.setOpperationDetails(detailsPayements);
+				 * operations.add(operationCom); });
+				 * 
+				 * } else if (paymentRule.getPaymentRulePaymentMethod() ==
+				 * PaymentMethod.EFFET_ESCOMPTE) { List<Comission> effetEscomptesComissions =
+				 * comissions.stream() .filter(comission -> comission.getComissionOperation() ==
+				 * Operation.REMISE_EFFET_ESCOMPTE) .collect(Collectors.toList());
+				 * 
+				 * effetEscomptesComissions.stream().forEach(com -> { OperationTreserorieDto
+				 * operationCom = new OperationTreserorieDto();
+				 * operationCom.setOpperationType(OperationType.DECAISSEMENT);
+				 * operationCom.setOperationDate(paymentRule.getPaymentRuleDeadlineDate());
+				 * operationCom.setOperationAmountS(com.getComissionValueS());
+				 * operationCom.setOperationAmount(com.getComissionValue());
+				 * operationCom.setOpperationLabel("Comission remise effet d'escompte");
+				 * operationCom.setOpperationCurrency(operation.getOpperationCurrency());
+				 * List<String> detailsPayementsCom = new ArrayList<String>();
+				 * detailsPayements.add("Comission de remise d'effet d'escompte");
+				 * operationCom.setOpperationDetails(detailsPayements);
+				 * operations.add(operationCom); });
+				 * 
+				 * }
+				 */
 			}
 
 		});
@@ -313,8 +347,10 @@ public class SupervisionTresorerieService {
 			detailsPayements.add(decaissement.getDecaissementDetails());
 
 			operation.setOpperationDetails(detailsPayements);
-
-			operation.setOpperationLabel(decaissement.getDecaissementType().getDecaissementTypeLabel());
+			operation.setOpperationLabel(
+					"DECAISSEMENT " + decaissement.getDecaissementPaymentType().toString().toUpperCase() + " N° "
+							+ decaissement.getDecaissementPaymentRuleNumber().toUpperCase());
+			// operation.setOpperationLabel(decaissement.getDecaissementType().getDecaissementTypeLabel());
 
 			operation.setOpperationFacultatifLabel(decaissement.getDecaissementLabel());
 
@@ -333,7 +369,8 @@ public class SupervisionTresorerieService {
 					operationCom.setOperationDate(decaissement.getDecaissementDeadlineDate());
 					operationCom.setOperationAmountS(com.getComissionValueS());
 					operationCom.setOperationAmount(com.getComissionValue());
-					operationCom.setOpperationLabel("Comission remise chèque");
+					operationCom.setOpperationLabel(
+							"COMISSION REMISE CHEQUE N° " + decaissement.getDecaissementPaymentRuleNumber());
 					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
 					List<String> detailsPayementsCom = new ArrayList<String>();
 					detailsPayements.add(
@@ -353,7 +390,7 @@ public class SupervisionTresorerieService {
 					operationCom.setOperationDate(decaissement.getDecaissementDeadlineDate());
 					operationCom.setOperationAmountS(com.getComissionValueS());
 					operationCom.setOperationAmount(com.getComissionValue());
-					operationCom.setOpperationLabel("Comission virement");
+					operationCom.setOpperationLabel("COMISSION VIREMENT");
 					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
 					List<String> detailsPayementsCom = new ArrayList<String>();
 					detailsPayements.add("Comission de virement ");
@@ -372,7 +409,8 @@ public class SupervisionTresorerieService {
 					operationCom.setOperationDate(decaissement.getDecaissementDeadlineDate());
 					operationCom.setOperationAmountS(com.getComissionValueS());
 					operationCom.setOperationAmount(com.getComissionValue());
-					operationCom.setOpperationLabel("Comission remise traite");
+					operationCom.setOpperationLabel(
+							"COMISSION REMISE TRAITE N° " + decaissement.getDecaissementPaymentRuleNumber());
 					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
 					List<String> detailsPayementsCom = new ArrayList<String>();
 					detailsPayements.add(
@@ -381,45 +419,46 @@ public class SupervisionTresorerieService {
 					operations.add(operationCom);
 				});
 
-			} else if (decaissement.getDecaissementPaymentType() == PaymentMethod.EFFET_ENCAISSEMENT) {
-				List<Comission> effetEncaissementsComissions = comissions.stream()
-						.filter(comission -> comission.getComissionOperation() == Operation.REMISE_EFFET_ENCAISSEMENT)
-						.collect(Collectors.toList());
-
-				effetEncaissementsComissions.stream().forEach(com -> {
-					OperationTreserorieDto operationCom = new OperationTreserorieDto();
-					operationCom.setOpperationType(OperationType.DECAISSEMENT);
-					operationCom.setOperationDate(decaissement.getDecaissementDeadlineDate());
-					operationCom.setOperationAmountS(com.getComissionValueS());
-					operationCom.setOperationAmount(com.getComissionValue());
-					operationCom.setOpperationLabel("Comission remise effet d'encaissement");
-					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
-					List<String> detailsPayementsCom = new ArrayList<String>();
-					detailsPayements.add("Comission de remise d'effet d'encaissement");
-					operationCom.setOpperationDetails(detailsPayements);
-					operations.add(operationCom);
-				});
-
-			} else if (decaissement.getDecaissementPaymentType() == PaymentMethod.EFFET_ESCOMPTE) {
-				List<Comission> effetEscomptesComissions = comissions.stream()
-						.filter(comission -> comission.getComissionOperation() == Operation.REMISE_EFFET_ESCOMPTE)
-						.collect(Collectors.toList());
-
-				effetEscomptesComissions.stream().forEach(com -> {
-					OperationTreserorieDto operationCom = new OperationTreserorieDto();
-					operationCom.setOpperationType(OperationType.DECAISSEMENT);
-					operationCom.setOperationDate(decaissement.getDecaissementDeadlineDate());
-					operationCom.setOperationAmountS(com.getComissionValueS());
-					operationCom.setOperationAmount(com.getComissionValue());
-					operationCom.setOpperationLabel("Comission remise effet d'escompte");
-					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
-					List<String> detailsPayementsCom = new ArrayList<String>();
-					detailsPayements.add("Comission de remise d'effet d'escompte");
-					operationCom.setOpperationDetails(detailsPayements);
-					operations.add(operationCom);
-				});
-
-			}
+			} /*
+				 * else if (decaissement.getDecaissementPaymentType() ==
+				 * PaymentMethod.EFFET_ENCAISSEMENT) { List<Comission>
+				 * effetEncaissementsComissions = comissions.stream() .filter(comission ->
+				 * comission.getComissionOperation() == Operation.REMISE_EFFET_ENCAISSEMENT)
+				 * .collect(Collectors.toList());
+				 * 
+				 * effetEncaissementsComissions.stream().forEach(com -> { OperationTreserorieDto
+				 * operationCom = new OperationTreserorieDto();
+				 * operationCom.setOpperationType(OperationType.DECAISSEMENT);
+				 * operationCom.setOperationDate(decaissement.getDecaissementDeadlineDate());
+				 * operationCom.setOperationAmountS(com.getComissionValueS());
+				 * operationCom.setOperationAmount(com.getComissionValue());
+				 * operationCom.setOpperationLabel("Comission remise effet d'encaissement");
+				 * operationCom.setOpperationCurrency(operation.getOpperationCurrency());
+				 * List<String> detailsPayementsCom = new ArrayList<String>();
+				 * detailsPayements.add("Comission de remise d'effet d'encaissement");
+				 * operationCom.setOpperationDetails(detailsPayements);
+				 * operations.add(operationCom); });
+				 * 
+				 * } else if (decaissement.getDecaissementPaymentType() ==
+				 * PaymentMethod.EFFET_ESCOMPTE) { List<Comission> effetEscomptesComissions =
+				 * comissions.stream() .filter(comission -> comission.getComissionOperation() ==
+				 * Operation.REMISE_EFFET_ESCOMPTE) .collect(Collectors.toList());
+				 * 
+				 * effetEscomptesComissions.stream().forEach(com -> { OperationTreserorieDto
+				 * operationCom = new OperationTreserorieDto();
+				 * operationCom.setOpperationType(OperationType.DECAISSEMENT);
+				 * operationCom.setOperationDate(decaissement.getDecaissementDeadlineDate());
+				 * operationCom.setOperationAmountS(com.getComissionValueS());
+				 * operationCom.setOperationAmount(com.getComissionValue());
+				 * operationCom.setOpperationLabel("Comission remise effet d'escompte");
+				 * operationCom.setOpperationCurrency(operation.getOpperationCurrency());
+				 * List<String> detailsPayementsCom = new ArrayList<String>();
+				 * detailsPayements.add("Comission de remise d'effet d'escompte");
+				 * operationCom.setOpperationDetails(detailsPayements);
+				 * operations.add(operationCom); });
+				 * 
+				 * }
+				 */
 
 		});
 
@@ -444,7 +483,10 @@ public class SupervisionTresorerieService {
 
 			operation.setOpperationDetails(detailsPayements);
 
-			operation.setOpperationLabel(encaissement.getEncaissementType().getEncaissementTypeLabel());
+			operation.setOpperationLabel(
+					"ENCAISSEMENT " + encaissement.getEncaissementPaymentType().toString().toUpperCase() + " N° "
+							+ encaissement.getEncaissementPaymentRuleNumber().toUpperCase());
+			// operation.setOpperationLabel(encaissement.getEncaissementType().getEncaissementTypeLabel());
 
 			operation.setOpperationFacultatifLabel(encaissement.getEncaissementLabel());
 
@@ -452,104 +494,102 @@ public class SupervisionTresorerieService {
 
 			// Ajouter une opération rélative au comission de type de paiement
 
-			if (encaissement.getEncaissementPaymentType() == PaymentMethod.CHEQUE) {
-				List<Comission> chequeComissions = comissions.stream()
-						.filter(comission -> comission.getComissionOperation() == Operation.REMISE_CHHEQUE)
-						.collect(Collectors.toList());
-
-				chequeComissions.stream().forEach(com -> {
-					OperationTreserorieDto operationCom = new OperationTreserorieDto();
-					operationCom.setOpperationType(OperationType.DECAISSEMENT);
-					operationCom.setOperationDate(encaissement.getEncaissementDeadlineDate());
-					operationCom.setOperationAmountS(com.getComissionValueS());
-					operationCom.setOperationAmount(com.getComissionValue());
-					operationCom.setOpperationLabel("Comission remise chèque");
-					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
-					List<String> detailsPayementsCom = new ArrayList<String>();
-					detailsPayements.add(
-							"Comission de remise de chèque numéro " + encaissement.getEncaissementPaymentRuleNumber());
-					operationCom.setOpperationDetails(detailsPayements);
-					operations.add(operationCom);
-				});
-
-			} else if (encaissement.getEncaissementPaymentType() == PaymentMethod.VIREMENT) {
-				List<Comission> virementComissions = comissions.stream()
-						.filter(comission -> comission.getComissionOperation() == Operation.VIREMENT)
-						.collect(Collectors.toList());
-
-				virementComissions.stream().forEach(com -> {
-					OperationTreserorieDto operationCom = new OperationTreserorieDto();
-					operationCom.setOpperationType(OperationType.DECAISSEMENT);
-					operationCom.setOperationDate(encaissement.getEncaissementDeadlineDate());
-					operationCom.setOperationAmountS(com.getComissionValueS());
-					operationCom.setOperationAmount(com.getComissionValue());
-					operationCom.setOpperationLabel("Comission virement");
-					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
-					List<String> detailsPayementsCom = new ArrayList<String>();
-					detailsPayements.add("Comission de virement ");
-					operationCom.setOpperationDetails(detailsPayements);
-					operations.add(operationCom);
-				});
-
-			} else if (encaissement.getEncaissementPaymentType() == PaymentMethod.TRAITE) {
-				List<Comission> traiteComissions = comissions.stream()
-						.filter(comission -> comission.getComissionOperation() == Operation.TRAITE)
-						.collect(Collectors.toList());
-
-				traiteComissions.stream().forEach(com -> {
-					OperationTreserorieDto operationCom = new OperationTreserorieDto();
-					operationCom.setOpperationType(OperationType.DECAISSEMENT);
-					operationCom.setOperationDate(encaissement.getEncaissementDeadlineDate());
-					operationCom.setOperationAmountS(com.getComissionValueS());
-					operationCom.setOperationAmount(com.getComissionValue());
-					operationCom.setOpperationLabel("Comission remise traite");
-					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
-					List<String> detailsPayementsCom = new ArrayList<String>();
-					detailsPayements.add(
-							"Comission de remise de traite numéro " + encaissement.getEncaissementPaymentRuleNumber());
-					operationCom.setOpperationDetails(detailsPayements);
-					operations.add(operationCom);
-				});
-
-			} else if (encaissement.getEncaissementPaymentType() == PaymentMethod.EFFET_ENCAISSEMENT) {
-				List<Comission> effetEncaissementsComissions = comissions.stream()
-						.filter(comission -> comission.getComissionOperation() == Operation.REMISE_EFFET_ENCAISSEMENT)
-						.collect(Collectors.toList());
-
-				effetEncaissementsComissions.stream().forEach(com -> {
-					OperationTreserorieDto operationCom = new OperationTreserorieDto();
-					operationCom.setOpperationType(OperationType.DECAISSEMENT);
-					operationCom.setOperationDate(encaissement.getEncaissementDeadlineDate());
-					operationCom.setOperationAmountS(com.getComissionValueS());
-					operationCom.setOperationAmount(com.getComissionValue());
-					operationCom.setOpperationLabel("Comission remise effet d'encaissement");
-					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
-					List<String> detailsPayementsCom = new ArrayList<String>();
-					detailsPayements.add("Comission de remise d'effet d'encaissement");
-					operationCom.setOpperationDetails(detailsPayements);
-					operations.add(operationCom);
-				});
-
-			} else if (encaissement.getEncaissementPaymentType() == PaymentMethod.EFFET_ESCOMPTE) {
-				List<Comission> effetEscomptesComissions = comissions.stream()
-						.filter(comission -> comission.getComissionOperation() == Operation.REMISE_EFFET_ESCOMPTE)
-						.collect(Collectors.toList());
-
-				effetEscomptesComissions.stream().forEach(com -> {
-					OperationTreserorieDto operationCom = new OperationTreserorieDto();
-					operationCom.setOpperationType(OperationType.DECAISSEMENT);
-					operationCom.setOperationDate(encaissement.getEncaissementDeadlineDate());
-					operationCom.setOperationAmountS(com.getComissionValueS());
-					operationCom.setOperationAmount(com.getComissionValue());
-					operationCom.setOpperationLabel("Comission remise effet d'escompte");
-					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
-					List<String> detailsPayementsCom = new ArrayList<String>();
-					detailsPayements.add("Comission de remise d'effet d'escompte");
-					operationCom.setOpperationDetails(detailsPayements);
-					operations.add(operationCom);
-				});
-
-			}
+			/*
+			 * if (encaissement.getEncaissementPaymentType() == PaymentMethod.CHEQUE) {
+			 * List<Comission> chequeComissions = comissions.stream() .filter(comission ->
+			 * comission.getComissionOperation() == Operation.REMISE_CHHEQUE)
+			 * .collect(Collectors.toList());
+			 * 
+			 * chequeComissions.stream().forEach(com -> { OperationTreserorieDto
+			 * operationCom = new OperationTreserorieDto();
+			 * operationCom.setOpperationType(OperationType.DECAISSEMENT);
+			 * operationCom.setOperationDate(encaissement.getEncaissementDeadlineDate());
+			 * operationCom.setOperationAmountS(com.getComissionValueS());
+			 * operationCom.setOperationAmount(com.getComissionValue());
+			 * operationCom.setOpperationLabel("Comission remise chèque");
+			 * operationCom.setOpperationCurrency(operation.getOpperationCurrency());
+			 * List<String> detailsPayementsCom = new ArrayList<String>();
+			 * detailsPayements.add( "Comission de remise de chèque numéro " +
+			 * encaissement.getEncaissementPaymentRuleNumber());
+			 * operationCom.setOpperationDetails(detailsPayements);
+			 * operations.add(operationCom); });
+			 * 
+			 * } else if (encaissement.getEncaissementPaymentType() ==
+			 * PaymentMethod.VIREMENT) { List<Comission> virementComissions =
+			 * comissions.stream() .filter(comission -> comission.getComissionOperation() ==
+			 * Operation.VIREMENT) .collect(Collectors.toList());
+			 * 
+			 * virementComissions.stream().forEach(com -> { OperationTreserorieDto
+			 * operationCom = new OperationTreserorieDto();
+			 * operationCom.setOpperationType(OperationType.DECAISSEMENT);
+			 * operationCom.setOperationDate(encaissement.getEncaissementDeadlineDate());
+			 * operationCom.setOperationAmountS(com.getComissionValueS());
+			 * operationCom.setOperationAmount(com.getComissionValue());
+			 * operationCom.setOpperationLabel("Comission virement");
+			 * operationCom.setOpperationCurrency(operation.getOpperationCurrency());
+			 * List<String> detailsPayementsCom = new ArrayList<String>();
+			 * detailsPayements.add("Comission de virement ");
+			 * operationCom.setOpperationDetails(detailsPayements);
+			 * operations.add(operationCom); });
+			 * 
+			 * } else if (encaissement.getEncaissementPaymentType() == PaymentMethod.TRAITE)
+			 * { List<Comission> traiteComissions = comissions.stream() .filter(comission ->
+			 * comission.getComissionOperation() == Operation.TRAITE)
+			 * .collect(Collectors.toList());
+			 * 
+			 * traiteComissions.stream().forEach(com -> { OperationTreserorieDto
+			 * operationCom = new OperationTreserorieDto();
+			 * operationCom.setOpperationType(OperationType.DECAISSEMENT);
+			 * operationCom.setOperationDate(encaissement.getEncaissementDeadlineDate());
+			 * operationCom.setOperationAmountS(com.getComissionValueS());
+			 * operationCom.setOperationAmount(com.getComissionValue());
+			 * operationCom.setOpperationLabel("Comission remise traite");
+			 * operationCom.setOpperationCurrency(operation.getOpperationCurrency());
+			 * List<String> detailsPayementsCom = new ArrayList<String>();
+			 * detailsPayements.add( "Comission de remise de traite numéro " +
+			 * encaissement.getEncaissementPaymentRuleNumber());
+			 * operationCom.setOpperationDetails(detailsPayements);
+			 * operations.add(operationCom); });
+			 * 
+			 * } else if (encaissement.getEncaissementPaymentType() ==
+			 * PaymentMethod.EFFET_ENCAISSEMENT) { List<Comission>
+			 * effetEncaissementsComissions = comissions.stream() .filter(comission ->
+			 * comission.getComissionOperation() == Operation.REMISE_EFFET_ENCAISSEMENT)
+			 * .collect(Collectors.toList());
+			 * 
+			 * effetEncaissementsComissions.stream().forEach(com -> { OperationTreserorieDto
+			 * operationCom = new OperationTreserorieDto();
+			 * operationCom.setOpperationType(OperationType.DECAISSEMENT);
+			 * operationCom.setOperationDate(encaissement.getEncaissementDeadlineDate());
+			 * operationCom.setOperationAmountS(com.getComissionValueS());
+			 * operationCom.setOperationAmount(com.getComissionValue());
+			 * operationCom.setOpperationLabel("Comission remise effet d'encaissement");
+			 * operationCom.setOpperationCurrency(operation.getOpperationCurrency());
+			 * List<String> detailsPayementsCom = new ArrayList<String>();
+			 * detailsPayements.add("Comission de remise d'effet d'encaissement");
+			 * operationCom.setOpperationDetails(detailsPayements);
+			 * operations.add(operationCom); });
+			 * 
+			 * } else if (encaissement.getEncaissementPaymentType() ==
+			 * PaymentMethod.EFFET_ESCOMPTE) { List<Comission> effetEscomptesComissions =
+			 * comissions.stream() .filter(comission -> comission.getComissionOperation() ==
+			 * Operation.REMISE_EFFET_ESCOMPTE) .collect(Collectors.toList());
+			 * 
+			 * effetEscomptesComissions.stream().forEach(com -> { OperationTreserorieDto
+			 * operationCom = new OperationTreserorieDto();
+			 * operationCom.setOpperationType(OperationType.DECAISSEMENT);
+			 * operationCom.setOperationDate(encaissement.getEncaissementDeadlineDate());
+			 * operationCom.setOperationAmountS(com.getComissionValueS());
+			 * operationCom.setOperationAmount(com.getComissionValue());
+			 * operationCom.setOpperationLabel("Comission remise effet d'escompte");
+			 * operationCom.setOpperationCurrency(operation.getOpperationCurrency());
+			 * List<String> detailsPayementsCom = new ArrayList<String>();
+			 * detailsPayements.add("Comission de remise d'effet d'escompte");
+			 * operationCom.setOpperationDetails(detailsPayements);
+			 * operations.add(operationCom); });
+			 * 
+			 * }
+			 */
 
 		});
 
