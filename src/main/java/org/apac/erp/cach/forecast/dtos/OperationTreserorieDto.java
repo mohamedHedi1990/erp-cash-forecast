@@ -15,6 +15,7 @@ public class OperationTreserorieDto {
 	private String operationAmountS;
 	private Double operationAmount;
 	private Double progressiveAmount;
+	private String progressiveAmountS;
 	private String opperationCurrency;
 	private String opperationLabel;
 	private String opperationFacultatifLabel;

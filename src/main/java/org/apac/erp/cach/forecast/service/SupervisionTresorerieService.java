@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apac.erp.cach.forecast.constants.Utils;
 import org.apac.erp.cach.forecast.dtos.OperationTreserorieDto;
 import org.apac.erp.cach.forecast.enumeration.Operation;
 import org.apac.erp.cach.forecast.enumeration.OperationType;
@@ -128,6 +129,7 @@ public class SupervisionTresorerieService {
 					else
 						operations.get(i).setProgressiveAmount(operations.get(i-1).getOperationAmount() - operations.get(i).getOperationAmount());
 			}
+			operations.get(i).setOperationAmountS( Utils.convertAmountToString(operations.get(i).getOperationAmount()));
 		}
 
 		return operations;
