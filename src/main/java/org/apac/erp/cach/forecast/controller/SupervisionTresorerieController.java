@@ -36,4 +36,11 @@ public class SupervisionTresorerieController {
 		return supervisionTresorerieService.globalSupervisionEngage(accountId, startDate, endDate, true);
 
 	}
+
+	@CrossOrigin
+	@PutMapping()
+	public void rapprochementBancaireModifyOperation(@RequestBody OperationTreserorieDto operationDto) {
+		supervisionTresorerieService.rapprochementBancaireModifyOperation(operationDto);
+
+	}
 }

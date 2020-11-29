@@ -71,11 +71,11 @@ public class SupervisionTresorerieService {
 		// Trouver tout kles réglements sur cette intervalle
 		List<PaymentRule> paymentRules = paymentRuleService.getAllPaymentRuleBetwwenTwoDates(bankAccount, startDate,
 				endDate);
-		if (isValidated) {
+		/*if (isValidated) {
 			paymentRules = paymentRules.stream().filter(paymentRule -> paymentRule.getIsValidated() == isValidated)
 					.collect(Collectors.toList());
 
-		}
+		}*/
 		List<OperationTreserorieDto> paymentRuleOperations = convertPaymentRulesToOperationTreserorieList(paymentRules,
 				comissions);
 		operations.addAll(paymentRuleOperations);
@@ -173,6 +173,7 @@ public class SupervisionTresorerieService {
 			operation.setOperationDate(paymentRule.getPaymentRuleDeadlineDate());
 			operation.setOperationAmountS(paymentRule.getPaymentRuleAmountS());
 			operation.setOperationAmount(paymentRule.getPaymentRuleAmount());
+			operation.setOperationRealId(paymentRule.getPaymentRuleId);
 
 			List<String> detailsPayements = new ArrayList<String>();
 			detailsPayements.add(paymentRule.getPaymentRulePaymentMethod().toString());
@@ -184,10 +185,14 @@ public class SupervisionTresorerieService {
 				operation.setOpperationLabel(
 						"ENCAISSEMENT " + paymentRule.getPaymentRulePaymentMethod().toString().toUpperCase() + " N° "
 								+ paymentRule.getPaymentRuleNumber().toUpperCase());
+											operation.setOperationRealType(OperationDtoType.REGLEMENT_FACTURE_CLIENT)
+
 			} else {
 				operation.setOpperationLabel(
 						"DECAISSEMENT " + paymentRule.getPaymentRulePaymentMethod().toString().toUpperCase() + " N° "
 								+ paymentRule.getPaymentRuleNumber().toUpperCase());
+																			operation.setOperationRealType(OperationDtoType.PAIEMENT_FACTURE_FOURNISSEUR)
+
 			}
 
 			// Ajouter une information sur la facture payé dans le label
@@ -232,6 +237,8 @@ public class SupervisionTresorerieService {
 						operationCom.setOperationDate(paymentRule.getPaymentRuleDeadlineDate());
 						operationCom.setOperationAmountS(com.getComissionValueS());
 						operationCom.setOperationAmount(com.getComissionValue());
+						operationCom.setOperationRealId(com.getComissionId);
+						operationCom.setOperationRealType(OperationDtoType.COMISSION);
 						operationCom
 								.setOpperationLabel("COMISSION REMISE CHEQUE N° " + paymentRule.getPaymentRuleNumber());
 						operationCom.setOpperationCurrency(operation.getOpperationCurrency());
@@ -255,6 +262,8 @@ public class SupervisionTresorerieService {
 						operationCom.setOperationAmount(com.getComissionValue());
 						operationCom.setOpperationLabel("COMISSION VIREMENT");
 						operationCom.setOpperationCurrency(operation.getOpperationCurrency());
+							operationCom.setOperationRealId(com.getComissionId);
+						operationCom.setOperationRealType(OperationDtoType.COMISSION);
 						List<String> detailsPayementsCom = new ArrayList<String>();
 						detailsPayements.add("Comission de virement ");
 						operationCom.setOpperationDetails(detailsPayements);
@@ -272,6 +281,8 @@ public class SupervisionTresorerieService {
 						operationCom.setOperationDate(paymentRule.getPaymentRuleDeadlineDate());
 						operationCom.setOperationAmountS(com.getComissionValueS());
 						operationCom.setOperationAmount(com.getComissionValue());
+							operationCom.setOperationRealId(com.getComissionId);
+						operationCom.setOperationRealType(OperationDtoType.COMISSION);
 						operationCom
 								.setOpperationLabel("COMISSION REMISE TRAITE N° " + paymentRule.getPaymentRuleNumber());
 						operationCom.setOpperationCurrency(operation.getOpperationCurrency());
@@ -342,6 +353,8 @@ public class SupervisionTresorerieService {
 			operation.setOperationAmountS(decaissement.getDecaissementAmountS());
 			operation.setOperationAmount(decaissement.getDecaissementAmount());
 			operation.setOpperationCurrency(decaissement.getDecaissementCurrency());
+			operation.setOperationRealId(decaissement.getDecaissementId());
+			operation.setOperationRealType(OperationDtoType.DECAISSEMENT);
 
 			List<String> detailsPayements = new ArrayList<String>();
 			detailsPayements.add(decaissement.getDecaissementPaymentType().toString());
@@ -371,6 +384,8 @@ public class SupervisionTresorerieService {
 					operationCom.setOperationDate(decaissement.getDecaissementDeadlineDate());
 					operationCom.setOperationAmountS(com.getComissionValueS());
 					operationCom.setOperationAmount(com.getComissionValue());
+						operationCom.setOperationRealId(com.getComissionId);
+						operationCom.setOperationRealType(OperationDtoType.COMISSION);
 					operationCom.setOpperationLabel(
 							"COMISSION REMISE CHEQUE N° " + decaissement.getDecaissementPaymentRuleNumber());
 					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
@@ -396,6 +411,8 @@ public class SupervisionTresorerieService {
 					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
 					List<String> detailsPayementsCom = new ArrayList<String>();
 					detailsPayements.add("Comission de virement ");
+						operationCom.setOperationRealId(com.getComissionId);
+						operationCom.setOperationRealType(OperationDtoType.COMISSION);
 					operationCom.setOpperationDetails(detailsPayements);
 					operations.add(operationCom);
 				});
@@ -411,6 +428,8 @@ public class SupervisionTresorerieService {
 					operationCom.setOperationDate(decaissement.getDecaissementDeadlineDate());
 					operationCom.setOperationAmountS(com.getComissionValueS());
 					operationCom.setOperationAmount(com.getComissionValue());
+						operationCom.setOperationRealId(com.getComissionId);
+						operationCom.setOperationRealType(OperationDtoType.COMISSION);
 					operationCom.setOpperationLabel(
 							"COMISSION REMISE TRAITE N° " + decaissement.getDecaissementPaymentRuleNumber());
 					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
@@ -482,6 +501,8 @@ public class SupervisionTresorerieService {
 			detailsPayements.add(encaissement.getEncaissementPaymentType().toString());
 			detailsPayements.add(encaissement.getEncaissementPaymentRuleNumber());
 			detailsPayements.add(encaissement.getEncaissementDetails());
+			operation.setOperationRealId(encaissement.getEncaissementId());
+			operation.setOperationRealType(OperationDtoType.ENCAISSEMENT);
 
 			operation.setOpperationDetails(detailsPayements);
 
@@ -598,4 +619,19 @@ public class SupervisionTresorerieService {
 		return operations;
 	}
 
+public void rapprochementBancaireModifyOperation(@RequestBody OperationTreserorieDto operation) {
+	if(operation.getOperationRealType == OperationDtoType.REGLEMENT_FACTURE_CLIENT ||
+	operation.getOperationRealType == OperationDtoType.PAIEMENT_FACTURE_FOURNISSEUR
+	) {
+
+	} else if (operation.getOperationRealType == OperationDtoType.DECAISSEMENT ) {
+
+	} else if (operation.getOperationRealType == OperationDtoType.ENCAISSEMENT) {
+
+	} else if (operation.getOperationRealType == OperationDtoType.COMISSION) {
+
+	} else if (operation.getOperationRealType == OperationDtoType.ECHEANCHIER) {
+		
+	}
+}
 }
