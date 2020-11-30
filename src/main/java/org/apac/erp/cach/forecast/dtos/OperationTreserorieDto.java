@@ -3,6 +3,7 @@ package org.apac.erp.cach.forecast.dtos;
 import java.util.Date;
 import java.util.List;
 
+import org.apac.erp.cach.forecast.enumeration.OperationDtoType;
 import org.apac.erp.cach.forecast.enumeration.OperationType;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -21,7 +22,7 @@ public class OperationTreserorieDto {
 	private String opperationFacultatifLabel;
 	private List<String> opperationDetails;
 	private OperationType opperationType;
-
+	private Boolean isValidated;
 	private Long operationRealId;
 	private OperationDtoType operationRealType;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")

@@ -55,6 +55,8 @@ public class TimeLineEntry extends AuditableSql implements Serializable {
 	
 	private String totalS;
 	
+	private Boolean isValidated;
+	
 	@Enumerated(EnumType.STRING)
 	private Annuity timeLineAnnuity;
 	
