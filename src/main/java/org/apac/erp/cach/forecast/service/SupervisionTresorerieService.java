@@ -130,7 +130,7 @@ public class SupervisionTresorerieService {
 					else
 						operations.get(i).setProgressiveAmount(operations.get(i-1).getOperationAmount() - operations.get(i).getOperationAmount());
 			}
-			operations.get(i).setOperationAmountS( Utils.convertAmountToString(operations.get(i).getOperationAmount()));
+			operations.get(i).setProgressiveAmountS( Utils.convertAmountToString(operations.get(i).getProgressiveAmount()));
 		}
 
 		return operations;
@@ -189,13 +189,13 @@ public class SupervisionTresorerieService {
 						"ENCAISSEMENT " + paymentRule.getPaymentRulePaymentMethod().toString().toUpperCase() + " N° "
 								+ paymentRule.getPaymentRuleNumber().toUpperCase());
 											operation.setOperationRealType(OperationDtoType.REGLEMENT_FACTURE_CLIENT);
-
+						operation.setOpperationType(OperationType.ENCAISSEMENT);					
 			} else {
 				operation.setOpperationLabel(
 						"DECAISSEMENT " + paymentRule.getPaymentRulePaymentMethod().toString().toUpperCase() + " N° "
 								+ paymentRule.getPaymentRuleNumber().toUpperCase());
 																			operation.setOperationRealType(OperationDtoType.PAIEMENT_FACTURE_FOURNISSEUR);
-
+operation.setOpperationType(OperationType.DECAISSEMENT);
 			}
 
 			// Ajouter une information sur la facture payé dans le label
@@ -660,5 +660,32 @@ public void rapprochementBancaireModifyOperation(@RequestBody OperationTreserori
 	} else if (operation.getOperationRealType() == OperationDtoType.ECHEANCHIER) {
 		
 	}
+}
+
+public void validate(OperationDtoType operationRealType, Long operationRealId) {
+	if(operationRealType == OperationDtoType.REGLEMENT_FACTURE_CLIENT ||
+			operationRealType == OperationDtoType.PAIEMENT_FACTURE_FOURNISSEUR
+			) {
+				PaymentRule paymentRule = paymentRuleService.findPaymentRuleBYId(operationRealId);
+				paymentRule.setIsValidated(true);
+				paymentRuleService.modifyPaymentRule(paymentRule);
+
+			} else if (operationRealType == OperationDtoType.DECAISSEMENT ) {
+				Decaissement decaissement = decaissementService.getDecaissementById(operationRealId);
+				decaissement.setIsValidated(true);
+				decaissementService.saveDecaissement(decaissement);
+
+			} else if (operationRealType == OperationDtoType.ENCAISSEMENT) {
+				Encaissement encaissement = encaissementService.getEncaissementById(operationRealId);
+				encaissement.setIsValidated(true);
+				encaissementService.saveEncaissement(encaissement);
+
+			} else if (operationRealType == OperationDtoType.COMISSION) {
+				Comission comission = comissionService.getComissionById(operationRealId);
+				comission.setIsValidated(true);
+				comissionService.saveComission(comission);
+
+			}
+	
 }
 }

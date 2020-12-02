@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apac.erp.cach.forecast.dtos.OperationTreserorieDto;
+import org.apac.erp.cach.forecast.enumeration.OperationDtoType;
 import org.apac.erp.cach.forecast.service.SupervisionTresorerieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -39,9 +40,16 @@ public class SupervisionTresorerieController {
 	}
 
 	@CrossOrigin
-	@PutMapping()
+	@PutMapping("rapprochement-bancaire")
 	public void rapprochementBancaireModifyOperation(@RequestBody OperationTreserorieDto operationDto) {
 		supervisionTresorerieService.rapprochementBancaireModifyOperation(operationDto);
+
+	}
+	
+	@CrossOrigin
+	@PutMapping("/rapprochement-bancaire/validate/{operationRealType}/{operationRealId}")
+	public void validate(@PathVariable("operationRealType") OperationDtoType operationRealType, @PathVariable("operationRealId") Long operationRealId) {
+		supervisionTresorerieService.validate(operationRealType, operationRealId);
 
 	}
 }
