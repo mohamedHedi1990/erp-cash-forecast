@@ -126,9 +126,9 @@ public class SupervisionTresorerieService {
 					operations.get(i).setProgressiveAmount(initialAmount - operations.get(i).getOperationAmount());
 			} else {
 				if(operations.get(i).getOpperationType() == OperationType.ENCAISSEMENT)
-					operations.get(i).setProgressiveAmount(operations.get(i-1).getOperationAmount() + operations.get(i).getOperationAmount());
+					operations.get(i).setProgressiveAmount(operations.get(i-1).getProgressiveAmount() + operations.get(i).getOperationAmount());
 					else
-						operations.get(i).setProgressiveAmount(operations.get(i-1).getOperationAmount() - operations.get(i).getOperationAmount());
+						operations.get(i).setProgressiveAmount(operations.get(i-1).getProgressiveAmount() - operations.get(i).getOperationAmount());
 			}
 			operations.get(i).setProgressiveAmountS( Utils.convertAmountToString(operations.get(i).getProgressiveAmount()));
 		}
