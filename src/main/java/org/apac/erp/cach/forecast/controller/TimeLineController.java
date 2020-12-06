@@ -37,7 +37,7 @@ public class TimeLineController {
 	@CrossOrigin
 	@GetMapping("/{timeLineId}")
 	public TimeLine findBankById(@PathVariable("timeLineId") Long timeLineId) {
-		return this.timeLineService.fetTimeLineById(timeLineId);
+		return this.timeLineService.findTimeLineById(timeLineId);
 	}
 	@CrossOrigin
 	@DeleteMapping("/{timeLineId}")

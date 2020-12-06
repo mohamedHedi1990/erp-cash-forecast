@@ -28,7 +28,7 @@ public class TimeLineService {
 		return this.timeLineRepo.findAll();
 	}
 	
-	public TimeLine fetTimeLineById(Long timeLineId) {
+	public TimeLine findTimeLineById(Long timeLineId) {
 		return this.timeLineRepo.findOne(timeLineId);
 	}
 

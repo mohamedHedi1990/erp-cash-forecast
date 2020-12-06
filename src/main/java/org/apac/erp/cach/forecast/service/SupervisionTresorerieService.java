@@ -19,6 +19,7 @@ import org.apac.erp.cach.forecast.persistence.entities.Encaissement;
 import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
 import org.apac.erp.cach.forecast.persistence.entities.TimeLine;
 import org.apac.erp.cach.forecast.persistence.entities.TimeLineEntry;
+import org.apac.erp.cach.forecast.persistence.repositories.TimeLineEntryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,6 +53,9 @@ public class SupervisionTresorerieService {
 	
 	@Autowired
 	private ComissionService comissionService;
+	
+	@Autowired
+	private TimeLineEntryService timeLineEntryService;
 
 	public List<OperationTreserorieDto> globalSupervisionEngage(Long accountId, Date startDate, Date endDate,
 			Boolean isValidated) {
@@ -84,10 +88,10 @@ public class SupervisionTresorerieService {
 		// Trouver tout les decaissements sur cette période
 		List<Decaissement> decaissements = decaissementService.findDecaissementsBetwwenTwoDates(bankAccount, startDate,
 				endDate);
-		if (isValidated) {
+		/*if (isValidated) {
 			decaissements = decaissements.stream().filter(decaissement -> decaissement.getIsValidated() == isValidated)
 					.collect(Collectors.toList());
-		}
+		}*/
 		List<OperationTreserorieDto> decaissementOperations = convertDecaissementsToOperationTreserorieList(
 				decaissements, comissions);
 		operations.addAll(decaissementOperations);
@@ -95,10 +99,10 @@ public class SupervisionTresorerieService {
 		// Trouver tout les encaissements sur cette période
 		List<Encaissement> encaissements = encaissementService.findEncaissementsBetwwenTwoDates(bankAccount, startDate,
 				endDate);
-		if (isValidated) {
+		/*if (isValidated) {
 			encaissements = encaissements.stream().filter(encaissement -> encaissement.getIsValidated() == isValidated)
 					.collect(Collectors.toList());
-		}
+		}*/
 		List<OperationTreserorieDto> encaissementOperations = convertEncaissementsToOperationTreserorieList(
 				encaissements, comissions);
 		operations.addAll(encaissementOperations);
@@ -139,7 +143,21 @@ public class SupervisionTresorerieService {
 	private List<OperationTreserorieDto> convertTimeLineEntriesToOperationsTreserorieList(List<TimeLineEntry> entries) {
 		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
 		entries.stream().forEach(entry -> {
+			
+			//une seule opération qui donne le montant total
 			OperationTreserorieDto operation = new OperationTreserorieDto();
+			operation.setOpperationType(OperationType.DECAISSEMENT);
+			operation.setOperationDate(entry.getLineDate());
+			operation.setOperationAmountS(entry.getTotalS());
+			operation.setOpperationLabel("PAIEMENT ECHEANCE CREDIT N° " + entry.getTimeLineCreditNumber());
+			operation.setOperationAmount(entry.getTotal());
+			operation.setIsValidated(entry.getIsValidated());
+			operation.setOperationRealId(entry.getTimeLineEntryId());
+			operation.setOperationRealType(OperationDtoType.ECHEANCHIER);
+			operations.add(operation);
+			
+			// code dedidé pour avoir deux opérations pour chaque entrée (unepour l'échénace princiaple et une autre pour le sinterets)
+			/*OperationTreserorieDto operation = new OperationTreserorieDto();
 			operation.setOpperationType(OperationType.DECAISSEMENT);
 			operation.setOperationDate(entry.getLineDate());
 			operation.setOperationAmountS(entry.getInitialAmountS());
@@ -161,7 +179,7 @@ public class SupervisionTresorerieService {
 			List<String> detailsPayements2 = new ArrayList<String>();
 			detailsPayements2.add("Paiement écheance intérets - Crédit No " + entry.getTimeLineCreditNumber());
 			operation2.setOpperationDetails(detailsPayements2);
-			operations.add(operation2);
+			operations.add(operation2);*/
 		});
 		return operations;
 	}
@@ -658,7 +676,9 @@ public void rapprochementBancaireModifyOperation(@RequestBody OperationTreserori
 		comissionService.saveComission(comission);
 
 	} else if (operation.getOperationRealType() == OperationDtoType.ECHEANCHIER) {
-		
+		TimeLine timeLine = timeLineService.findTimeLineById(operation.getOperationRealId());
+		timeLine.setTimeLineInitialAmount(operation.getOperationAmount());
+		timeLineService.saveTimeLine(timeLine);
 	}
 }
 
@@ -684,6 +704,11 @@ public void validate(OperationDtoType operationRealType, Long operationRealId) {
 				Comission comission = comissionService.getComissionById(operationRealId);
 				comission.setIsValidated(true);
 				comissionService.saveComission(comission);
+
+			} else if (operationRealType == OperationDtoType.ECHEANCHIER) {
+				TimeLineEntry entry = timeLineEntryService.findTimeLineEntryById(operationRealId);
+				entry.setIsValidated(true);
+				timeLineEntryService.saveTimeLineEntry(entry);
 
 			}
 	

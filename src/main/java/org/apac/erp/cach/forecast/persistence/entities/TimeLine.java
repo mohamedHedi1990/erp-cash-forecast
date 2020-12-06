@@ -16,9 +16,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.apac.erp.cach.forecast.constants.Utils;
 import org.apac.erp.cach.forecast.enumeration.Annuity;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Data;
 
@@ -49,8 +53,14 @@ public class TimeLine extends AuditableSql implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private Annuity timeLineAnnuity;
 	
+	private Integer timeLineAnnityNumber;
+	
 	private Double timeLineInterestRate;
 	private String timeLineInterestRateS;
+	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
+	@Temporal(TemporalType.DATE)
+	private Date timeLineStartDate;
 	
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<TimeLineEntry> timeLineTable;
