@@ -9,6 +9,7 @@ import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
 import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
 import org.apac.erp.cach.forecast.persistence.repositories.InvoiceRepository;
+import org.apac.erp.cach.forecast.persistence.repositories.PaymentRuleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,8 @@ public class InvoiceService {
 	
 	@Autowired
 	private InvoiceRepository invoiceRepo;
+    @Autowired
+	private PaymentRuleRepository paymentRuleRepository;
 	
 	public long betweenDates(java.util.Date date, java.util.Date date2) throws IOException {
 		return ChronoUnit.DAYS.between(date.toInstant(), date2.toInstant());
@@ -105,5 +108,15 @@ public class InvoiceService {
 		return savedInvoice;
 	}
 
-	
+	public Invoice updatePaymentRuleForInvoice(Long invoiceId, PaymentRule paymentRule) {
+		paymentRule.setPaymentRuleInvoices(""+invoiceId);
+		Invoice  invoice = findInvoiceById(invoiceId);
+		 PaymentRule paymentRule1=paymentRuleRepository.save(paymentRule);
+		invoice.setInvoicePayment(invoice.getInvoicePayment() + paymentRule.getPaymentRuleAmount());
+		if(Double.compare(invoice.getInvoicePayment(),invoice.getInvoiceTotalAmount()) == 0) {
+			invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
+		}
+		Invoice savedInvoice =  this.invoiceRepo.save(invoice);
+		return savedInvoice;
+	}
 }
