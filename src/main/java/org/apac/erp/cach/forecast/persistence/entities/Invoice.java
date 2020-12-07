@@ -69,7 +69,7 @@ public class Invoice extends AuditableSql implements Serializable {
 	
 	private String invoiceCurrency;
 
-	@OneToMany(cascade= CascadeType.ALL)
+	@OneToMany(mappedBy = "invoice",cascade= CascadeType.ALL)
 	private List<PaymentRule> invoicePaymentRules;
 	
 	@PrePersist

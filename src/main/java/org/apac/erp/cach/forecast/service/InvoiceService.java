@@ -93,6 +93,7 @@ public class InvoiceService {
 
 	public Invoice addPaymentRuleForInvoice(Long invoiceId, PaymentRule paymentRule) {
 		paymentRule.setPaymentRuleInvoices(""+invoiceId);
+		paymentRule.setInvoice(invoiceRepo.findOne(invoiceId));
 		Invoice  invoice = findInvoiceById(invoiceId);
 		List<PaymentRule> paymentRules = invoice.getInvoicePaymentRules();
 		if(paymentRules == null) {
@@ -110,6 +111,8 @@ public class InvoiceService {
 
 	public Invoice updatePaymentRuleForInvoice(Long invoiceId, PaymentRule paymentRule) {
 		paymentRule.setPaymentRuleInvoices(""+invoiceId);
+		paymentRule.setInvoice(invoiceRepo.findOne(invoiceId));
+
 		Invoice  invoice = findInvoiceById(invoiceId);
 		 PaymentRule paymentRule1=paymentRuleRepository.save(paymentRule);
 		invoice.setInvoicePayment(invoice.getInvoicePayment() + paymentRule.getPaymentRuleAmount());

@@ -4,19 +4,9 @@ import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.Date;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apac.erp.cach.forecast.constants.Utils;
 import org.apac.erp.cach.forecast.enumeration.OperationType;
 import org.apac.erp.cach.forecast.enumeration.PaymentMethod;
@@ -58,6 +48,11 @@ public class PaymentRule extends AuditableSql implements Serializable {
 	
 	@ManyToOne
 	private BankAccount paymentRuleAccount;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "invoice_id")
+	@JsonIgnore
+	private Invoice invoice;
 	
 	private String paymentRuleInvoices;
 	
