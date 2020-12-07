@@ -24,7 +24,7 @@ public class CustomerInvoiceController {
 	private CustomerInvoiceService customerInvoiceService;
 
 	@CrossOrigin
-	@GetMapping("/customers")
+	@GetMapping()
 	public List<CustomerInvoice> findAllCustomerInvoices() {
 
 		return customerInvoiceService.findAllCustomerInvoices();
