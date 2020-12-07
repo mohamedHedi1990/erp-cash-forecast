@@ -29,6 +29,7 @@ public class CustomerInvoiceService {
 	private InvoiceService invoiceService;
 
 	public List<CustomerInvoice> findAllCustomerInvoices() {
+
 		return customerInvoiceRepo.findAll();
 	}
 

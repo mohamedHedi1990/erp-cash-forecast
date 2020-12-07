@@ -3,12 +3,7 @@ package org.apac.erp.cach.forecast.controller;
 import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
 import org.apac.erp.cach.forecast.service.PaymentRuleService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/paymentRule")
@@ -28,6 +23,8 @@ public class PaymentRuleController {
 	public void deletePaymentRule(@PathVariable("paymentRuleId") Long paymentRuleId) {
 		 paymentRuleService.deletePaymentRule(paymentRuleId);
 	}
+
+
 /*
 	@CrossOrigin
 	@GetMapping("/methods")
