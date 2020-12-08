@@ -70,6 +70,7 @@ public class TimeLineEntry extends AuditableSql implements Serializable {
 		this.initialAmountS = Utils.convertAmountToString(this.initialAmount);
 		this.interestsS = Utils.convertAmountToString(this.interests);
 		this.tvaS = Utils.convertAmountToString(this.tva);
+		this.isValidated = false;
 		
 	}
 

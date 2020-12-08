@@ -109,14 +109,17 @@ public class SupervisionTresorerieService {
 
 		// Trouver la liste des time line entries
 		List<TimeLine> timeLines = timeLineService.findByTimeLineAccount(bankAccount);
-		for (TimeLine timeLine : timeLines) {
-			List<TimeLineEntry> entries = timeLine.getTimeLineTable();
-			entries = entries.stream().filter(entry -> entry.getLineDate().compareTo(startDate) >= 0
-					&& entry.getLineDate().compareTo(endDate) <= 0).collect(Collectors.toList());
-			List<OperationTreserorieDto> timeLineEntriesOperations = convertTimeLineEntriesToOperationsTreserorieList(
-					entries);
-			operations.addAll(timeLineEntriesOperations);
+		if(timeLines != null) {
+			for (TimeLine timeLine : timeLines) {
+				List<TimeLineEntry> entries = timeLine.getTimeLineTable();
+				entries = entries.stream().filter(entry -> entry.getLineDate().compareTo(startDate) >= 0
+						&& entry.getLineDate().compareTo(endDate) <= 0).collect(Collectors.toList());
+				List<OperationTreserorieDto> timeLineEntriesOperations = convertTimeLineEntriesToOperationsTreserorieList(
+						entries);
+				operations.addAll(timeLineEntriesOperations);
+			}
 		}
+		
 
 		operations = operations.stream().sorted(Comparator.comparing(OperationTreserorieDto::getOperationDate))
 				.collect(Collectors.toList());
