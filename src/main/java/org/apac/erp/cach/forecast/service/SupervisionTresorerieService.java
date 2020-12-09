@@ -115,7 +115,7 @@ public class SupervisionTresorerieService {
 				entries = entries.stream().filter(entry -> entry.getLineDate().compareTo(startDate) >= 0
 						&& entry.getLineDate().compareTo(endDate) <= 0).collect(Collectors.toList());
 				List<OperationTreserorieDto> timeLineEntriesOperations = convertTimeLineEntriesToOperationsTreserorieList(
-						entries);
+						entries, timeLine.getTimeLineCreditNumber());
 				operations.addAll(timeLineEntriesOperations);
 			}
 		}
@@ -143,7 +143,8 @@ public class SupervisionTresorerieService {
 		return operations;
 	}
 
-	private List<OperationTreserorieDto> convertTimeLineEntriesToOperationsTreserorieList(List<TimeLineEntry> entries) {
+	private List<OperationTreserorieDto> convertTimeLineEntriesToOperationsTreserorieList(List<TimeLineEntry> entries,
+			String creditNumber) {
 		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
 		entries.stream().forEach(entry -> {
 			
@@ -152,7 +153,7 @@ public class SupervisionTresorerieService {
 			operation.setOpperationType(OperationType.DECAISSEMENT);
 			operation.setOperationDate(entry.getLineDate());
 			operation.setOperationAmountS(entry.getTotalS());
-			operation.setOpperationLabel("PAIEMENT ECHEANCE CREDIT N° " + entry.getTimeLineCreditNumber());
+			operation.setOpperationLabel("PAIEMENT ECHEANCE CREDIT N° " + creditNumber);
 			operation.setOperationAmount(entry.getTotal());
 			operation.setIsValidated(entry.getIsValidated());
 			operation.setOperationRealId(entry.getTimeLineEntryId());
