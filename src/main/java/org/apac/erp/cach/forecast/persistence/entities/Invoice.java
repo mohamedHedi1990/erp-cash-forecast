@@ -2,6 +2,7 @@ package org.apac.erp.cach.forecast.persistence.entities;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Date;
 import java.util.List;
 
@@ -86,8 +87,11 @@ public class Invoice extends AuditableSql implements Serializable {
 
 	@PreUpdate
 	public void preUpdate() {
-		this.invoiceTotalAmount =Double.parseDouble(new DecimalFormat("##.###").format(this.invoiceTotalAmount));
-		this.invoicePayment =Double.parseDouble(new DecimalFormat("##.###").format(this.invoicePayment));
+		DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
+		simbolos.setGroupingSeparator(',');
+		simbolos.setDecimalSeparator('.');
+		this.invoiceTotalAmount =Double.parseDouble(new DecimalFormat("##.###",simbolos).format(this.invoiceTotalAmount));
+		this.invoicePayment =Double.parseDouble(new DecimalFormat("##.###",simbolos).format(this.invoicePayment));
 		this.invoiceTotalAmountS = Utils.convertAmountToString(this.invoiceTotalAmount);
 		this.invoicePaymentS = Utils.convertAmountToString(this.invoicePayment);
 	}

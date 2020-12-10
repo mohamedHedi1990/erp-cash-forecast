@@ -112,14 +112,32 @@ public class InvoiceService {
 	public Invoice updatePaymentRuleForInvoice(Long invoiceId, PaymentRule paymentRule) {
 		paymentRule.setPaymentRuleInvoices(""+invoiceId);
 		paymentRule.setInvoice(invoiceRepo.findOne(invoiceId));
-
+		PaymentRule paymentOlder=paymentRuleRepository.findOne(paymentRule.getPaymentRuleId());
+		Double paymentolders= paymentOlder.getPaymentRuleAmount();
 		Invoice  invoice = findInvoiceById(invoiceId);
-		 PaymentRule paymentRule1=paymentRuleRepository.save(paymentRule);
-		invoice.setInvoicePayment(invoice.getInvoicePayment() + paymentRule.getPaymentRuleAmount());
+		PaymentRule paymentRuleUpdate=paymentRuleRepository.save(paymentRule);
+		Double paymentNew=paymentRule.getPaymentRuleAmount();
+		Double paymentOlderInvoice=invoice.getInvoicePayment();
+		System.out.println("older payment invoice"+paymentOlderInvoice);
+		System.out.println("payment older"+paymentolders);
+		System.out.println("payment new:"+paymentNew);
+		Double newMontant=paymentOlderInvoice-paymentolders;
+		System.out.println("montant without payment older :"+paymentOlderInvoice+"-"+paymentolders+"="+newMontant);
+		newMontant=newMontant+ paymentRule.getPaymentRuleAmount();
+		System.out.println("montant with new  payment  "+newMontant);
+
+		System.out.println("payment Update:"+paymentRule.getPaymentRuleAmount());
+		System.out.println("payment rule older"+paymentRule);
+		System.out.println("payment rule new "+paymentRuleUpdate);
+		System.out.println("new payment "+newMontant);
+		invoice.setInvoicePayment(newMontant);
 		if(Double.compare(invoice.getInvoicePayment(),invoice.getInvoiceTotalAmount()) == 0) {
 			invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
 		}
+		System.out.println("invoiceto save "+invoice.toString());
 		Invoice savedInvoice =  this.invoiceRepo.save(invoice);
+		System.out.println("invoice saved "+invoice.toString());
+
 		return savedInvoice;
 	}
 }

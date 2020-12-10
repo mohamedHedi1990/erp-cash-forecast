@@ -1,6 +1,8 @@
 package org.apac.erp.cach.forecast.controller;
 
+import org.apac.erp.cach.forecast.persistence.entities.Invoice;
 import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
+import org.apac.erp.cach.forecast.service.InvoiceService;
 import org.apac.erp.cach.forecast.service.PaymentRuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +13,8 @@ public class PaymentRuleController {
 
 	@Autowired
 	private PaymentRuleService paymentRuleService;
+	@Autowired
+	private InvoiceService invoiceService;
 
 	@CrossOrigin
 	@PutMapping("/{paymentRuleId}")
@@ -21,7 +25,17 @@ public class PaymentRuleController {
 	@CrossOrigin
 	@DeleteMapping("/{paymentRuleId}")
 	public void deletePaymentRule(@PathVariable("paymentRuleId") Long paymentRuleId) {
-		 paymentRuleService.deletePaymentRule(paymentRuleId);
+		PaymentRule paymentRuleToDelete=paymentRuleService.findPaymentRuleBYId(paymentRuleId);
+		Invoice invoiceToUpdate=invoiceService.findInvoiceById(paymentRuleToDelete.getInvoice().getInvoiceId());
+		Double invoiceOlder=invoiceToUpdate.getInvoicePayment();
+		Double paymentRuleDelete=paymentRuleToDelete.getPaymentRuleAmount();
+		Double newInvoicePayment=invoiceOlder-paymentRuleDelete;
+		paymentRuleService.deletePaymentRule(paymentRuleId);
+		System.out.println("invoice older:"+invoiceOlder);
+		System.out.println("payment rule delete"+paymentRuleDelete);
+		System.out.println("montant invoice new "+newInvoicePayment);
+		invoiceToUpdate.setInvoicePayment(newInvoicePayment);
+       invoiceService.saveInvoice(invoiceToUpdate);
 	}
 
 
