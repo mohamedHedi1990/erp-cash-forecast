@@ -32,10 +32,7 @@ public class ProviderInvoiceService {
 	}
 
 	public ProviderInvoice saveProviderInvoice(ProviderInvoice invoice) {
-		//Provider provider = providerService.getProviderById(providerId);
-		//invoice.setProvider(provider);
 		invoice.setInvoiceStatus(InvoiceStatus.OPENED);
-		//invoice.setInvoiceTotalAmount(invoice.getInvoiceNet() + invoice.getInvoiceRs());
 
 		try {
 			long days = invoiceService.betweenDates(invoice.getInvoiceDate(), invoice.getInvoiceDeadlineDate());
@@ -46,9 +43,7 @@ public class ProviderInvoiceService {
 
 		if(invoice.getInvoiceId()!=null)
 		{
-			System.out.println("invoice id"+invoice.getInvoiceId());
-			System.out.println("invoice Payment "+invoice.getInvoicePayment());
-			System.out.println("total payment "+invoice.getInvoiceTotalAmount());
+
 			if(invoice.getInvoiceTotalAmount().compareTo(invoice.getInvoicePayment())==0) {
 
 				System.out.println("true");

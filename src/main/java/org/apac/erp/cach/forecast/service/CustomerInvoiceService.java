@@ -48,9 +48,7 @@ public class CustomerInvoiceService {
 
 		if(invoice.getInvoiceId()!=null)
 		{
-			System.out.println("invoice id"+invoice.getInvoiceId());
-			System.out.println("invoice Payment "+invoice.getInvoicePayment());
-			System.out.println("total payment "+invoice.getInvoiceTotalAmount());
+
 			if(invoice.getInvoiceTotalAmount().compareTo(invoice.getInvoicePayment())==0) {
 				invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
 				System.out.println("true");
