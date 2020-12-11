@@ -67,7 +67,7 @@ public class Encaissement extends AuditableSql implements Serializable {
 	@ManyToOne
 	private Customer encaissementCustomer;
 
-	private Boolean isValidated;
+	private boolean isValidated = false;
 
 	private String encaissementCurrency;
 	

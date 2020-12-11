@@ -47,7 +47,7 @@ public class EncaissementService {
 	public Encaissement validateEncaissement(Long encaissementId) {
 		Encaissement encaissement = getEncaissementById(encaissementId);
 		if(encaissement != null) {
-			encaissement.setIsValidated(true);
+			encaissement.setValidated(true);
 			encaissement =  this.encaissementRepo.save(encaissement);
 			
 			BankAccount account = encaissement.getEncaissementBankAccount();

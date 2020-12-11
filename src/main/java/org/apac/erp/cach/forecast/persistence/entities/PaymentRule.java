@@ -40,7 +40,7 @@ public class PaymentRule extends AuditableSql implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date paymentRuleDeadlineDate;
 
-	private Boolean isValidated;
+	private boolean isValidated = false;
 	
 	private Double paymentRuleAmount;
 
@@ -55,6 +55,8 @@ public class PaymentRule extends AuditableSql implements Serializable {
 	private Invoice invoice;
 	
 	private String paymentRuleInvoices;
+	
+	private boolean isRelatedComissionValidated = false;
 	
 	@Enumerated(EnumType.STRING)
 	private OperationType paymentRuleOperationType;

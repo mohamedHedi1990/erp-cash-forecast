@@ -48,8 +48,8 @@ public class SupervisionTresorerieController {
 	
 	@CrossOrigin
 	@PutMapping("/rapprochement-bancaire/validate/{operationRealType}/{operationRealId}")
-	public void validate(@PathVariable("operationRealType") OperationDtoType operationRealType, @PathVariable("operationRealId") Long operationRealId) {
-		supervisionTresorerieService.validate(operationRealType, operationRealId);
+	public void validate(@PathVariable("operationRealType") OperationDtoType operationRealType, @PathVariable("operationRealId") Long operationRealId, @RequestBody OperationTreserorieDto operation) {
+		supervisionTresorerieService.validate(operationRealType, operationRealId, operation);
 
 	}
 }
