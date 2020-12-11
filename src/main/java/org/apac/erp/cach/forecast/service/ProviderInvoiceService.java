@@ -43,6 +43,18 @@ public class ProviderInvoiceService {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+		if(invoice.getInvoiceId()!=null)
+		{
+			System.out.println("invoice id"+invoice.getInvoiceId());
+			System.out.println("invoice Payment "+invoice.getInvoicePayment());
+			System.out.println("total payment "+invoice.getInvoiceTotalAmount());
+			if(invoice.getInvoiceTotalAmount().compareTo(invoice.getInvoicePayment())==0) {
+
+				System.out.println("true");
+				invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
+			}
+		}
 		ProviderInvoice savedInvoice = providerInvoiceRepo.save(invoice);
 
 		return savedInvoice;
