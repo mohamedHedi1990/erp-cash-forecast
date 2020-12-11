@@ -30,7 +30,7 @@ public class CustomerInvoiceService {
 
 	public List<CustomerInvoice> findAllCustomerInvoices() {
 
-		return customerInvoiceRepo.findAll();
+		return customerInvoiceRepo.findAllByOrderByInvoiceDateDesc();
 	}
 
 	public CustomerInvoice saveCustomerInvoice(CustomerInvoice invoice) {

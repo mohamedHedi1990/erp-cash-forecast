@@ -28,7 +28,7 @@ public class ProviderInvoiceService {
 	private InvoiceService invoiceService;
 
 	public List<ProviderInvoice> findAllProviderInvoices() {
-		return providerInvoiceRepo.findAll();
+		return providerInvoiceRepo.findAllByOrderByInvoiceDateDesc();
 	}
 
 	public ProviderInvoice saveProviderInvoice(ProviderInvoice invoice) {
