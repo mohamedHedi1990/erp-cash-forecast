@@ -2,8 +2,10 @@ package org.apac.erp.cach.forecast.controller;
 
 import java.util.List;
 
+import org.apac.erp.cach.forecast.dtos.TimeLineInitialInfo;
 import org.apac.erp.cach.forecast.persistence.entities.TarifBancaire;
 import org.apac.erp.cach.forecast.persistence.entities.TimeLine;
+import org.apac.erp.cach.forecast.persistence.entities.TimeLineEntry;
 import org.apac.erp.cach.forecast.service.TimeLineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -43,6 +45,12 @@ public class TimeLineController {
 	@DeleteMapping("/{timeLineId}")
 	public void deleteTimeLine(@PathVariable("timeLineId") Long timeLineId) {
 		timeLineService.deleteTimeLine(timeLineId);
+	}
+
+	@CrossOrigin
+	@PostMapping("/time-line-table")
+	public List<TimeLineEntry> generateTimeLineTable(@RequestBody TimeLineInitialInfo timeLineInitialInfo) {
+		return timeLineService.generateTimeLineEntries(timeLineInitialInfo);
 	}
 
 

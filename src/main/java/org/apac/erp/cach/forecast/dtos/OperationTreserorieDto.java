@@ -22,9 +22,12 @@ public class OperationTreserorieDto {
 	private String opperationFacultatifLabel;
 	private List<String> opperationDetails;
 	private OperationType opperationType;
-	private Boolean isValidated;
+	private boolean isValidated = false;
 	private Long operationRealId;
 	private OperationDtoType operationRealType;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
 	private Date operationDate;
+	
+	
+	private String decaissementType;
 }

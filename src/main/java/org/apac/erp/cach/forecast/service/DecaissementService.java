@@ -115,7 +115,7 @@ public class DecaissementService {
 	public Decaissement validateDecaissement(Long decaissementId) {
 		Decaissement decaissement = getDecaissementById(decaissementId);
 		if(decaissement != null) {
-			decaissement.setIsValidated(true);
+			decaissement.setValidated(true);
 			decaissement =  this.decaissementRepo.save(decaissement);
 			BankAccount account = decaissement.getDecaissementBankAccount();
 			account.setAccountInitialAmount(account.getAccountInitialAmount() - decaissement.getDecaissementAmount());

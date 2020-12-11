@@ -38,8 +38,6 @@ public class Comission extends AuditableSql implements Serializable {
 	
 	private String comissionValueS;
 	
-	private Boolean isValidated;
-	
 	@Enumerated(EnumType.STRING)
 	private ComissionType commissionType;
 	

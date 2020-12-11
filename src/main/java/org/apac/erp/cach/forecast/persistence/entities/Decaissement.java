@@ -69,9 +69,11 @@ public class Decaissement extends AuditableSql implements Serializable {
 	@ManyToOne
 	private Provider decaissementProvider;
 	
-	private Boolean isValidated;
+	private boolean isValidated = false;
 	
 	private String decaissementCurrency;
+	
+	private boolean isRelatedComissionValidated = false;
 	
 	@PrePersist
 	public void initPR() {

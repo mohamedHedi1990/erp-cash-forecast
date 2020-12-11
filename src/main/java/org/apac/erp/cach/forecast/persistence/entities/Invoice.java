@@ -78,8 +78,11 @@ public class Invoice extends AuditableSql implements Serializable {
 		if (this.invoiceId == null) {
 			this.invoicePayment = 0.0;
 		}
-		this.invoiceTotalAmount =Double.parseDouble(new DecimalFormat("##.###").format(this.invoiceTotalAmount));
-		this.invoicePayment =Double.parseDouble(new DecimalFormat("##.###").format(this.invoicePayment));
+		DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
+		simbolos.setGroupingSeparator(',');
+		simbolos.setDecimalSeparator('.');
+		this.invoiceTotalAmount =Double.parseDouble(new DecimalFormat("##.###",simbolos).format(this.invoiceTotalAmount));
+		this.invoicePayment =Double.parseDouble(new DecimalFormat("##.###",simbolos).format(this.invoicePayment));
 		this.invoiceTotalAmountS = Utils.convertAmountToString(this.invoiceTotalAmount);
 		this.invoicePaymentS = Utils.convertAmountToString(this.invoicePayment);
 		

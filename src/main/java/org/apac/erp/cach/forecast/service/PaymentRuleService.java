@@ -39,7 +39,7 @@ public class PaymentRuleService {
 		PaymentRule paymentRule = findPaymentRuleBYId(paymentRuleId);
 		if(paymentRule != null) {
 			
-			paymentRule.setIsValidated(true);
+			paymentRule.setValidated(true);
 			paymentRule = this.paymentRuleRepo.save(paymentRule);
 			
 			BankAccount account = paymentRule.getPaymentRuleAccount();
