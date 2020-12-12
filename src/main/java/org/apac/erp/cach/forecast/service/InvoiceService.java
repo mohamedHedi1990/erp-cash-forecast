@@ -118,25 +118,16 @@ public class InvoiceService {
 		PaymentRule paymentRuleUpdate=paymentRuleRepository.save(paymentRule);
 		Double paymentNew=paymentRule.getPaymentRuleAmount();
 		Double paymentOlderInvoice=invoice.getInvoicePayment();
-		System.out.println("older payment invoice"+paymentOlderInvoice);
-		System.out.println("payment older"+paymentolders);
-		System.out.println("payment new:"+paymentNew);
 		Double newMontant=paymentOlderInvoice-paymentolders;
-		System.out.println("montant without payment older :"+paymentOlderInvoice+"-"+paymentolders+"="+newMontant);
 		newMontant=newMontant+ paymentRule.getPaymentRuleAmount();
-		System.out.println("montant with new  payment  "+newMontant);
-
-		System.out.println("payment Update:"+paymentRule.getPaymentRuleAmount());
-		System.out.println("payment rule older"+paymentRule);
-		System.out.println("payment rule new "+paymentRuleUpdate);
-		System.out.println("new payment "+newMontant);
 		invoice.setInvoicePayment(newMontant);
 		if(Double.compare(invoice.getInvoicePayment(),invoice.getInvoiceTotalAmount()) == 0) {
 			invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
 		}
-		System.out.println("invoiceto save "+invoice.toString());
+		else if(Double.compare(invoice.getInvoicePayment(),invoice.getInvoiceTotalAmount()) != 0) {
+			invoice.setInvoiceStatus(InvoiceStatus.OPENED);
+		}
 		Invoice savedInvoice =  this.invoiceRepo.save(invoice);
-		System.out.println("invoice saved "+invoice.toString());
 
 		return savedInvoice;
 	}

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
 import org.apac.erp.cach.forecast.persistence.entities.Provider;
 import org.apac.erp.cach.forecast.persistence.entities.ProviderInvoice;
+import org.apac.erp.cach.forecast.persistence.repositories.PaymentRuleRepository;
 import org.apac.erp.cach.forecast.persistence.repositories.ProviderInvoiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,8 @@ public class ProviderInvoiceService {
 
 	@Autowired
 	private InvoiceService invoiceService;
+	@Autowired
+	private PaymentRuleRepository paymentRuleRepository;
 
 	public List<ProviderInvoice> findAllProviderInvoices() {
 		return providerInvoiceRepo.findAllByOrderByInvoiceDateDesc();
@@ -33,7 +36,7 @@ public class ProviderInvoiceService {
 
 	public ProviderInvoice saveProviderInvoice(ProviderInvoice invoice) {
 		invoice.setInvoiceStatus(InvoiceStatus.OPENED);
-
+        ProviderInvoice providerInvoice=invoice;
 		try {
 			long days = invoiceService.betweenDates(invoice.getInvoiceDate(), invoice.getInvoiceDeadlineDate());
 			invoice.setInvoiceDeadlineInNumberOfDays((int) days);
@@ -46,12 +49,19 @@ public class ProviderInvoiceService {
 
 			if(invoice.getInvoiceTotalAmount().compareTo(invoice.getInvoicePayment())==0) {
 
-				System.out.println("true");
 				invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
 			}
 		}
-		ProviderInvoice savedInvoice = providerInvoiceRepo.save(invoice);
 
+		ProviderInvoice savedInvoice = providerInvoiceRepo.save(invoice);
+		if(providerInvoice.getInvoiceId()!=null) {
+			if(providerInvoice.getInvoicePaymentRules()!=null) {
+				providerInvoice.getInvoicePaymentRules().forEach(rule -> {
+					rule.setInvoice(savedInvoice);
+					paymentRuleRepository.save(rule);
+				});
+			}
+		}
 		return savedInvoice;
 	}
 	
