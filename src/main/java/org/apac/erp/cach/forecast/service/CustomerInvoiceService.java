@@ -8,6 +8,7 @@ import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
 import org.apac.erp.cach.forecast.persistence.entities.Customer;
 import org.apac.erp.cach.forecast.persistence.entities.CustomerInvoice;
 import org.apac.erp.cach.forecast.persistence.repositories.CustomerInvoiceRepository;
+import org.apac.erp.cach.forecast.persistence.repositories.PaymentRuleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.apac.erp.cach.forecast.dtos.InvoicesCustomerPayment;
@@ -27,18 +28,23 @@ public class CustomerInvoiceService {
 
 	@Autowired
 	private InvoiceService invoiceService;
+	@Autowired
+	private PaymentRuleRepository paymentRuleRepository;
 
 	public List<CustomerInvoice> findAllCustomerInvoices() {
 
 		return customerInvoiceRepo.findAllByOrderByInvoiceDateDesc();
 	}
-
+   public  List<CustomerInvoice>findAllByCustomerInvoices(Customer customer)
+   {
+   	 return  customerInvoiceRepo.findByCustomer(customer);
+   }
 	public CustomerInvoice saveCustomerInvoice(CustomerInvoice invoice) {
 		// Customer customer = customerService.getCustomerById(customerId);
 		// invoice.setCustomer(customer);
 		invoice.setInvoiceStatus(InvoiceStatus.OPENED);
 		// invoice.setInvoiceTotalAmount(invoice.getInvoiceNet() + invoice.getInvoiceRs());
-
+        CustomerInvoice customerInvoice=invoice;
 		try {
 			long days = invoiceService.betweenDates(invoice.getInvoiceDate(), invoice.getInvoiceDeadlineDate());
 			invoice.setInvoiceDeadlineInNumberOfDays((int) days);
@@ -51,11 +57,18 @@ public class CustomerInvoiceService {
 
 			if(invoice.getInvoiceTotalAmount().compareTo(invoice.getInvoicePayment())==0) {
 				invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
-				System.out.println("true");
 			}
 		}
-		CustomerInvoice savedInvoice = customerInvoiceRepo.save(invoice);
 
+		CustomerInvoice savedInvoice = customerInvoiceRepo.save(invoice);
+		if(customerInvoice.getInvoiceId()!=null) {
+			if(customerInvoice.getInvoicePaymentRules()!=null) {
+				customerInvoice.getInvoicePaymentRules().forEach(rule -> {
+					rule.setInvoice(savedInvoice);
+					paymentRuleRepository.save(rule);
+				});
+			}
+		}
 		return savedInvoice;
 	}
 	
