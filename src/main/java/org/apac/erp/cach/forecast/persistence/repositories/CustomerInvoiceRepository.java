@@ -11,5 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface CustomerInvoiceRepository extends JpaRepository<CustomerInvoice, Long> {
 
 	List<CustomerInvoice> findByCustomer(Customer customer);
+	List<CustomerInvoice>findAllByOrderByInvoiceDateDesc();
 
 }

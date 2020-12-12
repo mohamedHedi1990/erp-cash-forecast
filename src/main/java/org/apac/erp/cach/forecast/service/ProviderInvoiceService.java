@@ -28,20 +28,27 @@ public class ProviderInvoiceService {
 	private InvoiceService invoiceService;
 
 	public List<ProviderInvoice> findAllProviderInvoices() {
-		return providerInvoiceRepo.findAll();
+		return providerInvoiceRepo.findAllByOrderByInvoiceDateDesc();
 	}
 
 	public ProviderInvoice saveProviderInvoice(ProviderInvoice invoice) {
-		//Provider provider = providerService.getProviderById(providerId);
-		//invoice.setProvider(provider);
 		invoice.setInvoiceStatus(InvoiceStatus.OPENED);
-		//invoice.setInvoiceTotalAmount(invoice.getInvoiceNet() + invoice.getInvoiceRs());
 
 		try {
 			long days = invoiceService.betweenDates(invoice.getInvoiceDate(), invoice.getInvoiceDeadlineDate());
 			invoice.setInvoiceDeadlineInNumberOfDays((int) days);
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+
+		if(invoice.getInvoiceId()!=null)
+		{
+
+			if(invoice.getInvoiceTotalAmount().compareTo(invoice.getInvoicePayment())==0) {
+
+				System.out.println("true");
+				invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
+			}
 		}
 		ProviderInvoice savedInvoice = providerInvoiceRepo.save(invoice);
 

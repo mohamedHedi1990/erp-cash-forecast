@@ -13,4 +13,6 @@ import org.springframework.stereotype.Repository;
 public interface ProviderInvoiceRepository extends JpaRepository<ProviderInvoice, Long> {
 	List<ProviderInvoice> findByProvider(Provider provider);
 
+	List<ProviderInvoice>findAllByOrderByInvoiceDateDesc();
+
 }

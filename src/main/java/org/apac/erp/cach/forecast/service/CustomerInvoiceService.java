@@ -30,7 +30,7 @@ public class CustomerInvoiceService {
 
 	public List<CustomerInvoice> findAllCustomerInvoices() {
 
-		return customerInvoiceRepo.findAll();
+		return customerInvoiceRepo.findAllByOrderByInvoiceDateDesc();
 	}
 
 	public CustomerInvoice saveCustomerInvoice(CustomerInvoice invoice) {
@@ -44,6 +44,15 @@ public class CustomerInvoiceService {
 			invoice.setInvoiceDeadlineInNumberOfDays((int) days);
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+
+		if(invoice.getInvoiceId()!=null)
+		{
+
+			if(invoice.getInvoiceTotalAmount().compareTo(invoice.getInvoicePayment())==0) {
+				invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
+				System.out.println("true");
+			}
 		}
 		CustomerInvoice savedInvoice = customerInvoiceRepo.save(invoice);
 
