@@ -48,6 +48,12 @@ public class CustomerInvoiceController {
 	public List<CustomerInvoice> findAllCustomerInvoicesByCustomerId(@PathVariable("customerId") Long customerId) {
 		return customerInvoiceService.findAllCustomerInvoicesByCustomerId(customerId);
 	}
+	@CrossOrigin
+	@GetMapping("by-customer-id-and-opened-invoice/{customerId}")
+	public List<CustomerInvoice> findAllCustomerInvoicesByCustomerIdAndIsOpened(@PathVariable("customerId") Long customerId) {
+		return customerInvoiceService.findAllCustomerInvoicesByCustomerIdAndIsOpened(customerId);
+	}
+
 
 
 }

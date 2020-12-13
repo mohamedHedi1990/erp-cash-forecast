@@ -92,7 +92,13 @@ public class ProviderInvoiceService {
 		}
 		else return null;
 	}
-	
+	public List<ProviderInvoice> findAllProviderInvoicesByProviderIdAndIsOpened(Long providerId) {
+		Provider provider = providerService.getProviderById(providerId);
+		if(provider != null) {
+			return this.providerInvoiceRepo.findAllByProviderAndInvoiceStatus(provider,InvoiceStatus.OPENED);
+		}
+		else return null;
+	}
 	public ProviderInvoice getProviderInvoiceById(Long invoiceId) {
 		return this.providerInvoiceRepo.findOne(invoiceId);
 	}
