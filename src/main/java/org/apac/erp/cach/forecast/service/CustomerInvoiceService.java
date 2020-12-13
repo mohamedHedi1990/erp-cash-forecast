@@ -103,6 +103,13 @@ public class CustomerInvoiceService {
 		}
 		else return null;
 	}
+	public List<CustomerInvoice> findAllCustomerInvoicesByCustomerIdAndIsOpened(Long customerId) {
+		Customer customer = customerService.getCustomerById(customerId);
+		if(customer != null) {
+			return this.customerInvoiceRepo.findAllByCustomerAndInvoiceStatus(customer,InvoiceStatus.OPENED);
+		}
+		else return null;
+	}
 	
 
 }
