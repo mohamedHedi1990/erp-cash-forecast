@@ -58,7 +58,7 @@ public class BankAccount extends AuditableSql implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Contact> accountContacts;
 	
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "bankAccount",cascade = CascadeType.ALL)
 	private List<Comission> accountComissions;
 	
 	@PrePersist
