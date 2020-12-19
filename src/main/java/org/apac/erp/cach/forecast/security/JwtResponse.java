@@ -1,19 +1,19 @@
 package org.apac.erp.cach.forecast.security;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.List;
 @Data
 @AllArgsConstructor
 public class JwtResponse {
-    private String jwt;
+	private String token;
 
-    private Long id;
+	private Long id;
 
-    private String username;
+	private String username;
 
-
-    private List<String> roles ;
+	private List<String> roles;
 
 }

@@ -1,5 +1,10 @@
 package org.apac.erp.cach.forecast.security;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+
 import org.apac.erp.cach.forecast.persistence.repositories.RoleRepository;
 import org.apac.erp.cach.forecast.persistence.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,47 +13,47 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import javax.validation.Valid;
-import java.util.List;
-import java.util.stream.Collectors;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-    @Autowired
-    PasswordEncoder encoder;
+	@Autowired
+	PasswordEncoder encoder;
 
-    @Autowired
-    AuthenticationManager authenticationManager;
+	@Autowired
+	AuthenticationManager authenticationManager;
 
-    @Autowired
-    UserRepository userRepository;
+	@Autowired
+	UserRepository userRepository;
 
-    @Autowired
-    RoleRepository roleRepository;
+	@Autowired
+	RoleRepository roleRepository;
 
+	@Autowired
+	JwtUtils jwtUtils;
 
-    @Autowired
-    JwtUtils jwtUtils;
-    @CrossOrigin
-    @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+	@CrossOrigin
+	@PostMapping("/signin")
+	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getUserPassword()));
+		Authentication authentication = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getUserPassword()));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
-        System.out.println("jwt:"+jwt);
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
-                .collect(Collectors.toList());
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		String token = jwtUtils.generateJwtToken(authentication);
+		System.out.println("token:" + token);
+		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+		List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
+				.collect(Collectors.toList());
 
-        return  ResponseEntity.ok(new JwtResponse(jwt,userDetails.getId(),userDetails.getUsername(),roles));
-    }
+		return ResponseEntity.ok(new JwtResponse(token, userDetails.getId(), userDetails.getUsername(), roles));
+	}
 
 }
