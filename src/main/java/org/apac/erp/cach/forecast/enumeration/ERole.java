@@ -1,5 +1,5 @@
 package org.apac.erp.cach.forecast.enumeration;
 
-public enum Role {
+public enum ERole {
 	ADMINISTRATOR, SIMPLE, CAISSIER
 }
