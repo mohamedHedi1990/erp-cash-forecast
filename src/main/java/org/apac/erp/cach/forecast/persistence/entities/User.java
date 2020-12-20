@@ -1,18 +1,12 @@
 package org.apac.erp.cach.forecast.persistence.entities;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
+import javax.persistence.*;
 
-import org.apac.erp.cach.forecast.enumeration.Role;
+import org.apac.erp.cach.forecast.enumeration.ERole;
 
 import lombok.Data;
 
@@ -27,11 +21,14 @@ public class User extends AuditableSql implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userId;
 
-	private String userLogin;
+	private String username;
 
 	private String userPassword;
 
-	@Enumerated(EnumType.STRING)
-	private Role userRole;
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(	name = "erp_user_roles",
+			joinColumns = @JoinColumn(name = "user_id"),
+			inverseJoinColumns = @JoinColumn(name = "role_id"))
+	private Set<Role> roles = new HashSet<>();
 
 }
