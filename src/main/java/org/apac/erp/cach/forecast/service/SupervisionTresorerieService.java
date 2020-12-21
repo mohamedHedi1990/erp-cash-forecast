@@ -1,5 +1,7 @@
 package org.apac.erp.cach.forecast.service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -59,6 +61,28 @@ public class SupervisionTresorerieService {
 
 	public List<OperationTreserorieDto> globalSupervisionEngage(Long accountId, Date startDate, Date endDate,
 			Boolean isValidated) {
+		
+		//test
+		
+		System.out.println("start date --------------------------- " + startDate);
+		
+		System.out.println("end date ----------------------------- " + endDate);
+		ZoneId z = ZoneId.of("Africa/Tunis");
+		LocalDate localStartDate = startDate.toInstant().atZone(z).toLocalDate();
+		LocalDate localEndDate = endDate.toInstant().atZone(z).toLocalDate();
+		
+		Date startDate1 = Date.from(localStartDate.atStartOfDay(z).toInstant());
+		Date endDate1 = Date.from(localEndDate.atStartOfDay(z).toInstant());
+		
+		System.out.println("start date --------------------------- " + startDate1);
+		
+		System.out.println("end date ----------------------------- " + endDate1);
+		
+		//fin test
+		
+		
+		
+		
 		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
 
 		BankAccount bankAccount = bankAccountService.getAccountById(accountId);
