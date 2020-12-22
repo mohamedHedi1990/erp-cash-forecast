@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apac.erp.cach.forecast.enumeration.OperationDtoType;
 import org.apac.erp.cach.forecast.enumeration.OperationType;
+import org.apac.erp.cach.forecast.persistence.entities.BankAccount;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -28,6 +29,6 @@ public class OperationTreserorieDto {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
 	private Date operationDate;
 	
-	
+	private BankAccount operationAccount;
 	private String decaissementType;
 }
