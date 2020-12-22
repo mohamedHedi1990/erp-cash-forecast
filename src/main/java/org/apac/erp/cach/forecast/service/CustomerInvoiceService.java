@@ -33,7 +33,7 @@ public class CustomerInvoiceService {
 
 	public List<CustomerInvoice> findAllCustomerInvoices() {
 
-		return customerInvoiceRepo.findAllByOrderByInvoiceDateDesc();
+		return customerInvoiceRepo.findAllByOrderByInvoiceNumberDesc();
 	}
    public  List<CustomerInvoice>findAllByCustomerInvoices(Customer customer)
    {
