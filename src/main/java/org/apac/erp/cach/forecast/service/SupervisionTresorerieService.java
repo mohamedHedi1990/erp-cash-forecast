@@ -91,7 +91,7 @@ public class SupervisionTresorerieService {
 		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
 
 		BankAccount bankAccount = bankAccountService.getAccountById(accountId);
-		HistoricAccountSold lastAmountOfAccount = this.historicAccountSoldService.findTheBeginningSold(bankAccount.getAccountId(), startDate);
+		HistoricAccountSold lastAmountOfAccount = this.historicAccountSoldService.findFirst(bankAccount.getAccountId(), startDate);
 		//Double initialAmount = bankAccount.getAccountInitialAmount();
 		Double initialAmount = lastAmountOfAccount.getSolde();
 		List<Comission> comissions = new ArrayList<Comission>();
