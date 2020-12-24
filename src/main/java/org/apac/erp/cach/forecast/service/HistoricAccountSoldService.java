@@ -38,7 +38,7 @@ public class HistoricAccountSoldService {
 
 	public HistoricAccountSold findFirst(Long accountId, Date startDate) {
 		BankAccount bankAccount = this.accountService.getAccountById(accountId);
-		HistoricAccountSold beginSoldeHistoric = this.historicAccountSoldRepo.findTopByBankAccountAndDateGreaterThanEqualOrderByCreatedAtAsc(bankAccount, startDate);
+		HistoricAccountSold beginSoldeHistoric = this.historicAccountSoldRepo.findTopByBankAccountAndDateLessThanEqualOrderByCreatedAtDesc(bankAccount, startDate);
 		
 		return beginSoldeHistoric;
 	}
