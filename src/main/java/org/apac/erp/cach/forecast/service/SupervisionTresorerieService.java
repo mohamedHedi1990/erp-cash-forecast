@@ -93,7 +93,10 @@ public class SupervisionTresorerieService {
 		BankAccount bankAccount = bankAccountService.getAccountById(accountId);
 		HistoricAccountSold lastAmountOfAccount = this.historicAccountSoldService.findFirst(bankAccount.getAccountId(), startDate);
 		//Double initialAmount = bankAccount.getAccountInitialAmount();
-		Double initialAmount = lastAmountOfAccount.getSolde();
+		Double initialAmount = 0.0;
+		if(lastAmountOfAccount != null) {
+			initialAmount = lastAmountOfAccount.getSolde();
+		} 
 		List<Comission> comissions = new ArrayList<Comission>();
 		if (bankAccount.getAccountComissions() != null) {
 			comissions = bankAccount.getAccountComissions();

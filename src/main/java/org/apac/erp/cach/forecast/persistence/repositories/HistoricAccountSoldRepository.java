@@ -14,5 +14,7 @@ public interface HistoricAccountSoldRepository extends JpaRepository<HistoricAcc
 	public HistoricAccountSold findTopByBankAccountAndDateLessThanEqualOrderByCreatedAtDesc(BankAccount bankAccount, Date endDate);
 		
 	public HistoricAccountSold findTopByBankAccountAndDateGreaterThanEqualOrderByCreatedAtAsc(BankAccount bankAccount, Date startDate);
+	
+	public HistoricAccountSold findTopByBankAccountOrderByCreatedAtAsc(BankAccount bankAccount);
 
 }

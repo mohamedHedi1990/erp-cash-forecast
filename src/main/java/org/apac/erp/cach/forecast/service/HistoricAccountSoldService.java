@@ -45,4 +45,13 @@ public class HistoricAccountSoldService {
 	public HistoricAccountSold saveHistoricSolde(HistoricAccountSold historicSolde) {
 		return this.historicAccountSoldRepo.save(historicSolde);
 	}
+	
+	public HistoricAccountSold findTopByBankAccountOrderByCreatedAtAsc(BankAccount bankAccount) {
+		return this.historicAccountSoldRepo.findTopByBankAccountOrderByCreatedAtAsc(bankAccount);
+	}
+
+	public HistoricAccountSold findFirstSavedHistoric(Long accountId) {
+		BankAccount bankAccount = this.accountService.getAccountById(accountId);
+		return findTopByBankAccountOrderByCreatedAtAsc(bankAccount);
+	}
 }
