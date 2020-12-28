@@ -13,6 +13,6 @@ public interface CustomerInvoiceRepository extends JpaRepository<CustomerInvoice
 
 	List<CustomerInvoice> findByCustomer(Customer customer);
 	List<CustomerInvoice>findAllByCustomerAndInvoiceStatus(Customer customer, InvoiceStatus invoiceStatus);
-	List<CustomerInvoice>findAllByOrderByInvoiceDateDesc();
+	List<CustomerInvoice>findAllByOrderByInvoiceNumberDesc();
 
 }

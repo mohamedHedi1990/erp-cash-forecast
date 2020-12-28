@@ -19,11 +19,11 @@ public class HistoricAccountSoldService {
 	private BankAccountService accountService;
 	
 	public HistoricAccountSold findFirstByBankAccountAndCreatedAtLessThanEqualOrderByCreatedAtDesc(BankAccount bankAccount, Date endDate) {
-		return this.historicAccountSoldRepo.findTopByBankAccountAndCreatedAtLessThanEqualOrderByCreatedAtDesc(bankAccount, endDate);
+		return this.historicAccountSoldRepo.findTopByBankAccountAndDateLessThanEqualOrderByCreatedAtDesc(bankAccount, endDate);
 	}
 	
 	public HistoricAccountSold findFirstByBankAccountAndCreatedAtGreaterThanEqualOrderByCreatedAtAsc(BankAccount bankAccount, Date startDate) {
-		return this.historicAccountSoldRepo.findTopByBankAccountAndCreatedAtGreaterThanEqualOrderByCreatedAtAsc(bankAccount, startDate);
+		return this.historicAccountSoldRepo.findTopByBankAccountAndDateGreaterThanEqualOrderByCreatedAtAsc(bankAccount, startDate);
 	}
 
 	public HistoricAccountSold findTheBeginningSold(Long accountId, Date startDate) {
@@ -36,7 +36,22 @@ public class HistoricAccountSoldService {
 		return beginSoldeHistoric;
 	}
 
+	public HistoricAccountSold findFirst(Long accountId, Date startDate) {
+		BankAccount bankAccount = this.accountService.getAccountById(accountId);
+		HistoricAccountSold beginSoldeHistoric = this.historicAccountSoldRepo.findTopByBankAccountAndDateLessThanEqualOrderByCreatedAtDesc(bankAccount, startDate);
+		
+		return beginSoldeHistoric;
+	}
 	public HistoricAccountSold saveHistoricSolde(HistoricAccountSold historicSolde) {
 		return this.historicAccountSoldRepo.save(historicSolde);
+	}
+	
+	public HistoricAccountSold findTopByBankAccountOrderByCreatedAtAsc(BankAccount bankAccount) {
+		return this.historicAccountSoldRepo.findTopByBankAccountOrderByCreatedAtAsc(bankAccount);
+	}
+
+	public HistoricAccountSold findFirstSavedHistoric(Long accountId) {
+		BankAccount bankAccount = this.accountService.getAccountById(accountId);
+		return findTopByBankAccountOrderByCreatedAtAsc(bankAccount);
 	}
 }

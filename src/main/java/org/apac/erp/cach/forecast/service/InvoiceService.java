@@ -131,4 +131,11 @@ public class InvoiceService {
 
 		return savedInvoice;
 	}
+
+	public Invoice closeInvoice(Long invoiceId) {
+		Invoice invoice = findInvoiceById(invoiceId);
+		invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
+		return this.saveInvoice(invoice);
+		
+	}
 }

@@ -1,5 +1,7 @@
 package org.apac.erp.cach.forecast.service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -17,6 +19,7 @@ import org.apac.erp.cach.forecast.persistence.entities.BankAccount;
 import org.apac.erp.cach.forecast.persistence.entities.Comission;
 import org.apac.erp.cach.forecast.persistence.entities.Decaissement;
 import org.apac.erp.cach.forecast.persistence.entities.Encaissement;
+import org.apac.erp.cach.forecast.persistence.entities.HistoricAccountSold;
 import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
 import org.apac.erp.cach.forecast.persistence.entities.TimeLine;
 import org.apac.erp.cach.forecast.persistence.entities.TimeLineEntry;
@@ -56,13 +59,44 @@ public class SupervisionTresorerieService {
 
 	@Autowired
 	private TimeLineEntryService timeLineEntryService;
+	
+	@Autowired
+	private HistoricAccountSoldService historicAccountSoldService;
+	
 
 	public List<OperationTreserorieDto> globalSupervisionEngage(Long accountId, Date startDate, Date endDate,
 			Boolean isValidated) {
+		
+		//test
+		
+		System.out.println("start date --------------------------- " + startDate);
+		
+		System.out.println("end date ----------------------------- " + endDate);
+		ZoneId z = ZoneId.of("Africa/Tunis");
+		LocalDate localStartDate = startDate.toInstant().atZone(z).toLocalDate();
+		LocalDate localEndDate = endDate.toInstant().atZone(z).toLocalDate();
+		
+		Date startDate1 = Date.from(localStartDate.atStartOfDay(z).toInstant());
+		Date endDate1 = Date.from(localEndDate.atStartOfDay(z).toInstant());
+		
+		System.out.println("start date --------------------------- " + startDate1);
+		
+		System.out.println("end date ----------------------------- " + endDate1);
+		
+		//fin test
+		
+		
+		
+		
 		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
 
 		BankAccount bankAccount = bankAccountService.getAccountById(accountId);
-		Double initialAmount = bankAccount.getAccountInitialAmount();
+		HistoricAccountSold lastAmountOfAccount = this.historicAccountSoldService.findFirst(bankAccount.getAccountId(), startDate);
+		//Double initialAmount = bankAccount.getAccountInitialAmount();
+		Double initialAmount = 0.0;
+		if(lastAmountOfAccount != null) {
+			initialAmount = lastAmountOfAccount.getSolde();
+		} 
 		List<Comission> comissions = new ArrayList<Comission>();
 		if (bankAccount.getAccountComissions() != null) {
 			comissions = bankAccount.getAccountComissions();
@@ -248,7 +282,8 @@ public class SupervisionTresorerieService {
 			operation.setOperationAmount(paymentRule.getPaymentRuleAmount());
 			operation.setOperationRealId(paymentRule.getPaymentRuleId());
 			operation.setValidated(paymentRule.isValidated());
-
+			operation.setOperationAccount(paymentRule.getPaymentRuleAccount());
+			
 			List<String> detailsPayements = new ArrayList<String>();
 			detailsPayements.add(paymentRule.getPaymentRulePaymentMethod().toString());
 			detailsPayements.add(paymentRule.getPaymentRuleNumber());
@@ -320,6 +355,7 @@ public class SupervisionTresorerieService {
 						operationCom.setOperationRealId(paymentRule.getPaymentRuleId());
 						operationCom.setOperationRealType(OperationDtoType.COMISSION);
 						operationCom.setValidated(paymentRule.isRelatedComissionValidated());
+						operationCom.setOperationAccount(paymentRule.getPaymentRuleAccount());
 						operationCom.setDecaissementType(Constants.PAYMENT_RULE);
 						operationCom
 								.setOpperationLabel("COMISSION REMISE CHEQUE N° " + paymentRule.getPaymentRuleNumber());
@@ -346,6 +382,7 @@ public class SupervisionTresorerieService {
 						operationCom.setOpperationCurrency(operation.getOpperationCurrency());
 						operationCom.setOperationRealId(paymentRule.getPaymentRuleId());
 						operationCom.setOperationRealType(OperationDtoType.COMISSION);
+						operationCom.setOperationAccount(paymentRule.getPaymentRuleAccount());
 						operationCom.setValidated(paymentRule.isRelatedComissionValidated());
 						operationCom.setDecaissementType(Constants.PAYMENT_RULE);
 						List<String> detailsPayementsCom = new ArrayList<String>();
@@ -369,6 +406,8 @@ public class SupervisionTresorerieService {
 						operationCom.setValidated(paymentRule.isRelatedComissionValidated());
 						operationCom.setDecaissementType(Constants.PAYMENT_RULE);
 						operationCom.setOperationRealType(OperationDtoType.COMISSION);
+						operationCom.setOperationAccount(paymentRule.getPaymentRuleAccount());
+
 						operationCom
 								.setOpperationLabel("COMISSION REMISE TRAITE N° " + paymentRule.getPaymentRuleNumber());
 						operationCom.setOpperationCurrency(operation.getOpperationCurrency());
@@ -453,6 +492,7 @@ public class SupervisionTresorerieService {
 			operation.setOperationRealId(decaissement.getDecaissementId());
 			operation.setOperationRealType(OperationDtoType.DECAISSEMENT);
 			operation.setValidated(decaissement.isValidated());
+			operation.setOperationAccount(decaissement.getDecaissementBankAccount());
 			List<String> detailsPayements = new ArrayList<String>();
 			detailsPayements.add(decaissement.getDecaissementPaymentType().toString());
 			detailsPayements.add(decaissement.getDecaissementPaymentRuleNumber());
@@ -492,6 +532,8 @@ public class SupervisionTresorerieService {
 					operationCom.setOpperationLabel(
 							"COMISSION REMISE CHEQUE N° " + decaissement.getDecaissementPaymentRuleNumber());
 					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
+					operationCom.setOperationAccount(decaissement.getDecaissementBankAccount());
+
 					List<String> detailsPayementsCom = new ArrayList<String>();
 					detailsPayements.add(
 							"Comission de remise de chèque numéro " + decaissement.getDecaissementPaymentRuleNumber());
@@ -514,6 +556,7 @@ public class SupervisionTresorerieService {
 					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
 					operationCom.setValidated(decaissement.isRelatedComissionValidated());
 					operationCom.setDecaissementType(Constants.DECAISSEMENT);
+					operationCom.setOperationAccount(decaissement.getDecaissementBankAccount());
 					List<String> detailsPayementsCom = new ArrayList<String>();
 					detailsPayements.add("Comission de virement ");
 					operationCom.setOperationRealId(decaissement.getDecaissementId());
@@ -533,6 +576,7 @@ public class SupervisionTresorerieService {
 					operationCom.setOperationDate(decaissement.getDecaissementDeadlineDate());
 					operationCom.setOperationAmountS(com.getComissionValueS());
 					operationCom.setOperationAmount(com.getComissionValue());
+					operationCom.setOperationAccount(decaissement.getDecaissementBankAccount());
 					operationCom.setOperationRealId(decaissement.getDecaissementId());
 					operationCom.setOperationRealType(OperationDtoType.COMISSION);
 					operationCom.setValidated(decaissement.isRelatedComissionValidated());
@@ -619,6 +663,7 @@ public class SupervisionTresorerieService {
 			detailsPayements.add(encaissement.getEncaissementPaymentType().toString());
 			detailsPayements.add(encaissement.getEncaissementPaymentRuleNumber());
 			detailsPayements.add(encaissement.getEncaissementDetails());
+			operation.setOperationAccount(encaissement.getEncaissementBankAccount());
 			operation.setOperationRealId(encaissement.getEncaissementId());
 			operation.setOperationRealType(OperationDtoType.ENCAISSEMENT);
 			operation.setValidated(encaissement.isValidated());
@@ -795,32 +840,55 @@ public class SupervisionTresorerieService {
 			PaymentRule paymentRule = paymentRuleService.findPaymentRuleBYId(operationRealId);
 			paymentRule.setValidated(true);
 			paymentRuleService.modifyPaymentRule(paymentRule);
+			BankAccount account = paymentRule.getPaymentRuleAccount();
+			if(operationRealType == OperationDtoType.REGLEMENT_FACTURE_CLIENT) {
+				account.setAccountInitialAmount(account.getAccountInitialAmount() + paymentRule.getPaymentRuleAmount());
+			} else if(operationRealType == OperationDtoType.PAIEMENT_FACTURE_FOURNISSEUR) {
+				account.setAccountInitialAmount(account.getAccountInitialAmount() - paymentRule.getPaymentRuleAmount());
+			}
+			
+			bankAccountService.saveAccount(account);
 
 		} else if (operationRealType == OperationDtoType.DECAISSEMENT) {
 			Decaissement decaissement = decaissementService.getDecaissementById(operationRealId);
 			decaissement.setValidated(true);
 			decaissementService.saveDecaissement(decaissement);
+			BankAccount account = decaissement.getDecaissementBankAccount();
+			account.setAccountInitialAmount(account.getAccountInitialAmount() - decaissement.getDecaissementAmount());
+			bankAccountService.saveAccount(account);
 
 		} else if (operationRealType == OperationDtoType.ENCAISSEMENT) {
 			Encaissement encaissement = encaissementService.getEncaissementById(operationRealId);
 			encaissement.setValidated(true);
 			encaissementService.saveEncaissement(encaissement);
+			BankAccount account = encaissement.getEncaissementBankAccount();
+			account.setAccountInitialAmount(account.getAccountInitialAmount() + encaissement.getEncaissementAmount());
+			bankAccountService.saveAccount(account);
 
 		} else if (operationRealType == OperationDtoType.COMISSION) {
 			if (operation.getDecaissementType().equals(Constants.PAYMENT_RULE)) {
 				PaymentRule paymentRule = paymentRuleService.findPaymentRuleBYId(operationRealId);
 				paymentRule.setRelatedComissionValidated(true);
 				paymentRuleService.modifyPaymentRule(paymentRule);
+				BankAccount account = operation.getOperationAccount();
+				account.setAccountInitialAmount(account.getAccountInitialAmount() - operation.getOperationAmount());
+				bankAccountService.saveAccount(account);
 			} else if (operation.getDecaissementType().equals(Constants.DECAISSEMENT)) {
 				Decaissement decaissement = decaissementService.getDecaissementById(operationRealId);
 				decaissement.setRelatedComissionValidated(true);
 				decaissementService.saveDecaissement(decaissement);
+				BankAccount account = operation.getOperationAccount();
+				account.setAccountInitialAmount(account.getAccountInitialAmount() - operation.getOperationAmount());
+				bankAccountService.saveAccount(account);
 			}
 
 		} else if (operationRealType == OperationDtoType.ECHEANCHIER) {
 			TimeLineEntry entry = timeLineEntryService.findTimeLineEntryById(operationRealId);
 			entry.setIsValidated(true);
 			timeLineEntryService.saveTimeLineEntry(entry);
+			BankAccount account = operation.getOperationAccount();
+			account.setAccountInitialAmount(account.getAccountInitialAmount() - operation.getOperationAmount());
+			bankAccountService.saveAccount(account);
 
 		}
 
