@@ -6,6 +6,7 @@ import java.util.List;
 import org.apac.erp.cach.forecast.persistence.entities.BankAccount;
 import org.apac.erp.cach.forecast.persistence.entities.HistoricAccountSold;
 import org.apac.erp.cach.forecast.persistence.repositories.BankAccountRepository;
+import org.apac.erp.cach.forecast.persistence.repositories.HistoricAccountSoldRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,8 @@ public class BankAccountService {
 	
 	@Autowired
 	private HistoricAccountSoldService historicAccountSoldService;
+	@Autowired
+	private HistoricAccountSoldRepository historicAccountSoldRepository;
 
 	public BankAccount saveAccount(BankAccount account) {
 		BankAccount accountB = this.bankAccountRepo.save(account);
@@ -34,6 +37,11 @@ public class BankAccountService {
 	}
 
 	public void deleteAccount(Long accountId) {
+         BankAccount bankAccount =this.bankAccountRepo.findOne(accountId);
+         List<HistoricAccountSold>historicAccountSolds=this.historicAccountSoldRepository.findByBankAccount(bankAccount);
+		 historicAccountSolds.forEach(historicAccountSold -> {
+		 	this.historicAccountSoldRepository.delete(historicAccountSold);
+		 });
 		 this.bankAccountRepo.delete(accountId);
 		
 	}
