@@ -8,6 +8,8 @@ import org.apac.erp.cach.forecast.persistence.entities.HistoricAccountSold;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
+
 @Repository
 public interface HistoricAccountSoldRepository extends JpaRepository<HistoricAccountSold, Long>{
 
@@ -17,4 +19,6 @@ public interface HistoricAccountSoldRepository extends JpaRepository<HistoricAcc
 	
 	public HistoricAccountSold findTopByBankAccountOrderByCreatedAtAsc(BankAccount bankAccount);
 	List<HistoricAccountSold> findByBankAccount(BankAccount bankAccount);
+	@Transactional
+	public void deleteAllByBankAccount(BankAccount bankAccount);
 }

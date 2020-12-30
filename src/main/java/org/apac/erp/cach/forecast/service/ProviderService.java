@@ -34,7 +34,10 @@ public class ProviderService {
 	public List<Provider> getAllProviders() {
 		return this.providerRepo.findAll();
 	}
-	
+	public List<Provider> getAllProvidersByLabelProvider() {
+		return this.providerRepo.findAllByOrderByProviderLabel();
+	}
+
 	public Provider getProviderById(Long providerId) {
 		return this.providerRepo.findOne(providerId);
 	}

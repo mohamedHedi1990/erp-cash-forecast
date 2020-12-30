@@ -38,10 +38,7 @@ public class BankAccountService {
 
 	public void deleteAccount(Long accountId) {
          BankAccount bankAccount =this.bankAccountRepo.findOne(accountId);
-         List<HistoricAccountSold>historicAccountSolds=this.historicAccountSoldRepository.findByBankAccount(bankAccount);
-		 historicAccountSolds.forEach(historicAccountSold -> {
-		 	this.historicAccountSoldRepository.delete(historicAccountSold);
-		 });
+		 this.historicAccountSoldRepository.deleteAllByBankAccount(bankAccount);
 		 this.bankAccountRepo.delete(accountId);
 		
 	}

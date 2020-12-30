@@ -5,6 +5,8 @@ import org.apac.erp.cach.forecast.persistence.repositories.ComissionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ComissionService {
 
@@ -21,5 +23,9 @@ public class ComissionService {
 	
 	public Comission saveComission(Comission comission) {
 		return this.comissionRepo.save(comission);
+	}
+	public List<Comission> saveAllComissions(List<Comission>comissions)
+	{
+		return  this.comissionRepo.save(comissions);
 	}
 }

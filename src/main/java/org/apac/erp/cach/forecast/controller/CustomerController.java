@@ -26,7 +26,7 @@ public class CustomerController {
 	@CrossOrigin
 	@GetMapping()
 	public List<Customer> getAllCustomers() {
-		return this.customerService.getAllCustomers();
+		return this.customerService.getAllCustomersOrderByDenomination();
 	}
 
 	@CrossOrigin

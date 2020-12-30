@@ -30,7 +30,10 @@ public class CustomerService {
 	public List<Customer> getAllCustomers() {
 		return this.customerRepo.findAll();
 	}
-	
+	public List<Customer> getAllCustomersOrderByDenomination() {
+		return this.customerRepo.findAllByOrderByCustomerLabel();
+	}
+
 	public Customer getCustomerById(Long customerId) {
 		return this.customerRepo.findOne(customerId);
 	}

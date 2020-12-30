@@ -26,7 +26,7 @@ public class ProviderController {
 	@CrossOrigin
 	@GetMapping()
 	public List<Provider> getAllProviders() {
-		return this.providerService.getAllProviders();
+		return this.providerService.getAllProvidersByLabelProvider();
 	}
 
 	@CrossOrigin

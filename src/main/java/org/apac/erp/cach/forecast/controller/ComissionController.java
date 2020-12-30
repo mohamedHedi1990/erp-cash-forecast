@@ -5,6 +5,8 @@ import org.apac.erp.cach.forecast.service.ComissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/comission")
 public class ComissionController {
@@ -16,6 +18,13 @@ public class ComissionController {
 	public Comission addComission(@RequestBody Comission comission)
 	{
 		return comissionService.saveComission(comission);
+	}
+	@CrossOrigin
+	@PostMapping("/saveAndUpdateAllCommission")
+	public List<Comission> addAllComission(@RequestBody List<Comission> comissions)
+	{
+		 return  comissionService.saveAllComissions(comissions);
+
 	}
 
 	@CrossOrigin
