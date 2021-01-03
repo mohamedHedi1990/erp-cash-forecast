@@ -25,7 +25,11 @@ public class HistoricAccountSoldController {
 	public HistoricAccountSold findTheBeginningSold(@PathVariable("accountId") Long accountId,  @PathVariable("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate) {
 		return historicAccountSoldService.findFirst(accountId, startDate);
 	}
-	
+	@CrossOrigin
+	@GetMapping("findLastRapprochment/{accountId}/{startDate}")
+	public HistoricAccountSold findTheLastRapprochedSold(@PathVariable("accountId") Long accountId,  @PathVariable("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate) {
+		return historicAccountSoldService.findLast(accountId, startDate);
+	}
 	@CrossOrigin
 	@GetMapping("/{accountId}")
 	public HistoricAccountSold findFirstSavedHistoric(@PathVariable("accountId") Long accountId) {

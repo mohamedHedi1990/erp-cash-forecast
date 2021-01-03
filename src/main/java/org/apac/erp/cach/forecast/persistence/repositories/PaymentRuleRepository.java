@@ -11,4 +11,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PaymentRuleRepository extends JpaRepository<PaymentRule, Long> {
 List<PaymentRule> findByPaymentRuleAccountAndPaymentRuleDeadlineDateBetweenOrderByPaymentRuleDeadlineDateAsc(BankAccount bankAccount, Date startDate, Date endDate);
+List<PaymentRule> findByPaymentRuleAccountAndPaymentRuleDeadlineDateBeforeOrderByPaymentRuleDeadlineDateAsc(BankAccount bankAccount,Date startDate);
 }

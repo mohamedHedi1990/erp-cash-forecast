@@ -131,7 +131,10 @@ public class PaymentRuleService {
 	public List<PaymentRule> getAllPaymentRuleBetwwenTwoDates(BankAccount bankAccount, Date startDate, Date endDate) {
 		return this.paymentRuleRepo.findByPaymentRuleAccountAndPaymentRuleDeadlineDateBetweenOrderByPaymentRuleDeadlineDateAsc(bankAccount,startDate, endDate);
 	}
-	
+	public List<PaymentRule>getAllPaymentRuleBeforDate(BankAccount bankAccount,Date startDate)
+	{
+		return this.paymentRuleRepo.findByPaymentRuleAccountAndPaymentRuleDeadlineDateBeforeOrderByPaymentRuleDeadlineDateAsc(bankAccount,startDate);
+	}
 	/*
 
 	public PaymentRule saveNewPaymentRuleToInvoice(PaymentRule paymentRule, Long invoiceId, Long accountId) {

@@ -893,4 +893,19 @@ public class SupervisionTresorerieService {
 		}
 
 	}
+	public List<OperationTreserorieDto> rapprochementBancaireBeforeDate(Long accountId, Date startDate, Boolean isValidated) {
+		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
+
+		BankAccount bankAccount = bankAccountService.getAccountById(accountId);
+		List<Comission> comissions = new ArrayList<Comission>();
+		if (bankAccount.getAccountComissions() != null) {
+			comissions = bankAccount.getAccountComissions();
+		}
+
+		List<PaymentRule> paymentRules = paymentRuleService.getAllPaymentRuleBeforDate(bankAccount,startDate);
+		List<OperationTreserorieDto> paymentRuleOperations = convertPaymentRulesToOperationTreserorieList(paymentRules,
+				comissions);
+		operations.addAll(paymentRuleOperations);
+		return  operations;
+	}
 }

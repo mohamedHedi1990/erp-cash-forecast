@@ -14,9 +14,8 @@ import javax.transaction.Transactional;
 public interface HistoricAccountSoldRepository extends JpaRepository<HistoricAccountSold, Long>{
 
 	public HistoricAccountSold findTopByBankAccountAndDateLessThanEqualOrderByCreatedAtDesc(BankAccount bankAccount, Date endDate);
-		
-	public HistoricAccountSold findTopByBankAccountAndDateGreaterThanEqualOrderByCreatedAtAsc(BankAccount bankAccount, Date startDate);
-	
+    public HistoricAccountSold findTopByBankAccountAndDateGreaterThanEqualOrderByCreatedAtDesc(BankAccount bankAccount, Date endDate);
+
 	public HistoricAccountSold findTopByBankAccountOrderByCreatedAtAsc(BankAccount bankAccount);
 	List<HistoricAccountSold> findByBankAccount(BankAccount bankAccount);
 	@Transactional

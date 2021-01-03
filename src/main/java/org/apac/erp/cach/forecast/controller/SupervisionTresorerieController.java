@@ -30,6 +30,13 @@ public class SupervisionTresorerieController {
 		return supervisionTresorerieService.globalSupervisionEngage(accountId, startDate, endDate, false);
 
 	}
+
+	@CrossOrigin
+	@GetMapping("rapprochement-bancaire/{accountId}/{startDate}")
+	public List<OperationTreserorieDto> findSupervisionEngageBeforedate(@PathVariable("accountId") Long accountId,  @PathVariable("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate) {
+		return supervisionTresorerieService.rapprochementBancaireBeforeDate(accountId,startDate,false);
+
+	}
 	
 	@CrossOrigin
 	@GetMapping("rapprochement-bancaire/{accountId}/{startDate}/{endDate}")
