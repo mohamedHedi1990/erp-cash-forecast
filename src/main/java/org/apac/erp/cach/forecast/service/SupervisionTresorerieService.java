@@ -91,7 +91,8 @@ public class SupervisionTresorerieService {
 		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
 
 		BankAccount bankAccount = bankAccountService.getAccountById(accountId);
-		HistoricAccountSold lastAmountOfAccount = this.historicAccountSoldService.findFirst(bankAccount.getAccountId(), startDate);
+		HistoricAccountSold initialAmountInTheBeginingOfThePeriod = this.historicAccountSoldService.findFirst(bankAccount.getAccountId(), startDate);
+		HistoricAccountSold lastAmountOfAccount = this.historicAccountSoldService.findLast(bankAccount.getAccountId());
 		//Double initialAmount = bankAccount.getAccountInitialAmount();
 		Double initialAmount = 0.0;
 		if(lastAmountOfAccount != null) {
@@ -108,6 +109,24 @@ public class SupervisionTresorerieService {
 		// comissions =
 		// this.tarifBancaireService.findByTarifAccount(bankAccount).get(0).getComissions();
 		// }
+		
+		
+		//Trouver toutes les opérations non validés avant cette date
+		
+		
+		List<PaymentRule> paymentRulesNV = paymentRuleService.getAllNonValidatedBeforeDate(bankAccount, startDate);
+		List<OperationTreserorieDto> paymentRuleOperationsNV = convertPaymentRulesToOperationTreserorieList(paymentRulesNV,
+				comissions, false);
+		operations.addAll(paymentRuleOperationsNV);
+		List<Decaissement> decaissementsNV = decaissementService.findAllNonValidatedBeforeDate(bankAccount, startDate);
+		List<OperationTreserorieDto> decaissementOperationsNV = convertDecaissementsToOperationTreserorieList(
+				decaissementsNV, comissions, false);
+		operations.addAll(decaissementOperationsNV);
+		List<Encaissement> encaissementsNV = encaissementService.findAllNonValidatedBeforeDate(bankAccount, startDate);
+		List<OperationTreserorieDto> encaissementOperationsNV = convertEncaissementsToOperationTreserorieList(
+				encaissementsNV, comissions, true);
+		operations.addAll(encaissementOperationsNV);
+		
 
 		// Trouver tout kles réglements sur cette intervalle
 		List<PaymentRule> paymentRules = paymentRuleService.getAllPaymentRuleBetwwenTwoDates(bankAccount, startDate,
@@ -121,7 +140,7 @@ public class SupervisionTresorerieService {
 		 * }
 		 */
 		List<OperationTreserorieDto> paymentRuleOperations = convertPaymentRulesToOperationTreserorieList(paymentRules,
-				comissions);
+				comissions, true);
 		operations.addAll(paymentRuleOperations);
 
 		// Trouver tout les decaissements sur cette période
@@ -134,7 +153,7 @@ public class SupervisionTresorerieService {
 		 * .collect(Collectors.toList()); }
 		 */
 		List<OperationTreserorieDto> decaissementOperations = convertDecaissementsToOperationTreserorieList(
-				decaissements, comissions);
+				decaissements, comissions, true);
 		operations.addAll(decaissementOperations);
 
 		// Trouver tout les encaissements sur cette période
@@ -147,7 +166,7 @@ public class SupervisionTresorerieService {
 		 * .collect(Collectors.toList()); }
 		 */
 		List<OperationTreserorieDto> encaissementOperations = convertEncaissementsToOperationTreserorieList(
-				encaissements, comissions);
+				encaissements, comissions, true);
 		operations.addAll(encaissementOperations);
 
 		// Trouver la liste des time line entries
@@ -158,7 +177,7 @@ public class SupervisionTresorerieService {
 				entries = entries.stream().filter(entry -> entry.getLineDate().compareTo(startDate) >= 0
 						&& entry.getLineDate().compareTo(endDate) <= 0).collect(Collectors.toList());
 				List<OperationTreserorieDto> timeLineEntriesOperations = convertTimeLineEntriesToOperationsTreserorieList(
-						entries, timeLine.getTimeLineCreditNumber());
+						entries, timeLine.getTimeLineCreditNumber(), true);
 				operations.addAll(timeLineEntriesOperations);
 			}
 		}
@@ -219,7 +238,7 @@ public class SupervisionTresorerieService {
 	}
 
 	private List<OperationTreserorieDto> convertTimeLineEntriesToOperationsTreserorieList(List<TimeLineEntry> entries,
-			String creditNumber) {
+			String creditNumber, Boolean isInTheSimulatedPeriod) {
 		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
 		entries.stream().forEach(entry -> {
 
@@ -233,6 +252,7 @@ public class SupervisionTresorerieService {
 			operation.setValidated(entry.getIsValidated());
 			operation.setOperationRealId(entry.getTimeLineEntryId());
 			operation.setOperationRealType(OperationDtoType.ECHEANCHIER);
+			operation.setIsInTheSimulatedPeriod(isInTheSimulatedPeriod);
 			operations.add(operation);
 
 			// code dedidé pour avoir deux opérations pour chaque entrée
@@ -272,7 +292,7 @@ public class SupervisionTresorerieService {
 	}
 
 	private List<OperationTreserorieDto> convertPaymentRulesToOperationTreserorieList(List<PaymentRule> paymentRules,
-			List<Comission> comissions) {
+			List<Comission> comissions, Boolean isInTheSimulatedPeriod) {
 		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
 		paymentRules.forEach(paymentRule -> {
 			OperationTreserorieDto operation = new OperationTreserorieDto();
@@ -283,6 +303,7 @@ public class SupervisionTresorerieService {
 			operation.setOperationRealId(paymentRule.getPaymentRuleId());
 			operation.setValidated(paymentRule.isValidated());
 			operation.setOperationAccount(paymentRule.getPaymentRuleAccount());
+			operation.setIsInTheSimulatedPeriod(isInTheSimulatedPeriod);
 			
 			List<String> detailsPayements = new ArrayList<String>();
 			detailsPayements.add(paymentRule.getPaymentRulePaymentMethod().toString());
@@ -357,6 +378,7 @@ public class SupervisionTresorerieService {
 						operationCom.setValidated(paymentRule.isRelatedComissionValidated());
 						operationCom.setOperationAccount(paymentRule.getPaymentRuleAccount());
 						operationCom.setDecaissementType(Constants.PAYMENT_RULE);
+						operationCom.setIsInTheSimulatedPeriod(isInTheSimulatedPeriod);
 						operationCom
 								.setOpperationLabel("COMISSION REMISE CHEQUE N° " + paymentRule.getPaymentRuleNumber());
 						operationCom.setOpperationCurrency(operation.getOpperationCurrency());
@@ -385,6 +407,7 @@ public class SupervisionTresorerieService {
 						operationCom.setOperationAccount(paymentRule.getPaymentRuleAccount());
 						operationCom.setValidated(paymentRule.isRelatedComissionValidated());
 						operationCom.setDecaissementType(Constants.PAYMENT_RULE);
+						operationCom.setIsInTheSimulatedPeriod(isInTheSimulatedPeriod);
 						List<String> detailsPayementsCom = new ArrayList<String>();
 						detailsPayements.add("Comission de virement ");
 						operationCom.setOpperationDetails(detailsPayements);
@@ -406,6 +429,7 @@ public class SupervisionTresorerieService {
 						operationCom.setValidated(paymentRule.isRelatedComissionValidated());
 						operationCom.setDecaissementType(Constants.PAYMENT_RULE);
 						operationCom.setOperationRealType(OperationDtoType.COMISSION);
+						operationCom.setIsInTheSimulatedPeriod(isInTheSimulatedPeriod);
 						operationCom.setOperationAccount(paymentRule.getPaymentRuleAccount());
 
 						operationCom
@@ -478,7 +502,7 @@ public class SupervisionTresorerieService {
 	}
 
 	private List<OperationTreserorieDto> convertDecaissementsToOperationTreserorieList(List<Decaissement> decaissements,
-			List<Comission> comissions) {
+			List<Comission> comissions, Boolean isInTheSimulatedPeriod) {
 
 		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
 
@@ -492,6 +516,7 @@ public class SupervisionTresorerieService {
 			operation.setOperationRealId(decaissement.getDecaissementId());
 			operation.setOperationRealType(OperationDtoType.DECAISSEMENT);
 			operation.setValidated(decaissement.isValidated());
+			operation.setIsInTheSimulatedPeriod(isInTheSimulatedPeriod);
 			operation.setOperationAccount(decaissement.getDecaissementBankAccount());
 			List<String> detailsPayements = new ArrayList<String>();
 			detailsPayements.add(decaissement.getDecaissementPaymentType().toString());
@@ -538,6 +563,8 @@ public class SupervisionTresorerieService {
 					detailsPayements.add(
 							"Comission de remise de chèque numéro " + decaissement.getDecaissementPaymentRuleNumber());
 					operationCom.setOpperationDetails(detailsPayements);
+					operationCom.setIsInTheSimulatedPeriod(isInTheSimulatedPeriod);
+
 					operations.add(operationCom);
 				});
 
@@ -557,6 +584,7 @@ public class SupervisionTresorerieService {
 					operationCom.setValidated(decaissement.isRelatedComissionValidated());
 					operationCom.setDecaissementType(Constants.DECAISSEMENT);
 					operationCom.setOperationAccount(decaissement.getDecaissementBankAccount());
+					operationCom.setIsInTheSimulatedPeriod(isInTheSimulatedPeriod);
 					List<String> detailsPayementsCom = new ArrayList<String>();
 					detailsPayements.add("Comission de virement ");
 					operationCom.setOperationRealId(decaissement.getDecaissementId());
@@ -581,6 +609,7 @@ public class SupervisionTresorerieService {
 					operationCom.setOperationRealType(OperationDtoType.COMISSION);
 					operationCom.setValidated(decaissement.isRelatedComissionValidated());
 					operationCom.setDecaissementType(Constants.DECAISSEMENT);
+					operationCom.setIsInTheSimulatedPeriod(isInTheSimulatedPeriod);
 					operationCom.setOpperationLabel(
 							"COMISSION REMISE TRAITE N° " + decaissement.getDecaissementPaymentRuleNumber());
 					operationCom.setOpperationCurrency(operation.getOpperationCurrency());
@@ -649,7 +678,7 @@ public class SupervisionTresorerieService {
 	}
 
 	private List<OperationTreserorieDto> convertEncaissementsToOperationTreserorieList(List<Encaissement> encaissements,
-			List<Comission> comissions) {
+			List<Comission> comissions, Boolean isInTheSimulatedPeriod) {
 
 		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
 
@@ -667,6 +696,7 @@ public class SupervisionTresorerieService {
 			operation.setOperationRealId(encaissement.getEncaissementId());
 			operation.setOperationRealType(OperationDtoType.ENCAISSEMENT);
 			operation.setValidated(encaissement.isValidated());
+			operation.setIsInTheSimulatedPeriod(isInTheSimulatedPeriod);
 
 			operation.setOpperationDetails(detailsPayements);
 			String label = "ENCAISSEMENT " + encaissement.getEncaissementPaymentRuleNumber().toString().toUpperCase();

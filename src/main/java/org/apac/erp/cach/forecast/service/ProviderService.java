@@ -32,7 +32,7 @@ public class ProviderService {
 	}
 	
 	public List<Provider> getAllProviders() {
-		return this.providerRepo.findAll();
+		return this.providerRepo.findAllByOrderByProviderLabel();
 	}
 	
 	public Provider getProviderById(Long providerId) {

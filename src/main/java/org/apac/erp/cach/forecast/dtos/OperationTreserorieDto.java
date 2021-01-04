@@ -31,4 +31,5 @@ public class OperationTreserorieDto {
 	
 	private BankAccount operationAccount;
 	private String decaissementType;
+	private Boolean isInTheSimulatedPeriod;
 }

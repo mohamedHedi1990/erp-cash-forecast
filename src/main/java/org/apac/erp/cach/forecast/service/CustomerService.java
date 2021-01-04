@@ -28,7 +28,7 @@ public class CustomerService {
 	}
 	
 	public List<Customer> getAllCustomers() {
-		return this.customerRepo.findAll();
+		return this.customerRepo.findAllByOrderByCustomerLabel();
 	}
 	
 	public Customer getCustomerById(Long customerId) {

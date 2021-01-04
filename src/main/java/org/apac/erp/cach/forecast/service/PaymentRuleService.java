@@ -132,6 +132,10 @@ public class PaymentRuleService {
 		return this.paymentRuleRepo.findByPaymentRuleAccountAndPaymentRuleDeadlineDateBetweenOrderByPaymentRuleDeadlineDateAsc(bankAccount,startDate, endDate);
 	}
 	
+	public List<PaymentRule> getAllNonValidatedBeforeDate(BankAccount bankAccount, Date startDate) {
+		return this.paymentRuleRepo.findByPaymentRuleAccountAndIsValidatedAndPaymentRuleDeadlineDateBeforeOrderByPaymentRuleDeadlineDateAsc(bankAccount, false, startDate);
+	}
+	
 	/*
 
 	public PaymentRule saveNewPaymentRuleToInvoice(PaymentRule paymentRule, Long invoiceId, Long accountId) {

@@ -12,5 +12,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EncaissementRepository extends JpaRepository<Encaissement, Long> {
 	List<Encaissement> findByEncaissementBankAccountAndEncaissementDeadlineDateBetweenOrderByEncaissementDeadlineDateAsc(BankAccount bankAccount, Date startDate, Date endDate);
+	List<Encaissement> findByEncaissementBankAccountAndIsValidatedAndEncaissementDeadlineDateBeforeOrderByEncaissementDeadlineDateAsc(BankAccount bankAccount, Boolean isValidated, Date startDate);
 
 }

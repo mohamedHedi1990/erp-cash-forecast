@@ -14,5 +14,6 @@ public interface DecaissementRepository extends JpaRepository<Decaissement, Long
 
 	List<Decaissement> findByDecaissementBankAccountAndDecaissementDeadlineDateBetweenOrderByDecaissementDeadlineDateAsc(BankAccount bankAccount, Date startDate, Date endDate);
 
+	List<Decaissement> findByDecaissementBankAccountAndIsValidatedAndDecaissementDeadlineDateBeforeOrderByDecaissementDeadlineDateAsc(BankAccount bankAccount, boolean isvalidated, Date startDate);
 
 }

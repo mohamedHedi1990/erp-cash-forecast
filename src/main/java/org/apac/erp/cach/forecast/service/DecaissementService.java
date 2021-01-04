@@ -111,6 +111,9 @@ public class DecaissementService {
 	List<Decaissement> findDecaissementsBetwwenTwoDates(BankAccount bankAccount, Date startDate, Date endDate) {
 		return this.decaissementRepo.findByDecaissementBankAccountAndDecaissementDeadlineDateBetweenOrderByDecaissementDeadlineDateAsc(bankAccount, startDate, endDate);
 	}
+	List<Decaissement> findAllNonValidatedBeforeDate(BankAccount bankAccount, Date startDate) {
+		return this.decaissementRepo.findByDecaissementBankAccountAndIsValidatedAndDecaissementDeadlineDateBeforeOrderByDecaissementDeadlineDateAsc(bankAccount, false, startDate);
+	}
 
 	public Decaissement validateDecaissement(Long decaissementId) {
 		Decaissement decaissement = getDecaissementById(decaissementId);

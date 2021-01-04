@@ -22,6 +22,10 @@ public class HistoricAccountSoldService {
 		return this.historicAccountSoldRepo.findTopByBankAccountAndDateLessThanEqualOrderByCreatedAtDesc(bankAccount, endDate);
 	}
 	
+	public HistoricAccountSold findLastRapprochement(BankAccount bankAccount) {
+		return this.historicAccountSoldRepo.findTopByBankAccountAndDateLessThanEqualOrderByCreatedAtDesc(bankAccount, new Date());
+	}
+	
 	public HistoricAccountSold findFirstByBankAccountAndCreatedAtGreaterThanEqualOrderByCreatedAtAsc(BankAccount bankAccount, Date startDate) {
 		return this.historicAccountSoldRepo.findTopByBankAccountAndDateGreaterThanEqualOrderByCreatedAtAsc(bankAccount, startDate);
 	}
@@ -46,12 +50,19 @@ public class HistoricAccountSoldService {
 		return this.historicAccountSoldRepo.save(historicSolde);
 	}
 	
-	public HistoricAccountSold findTopByBankAccountOrderByCreatedAtAsc(BankAccount bankAccount) {
-		return this.historicAccountSoldRepo.findTopByBankAccountOrderByCreatedAtAsc(bankAccount);
+	public HistoricAccountSold findTopByBankAccountOrderByCreatedAtDesc(BankAccount bankAccount) {
+		return this.historicAccountSoldRepo.findTopByBankAccountOrderByCreatedAtDesc(bankAccount);
 	}
 
 	public HistoricAccountSold findFirstSavedHistoric(Long accountId) {
 		BankAccount bankAccount = this.accountService.getAccountById(accountId);
-		return findTopByBankAccountOrderByCreatedAtAsc(bankAccount);
+		return findTopByBankAccountOrderByCreatedAtDesc(bankAccount);
+	}
+	
+	public HistoricAccountSold findLast(Long accountId) {
+		BankAccount bankAccount = this.accountService.getAccountById(accountId);
+		HistoricAccountSold lastSoldeHistoric = findLastRapprochement(bankAccount);
+
+		return lastSoldeHistoric;
 	}
 }

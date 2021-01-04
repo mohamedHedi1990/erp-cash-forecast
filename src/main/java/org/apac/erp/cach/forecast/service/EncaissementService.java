@@ -43,6 +43,9 @@ public class EncaissementService {
 		return this.encaissementRepo.findByEncaissementBankAccountAndEncaissementDeadlineDateBetweenOrderByEncaissementDeadlineDateAsc(bankAccount, startDate, endDate);
 	}
 
+	List<Encaissement> findAllNonValidatedBeforeDate(BankAccount bankAccount, Date startDate) {
+		return this.encaissementRepo.findByEncaissementBankAccountAndIsValidatedAndEncaissementDeadlineDateBeforeOrderByEncaissementDeadlineDateAsc(bankAccount, false, startDate);
+	}
 	
 	public Encaissement validateEncaissement(Long encaissementId) {
 		Encaissement encaissement = getEncaissementById(encaissementId);
