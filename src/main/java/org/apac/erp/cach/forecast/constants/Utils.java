@@ -27,6 +27,7 @@ public class Utils {
 
 	public static String convertAmountToStringWithSeperator(double amount1) {
 		DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
+		symbols.setGroupingSeparator('\'');
 		DecimalFormat df=new DecimalFormat("#,###.###", symbols);
 		String result=df.format(amount1);
 		System.out.println(result);
@@ -43,6 +44,7 @@ public class Utils {
 			}
 			initialAmount = tab[0] + tab[1];
 			System.out.println("init amount :"+initialAmount);
+
 			return initialAmount;
 		} else {
 			initialAmount = initialAmount + ".000";
