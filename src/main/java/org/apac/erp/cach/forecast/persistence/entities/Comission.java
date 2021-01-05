@@ -39,13 +39,13 @@ public class Comission extends AuditableSql implements Serializable {
 	
 	@PrePersist
 	public void initInvoice() {
-		this.comissionValueS = Utils.convertAmountToString(this.comissionValue);
+		this.comissionValueS = Utils.convertAmountToStringWithSeperator(this.comissionValue);
 		
 	}
 
 	@PreUpdate
 	public void preUpdate() {
-		this.comissionValueS = Utils.convertAmountToString(this.comissionValue);
+		this.comissionValueS = Utils.convertAmountToStringWithSeperator(this.comissionValue);
 	}
 
 }

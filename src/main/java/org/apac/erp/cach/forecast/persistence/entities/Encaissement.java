@@ -75,13 +75,13 @@ public class Encaissement extends AuditableSql implements Serializable {
 	@PrePersist
 	public void initPR() {
 		
-		this.encaissementAmountS = Utils.convertAmountToString(this.encaissementAmount);
+		this.encaissementAmountS = Utils.convertAmountToStringWithSeperator(this.encaissementAmount);
 		
 	}
 
 	@PreUpdate
 	public void preUpdate() {
-		this.encaissementAmountS = Utils.convertAmountToString(this.encaissementAmount);
+		this.encaissementAmountS = Utils.convertAmountToStringWithSeperator(this.encaissementAmount);
 	}
 
 }

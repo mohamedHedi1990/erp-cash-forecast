@@ -66,20 +66,20 @@ public class TimeLineEntry extends AuditableSql implements Serializable {
 	
 	@PrePersist
 	public void initInvoice() {
-		this.totalS = Utils.convertAmountToString(this.total);
-		this.initialAmountS = Utils.convertAmountToString(this.initialAmount);
-		this.interestsS = Utils.convertAmountToString(this.interests);
-		this.tvaS = Utils.convertAmountToString(this.tva);
+		this.totalS = Utils.convertAmountToStringWithSeperator(this.total);
+		this.initialAmountS = Utils.convertAmountToStringWithSeperator(this.initialAmount);
+		this.interestsS = Utils.convertAmountToStringWithSeperator(this.interests);
+		this.tvaS = Utils.convertAmountToStringWithSeperator(this.tva);
 		this.isValidated = false;
 		
 	}
 
 	@PreUpdate
 	public void preUpdate() {
-		this.totalS = Utils.convertAmountToString(this.total);
-		this.initialAmountS = Utils.convertAmountToString(this.initialAmount);
-		this.interestsS = Utils.convertAmountToString(this.interests);
-		this.tvaS = Utils.convertAmountToString(this.tva);
+		this.totalS = Utils.convertAmountToStringWithSeperator(this.total);
+		this.initialAmountS = Utils.convertAmountToStringWithSeperator(this.initialAmount);
+		this.interestsS = Utils.convertAmountToStringWithSeperator(this.interests);
+		this.tvaS = Utils.convertAmountToStringWithSeperator(this.tva);
 		
 	}
 	

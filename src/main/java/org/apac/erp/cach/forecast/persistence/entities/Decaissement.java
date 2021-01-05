@@ -78,13 +78,13 @@ public class Decaissement extends AuditableSql implements Serializable {
 	@PrePersist
 	public void initPR() {
 		
-		this.decaissementAmountS = Utils.convertAmountToString(this.decaissementAmount);
+		this.decaissementAmountS = Utils.convertAmountToStringWithSeperator(this.decaissementAmount);
 		
 	}
 
 	@PreUpdate
 	public void preUpdate() {
-		this.decaissementAmountS = Utils.convertAmountToString(this.decaissementAmount);
+		this.decaissementAmountS = Utils.convertAmountToStringWithSeperator(this.decaissementAmount);
 	}
 
 }

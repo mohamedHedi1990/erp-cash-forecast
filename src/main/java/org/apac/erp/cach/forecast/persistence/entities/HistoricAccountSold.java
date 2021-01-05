@@ -51,12 +51,14 @@ public class HistoricAccountSold extends AuditableSql implements Serializable {
 	
 	@PrePersist
 	public void initInvoice() {
-		this.soldeS = Utils.convertAmountToString(this.solde);
+		this.solde =  (double)(Math.round(this.solde * 1000))/1000;
+		this.soldeS = Utils.convertAmountToStringWithSeperator(this.solde);
 		
 	}
 
 	@PreUpdate
 	public void preUpdate() {
-		this.soldeS = Utils.convertAmountToString(this.solde);
+		this.solde =  (double)(Math.round(this.solde * 1000))/1000;
+		this.soldeS = Utils.convertAmountToStringWithSeperator(this.solde);
 	}
 }

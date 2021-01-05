@@ -83,8 +83,8 @@ public class Invoice extends AuditableSql implements Serializable {
 		simbolos.setDecimalSeparator('.');
 		this.invoiceTotalAmount =Double.parseDouble(new DecimalFormat("##.###",simbolos).format(this.invoiceTotalAmount));
 		this.invoicePayment =Double.parseDouble(new DecimalFormat("##.###",simbolos).format(this.invoicePayment));
-		this.invoiceTotalAmountS = Utils.convertAmountToString(this.invoiceTotalAmount);
-		this.invoicePaymentS = Utils.convertAmountToString(this.invoicePayment);
+		this.invoiceTotalAmountS = Utils.convertAmountToStringWithSeperator(this.invoiceTotalAmount);
+		this.invoicePaymentS = Utils.convertAmountToStringWithSeperator(this.invoicePayment);
 		
 	}
 
@@ -95,8 +95,8 @@ public class Invoice extends AuditableSql implements Serializable {
 		simbolos.setDecimalSeparator('.');
 		this.invoiceTotalAmount =Double.parseDouble(new DecimalFormat("##.###",simbolos).format(this.invoiceTotalAmount));
 		this.invoicePayment =Double.parseDouble(new DecimalFormat("##.###",simbolos).format(this.invoicePayment));
-		this.invoiceTotalAmountS = Utils.convertAmountToString(this.invoiceTotalAmount);
-		this.invoicePaymentS = Utils.convertAmountToString(this.invoicePayment);
+		this.invoiceTotalAmountS = Utils.convertAmountToStringWithSeperator(this.invoiceTotalAmount);
+		this.invoicePaymentS = Utils.convertAmountToStringWithSeperator(this.invoicePayment);
 	}
 
 }

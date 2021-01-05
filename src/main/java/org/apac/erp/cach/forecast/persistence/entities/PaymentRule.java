@@ -63,13 +63,13 @@ public class PaymentRule extends AuditableSql implements Serializable {
 
 	@PrePersist
 	public void initPR() {
-		this.paymentRuleAmountS = Utils.convertAmountToString(this.paymentRuleAmount);
+		this.paymentRuleAmountS = Utils.convertAmountToStringWithSeperator(this.paymentRuleAmount);
 		
 	}
 
 	@PreUpdate
 	public void preUpdate() {
-		this.paymentRuleAmountS = Utils.convertAmountToString(this.paymentRuleAmount);
+		this.paymentRuleAmountS = Utils.convertAmountToStringWithSeperator(this.paymentRuleAmount);
 	}
 
 	

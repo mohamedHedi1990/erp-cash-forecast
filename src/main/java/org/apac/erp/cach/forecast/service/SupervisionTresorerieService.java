@@ -901,15 +901,17 @@ public class SupervisionTresorerieService {
 				paymentRule.setRelatedComissionValidated(true);
 				paymentRuleService.modifyPaymentRule(paymentRule);
 				BankAccount account = operation.getOperationAccount();
-				account.setAccountInitialAmount(account.getAccountInitialAmount() - operation.getOperationAmount());
-				bankAccountService.saveAccount(account);
+				BankAccount persistedAccound = bankAccountService.getAccountById(account.getAccountId());
+				persistedAccound.setAccountInitialAmount(account.getAccountInitialAmount() - operation.getOperationAmount());
+				bankAccountService.saveAccount(persistedAccound);
 			} else if (operation.getDecaissementType().equals(Constants.DECAISSEMENT)) {
 				Decaissement decaissement = decaissementService.getDecaissementById(operationRealId);
 				decaissement.setRelatedComissionValidated(true);
 				decaissementService.saveDecaissement(decaissement);
 				BankAccount account = operation.getOperationAccount();
-				account.setAccountInitialAmount(account.getAccountInitialAmount() - operation.getOperationAmount());
-				bankAccountService.saveAccount(account);
+				BankAccount persistedAccound = bankAccountService.getAccountById(account.getAccountId());
+				persistedAccound.setAccountInitialAmount(account.getAccountInitialAmount() - operation.getOperationAmount());
+				bankAccountService.saveAccount(persistedAccound);
 			}
 
 		} else if (operationRealType == OperationDtoType.ECHEANCHIER) {

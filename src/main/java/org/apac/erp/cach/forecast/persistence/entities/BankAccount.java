@@ -71,6 +71,7 @@ public class BankAccount extends AuditableSql implements Serializable {
 
 	@PreUpdate
 	public void preUpdate() {
+		this.accountInitialAmount =  (double)(Math.round(this.accountInitialAmount * 1000))/1000;
 		this.accountInitialAmountS = Utils.convertAmountToStringWithSeperator(this.accountInitialAmount);
 	}
 	
