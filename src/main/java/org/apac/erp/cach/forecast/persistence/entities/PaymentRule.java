@@ -18,7 +18,7 @@ import lombok.Data;
 @Entity
 @Table(name = "erp_paymentRule")
 @Data
-public class PaymentRule extends AuditableSql implements Serializable {
+public class  PaymentRule extends AuditableSql implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 

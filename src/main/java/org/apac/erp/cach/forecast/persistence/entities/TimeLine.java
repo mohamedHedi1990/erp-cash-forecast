@@ -68,15 +68,15 @@ public class TimeLine extends AuditableSql implements Serializable {
 	@PrePersist
 	public void initInvoice() {
 		
-		this.timeLineInitialAmountS = Utils.convertAmountToString(this.timeLineInitialAmount);
-		this.timeLineInterestRateS = Utils.convertAmountToString(this.timeLineInterestRate);
+		this.timeLineInitialAmountS = Utils.convertAmountToStringWithSeperator(this.timeLineInitialAmount);
+		this.timeLineInterestRateS = Utils.convertAmountToStringWithSeperator(this.timeLineInterestRate);
 		
 	}
 
 	@PreUpdate
 	public void preUpdate() {
-		this.timeLineInitialAmountS = Utils.convertAmountToString(this.timeLineInitialAmount);
-		this.timeLineInterestRateS = Utils.convertAmountToString(this.timeLineInterestRate);
+		this.timeLineInitialAmountS = Utils.convertAmountToStringWithSeperator(this.timeLineInitialAmount);
+		this.timeLineInterestRateS = Utils.convertAmountToStringWithSeperator(this.timeLineInterestRate);
 	}
 
 }

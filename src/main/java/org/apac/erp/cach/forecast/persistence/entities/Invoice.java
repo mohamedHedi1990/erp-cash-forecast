@@ -19,6 +19,7 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apac.erp.cach.forecast.constants.Utils;
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
@@ -72,6 +73,15 @@ public class Invoice extends AuditableSql implements Serializable {
 
 	@OneToMany(mappedBy = "invoice",cascade= {CascadeType.MERGE,CascadeType.REMOVE})
 	private List<PaymentRule> invoicePaymentRules;
+	
+	@Transient
+	private String invoiceDates;
+	
+	@Transient
+	private String invoiceDeadlineDates;
+	
+	@Transient
+	private boolean isAssocited;
 	
 	@PrePersist
 	public void initInvoice() {

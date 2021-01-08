@@ -1,20 +1,26 @@
 package org.apac.erp.cach.forecast.service;
 
 import java.io.IOException;
-import java.util.List;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
-
+import org.apac.erp.cach.forecast.dtos.InvoicesProviderPayment;
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
+import org.apac.erp.cach.forecast.persistence.entities.CustomerAttachedInvoices;
+import org.apac.erp.cach.forecast.persistence.entities.CustomerInvoice;
+import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
 import org.apac.erp.cach.forecast.persistence.entities.Provider;
+import org.apac.erp.cach.forecast.persistence.entities.ProviderAttachedInvoices;
 import org.apac.erp.cach.forecast.persistence.entities.ProviderInvoice;
 import org.apac.erp.cach.forecast.persistence.repositories.PaymentRuleRepository;
+import org.apac.erp.cach.forecast.persistence.repositories.ProviderAttachedInvoicesRepository;
 import org.apac.erp.cach.forecast.persistence.repositories.ProviderInvoiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.apac.erp.cach.forecast.dtos.InvoicesProviderPayment;
-import org.apac.erp.cach.forecast.persistence.entities.Invoice;
-import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
 
 
 @Service
@@ -29,6 +35,9 @@ public class ProviderInvoiceService {
 	private InvoiceService invoiceService;
 	@Autowired
 	private PaymentRuleRepository paymentRuleRepository;
+	
+	@Autowired
+	private ProviderAttachedInvoicesRepository providerAttachedInvoicesRepository;
 
 	public List<ProviderInvoice> findAllProviderInvoices() {
 		return providerInvoiceRepo.findAllByOrderByInvoiceDateDesc();
@@ -65,7 +74,7 @@ public class ProviderInvoiceService {
 		return savedInvoice;
 	}
 	
-	public List<ProviderInvoice> payInvoices(InvoicesProviderPayment invoicePayment) {
+	/*public List<ProviderInvoice> payInvoices(InvoicesProviderPayment invoicePayment) {
 				invoicePayment.getSelectedInvoices().stream().forEach(invoice -> {
 			List<PaymentRule> paymentRules = invoice.getInvoicePaymentRules();
 			if(paymentRules == null) {
@@ -83,8 +92,62 @@ public class ProviderInvoiceService {
 		});
 
 		return this.providerInvoiceRepo.save(invoicePayment.getSelectedInvoices());
-	}
+	}*/
 
+
+	public ProviderAttachedInvoices payInvoices(InvoicesProviderPayment invoicePayment) {
+		
+		String externalId = "";
+		invoicePayment.setSelectedInvoices(invoicePayment.getSelectedInvoices().stream().sorted(Comparator.comparing(ProviderInvoice::getInvoiceId))
+				.collect(Collectors.toList()));
+		for(ProviderInvoice invoice: invoicePayment.getSelectedInvoices()) {
+			if(externalId.isEmpty()) {
+				externalId = ""+invoice.getInvoiceId();
+			} else {
+				externalId = externalId + "." + invoice.getInvoiceId();
+			}
+		}
+		
+		
+		ProviderAttachedInvoices attachedInvoices = this.providerAttachedInvoicesRepository.findByExternalId(externalId);
+		
+		if(attachedInvoices == null) {
+			attachedInvoices = new ProviderAttachedInvoices();
+			attachedInvoices.setInvoices(new ArrayList<>());
+			attachedInvoices.setPaymentRules(new ArrayList<>());
+			for(ProviderInvoice invoice : invoicePayment.getSelectedInvoices()) {
+
+				attachedInvoices.getInvoices().add(invoice);
+				attachedInvoices.setTotalRequiredAmount(
+						attachedInvoices.getTotalRequiredAmount() + invoice.getInvoiceTotalAmount());
+
+			}
+			attachedInvoices.setExternalId(externalId);
+		}
+		
+		for(ProviderInvoice invoice : invoicePayment.getSelectedInvoices()) {
+
+			List<PaymentRule> paymentRules = invoice.getInvoicePaymentRules();
+			if (paymentRules != null) {
+				for (PaymentRule paymentRule : paymentRules) {
+					attachedInvoices.setTotalPaidAmount(
+							attachedInvoices.getTotalPaidAmount() + paymentRule.getPaymentRuleAmount());
+				}
+				
+			}
+
+		}
+		attachedInvoices.setTotalPaidAmount(attachedInvoices.getTotalPaidAmount() + invoicePayment.getPaymentRule().getPaymentRuleAmount());
+		if (attachedInvoices.getTotalPaidAmount() == attachedInvoices.getTotalRequiredAmount()) {
+			attachedInvoices.getInvoices().stream().forEach(invoice -> {
+			invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
+			invoice.setInvoicePayment(invoice.getInvoiceTotalAmount());
+			this.invoiceService.saveInvoice(invoice);
+			});
+		}
+		attachedInvoices.getPaymentRules().add(invoicePayment.getPaymentRule());
+		return this.providerAttachedInvoicesRepository.save(attachedInvoices);
+	}
 	public List<ProviderInvoice> findAllProviderInvoicesByProviderId(Long providerId) {
 		Provider provider = providerService.getProviderById(providerId);
 		if(provider != null) {
@@ -101,5 +164,61 @@ public class ProviderInvoiceService {
 	}
 	public ProviderInvoice getProviderInvoiceById(Long invoiceId) {
 		return this.providerInvoiceRepo.findOne(invoiceId);
+	}
+	
+	private List<ProviderInvoice> findAllProviderInvoicesAttached_private() {
+		List<ProviderAttachedInvoices> providerAttachedInvoices = this.providerAttachedInvoicesRepository.findAll();
+		List<ProviderInvoice> providerInvoices = new ArrayList<ProviderInvoice>();
+		providerAttachedInvoices.forEach(attachedInvoice -> {
+			ProviderInvoice invoice = new ProviderInvoice();
+			invoice.setInvoiceNumber("");
+			String invoiceNum = "";
+			String invoiceDates = "";
+			String invoiceDeadlineDates = "";
+			DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+			for(ProviderInvoice providerInvoice : attachedInvoice.getInvoices()) {
+				if(invoiceNum.isEmpty()) {
+					invoiceNum = providerInvoice.getInvoiceNumber();
+					invoiceDates = formatter.format(providerInvoice.getInvoiceDate());
+					invoiceDeadlineDates = formatter.format(providerInvoice.getInvoiceDeadlineDate());
+				} else {
+					invoiceNum = invoiceNum + " / " + providerInvoice.getInvoiceNumber();
+					invoiceDates = invoiceDates + " / " + formatter.format(providerInvoice.getInvoiceDate());
+					invoiceDeadlineDates = invoiceDeadlineDates + " / " + formatter.format(providerInvoice.getInvoiceDeadlineDate());
+
+				}
+				invoice.setProvider(providerInvoice.getProvider());
+				invoice.setInvoiceDate(providerInvoice.getInvoiceDate());
+				invoice.setInvoiceDeadlineDate(providerInvoice.getInvoiceDeadlineDate());
+			}
+			invoice.setInvoiceNumber(invoiceNum);
+			invoice.setAssocited(true);
+			invoice.setInvoiceStatus(attachedInvoice.getInvoices().get(0).getInvoiceStatus());
+			invoice.setInvoiceTotalAmount(attachedInvoice.getTotalRequiredAmount());
+			invoice.setInvoicePayment(attachedInvoice.getTotalPaidAmount());
+			invoice.setInvoiceTotalAmountS(attachedInvoice.getTotalRequiredAmountS());
+			invoice.setInvoicePaymentS(attachedInvoice.getTotalPaidAmountS());
+			invoice.setInvoiceCurrency(attachedInvoice.getInvoices().get(0).getInvoiceCurrency());
+			invoice.setInvoicePaymentRules(attachedInvoice.getPaymentRules());
+			providerInvoices.add(invoice);
+			invoice.setInvoiceDates(invoiceDates);
+			int rand = (int)(Math.random() * (10000 - 8050)) + 8050;
+			invoice.setInvoiceId((long) rand);
+			invoice.setInvoiceDeadlineDates(invoiceDeadlineDates);
+		});
+		return providerInvoices;
+	}
+	
+	public List<ProviderInvoice> findAllProviderInvoicesAttached() {
+		List<ProviderInvoice> providerInvoices = this.findAllProviderInvoices();
+		List<ProviderInvoice> attachedProviderInvoices = this.findAllProviderInvoicesAttached_private();
+
+		List<ProviderInvoice> allInvoices = new ArrayList<>();
+		allInvoices.addAll(providerInvoices);
+		allInvoices.addAll(attachedProviderInvoices);
+
+		allInvoices = allInvoices.stream().sorted(Comparator.comparing(ProviderInvoice::getInvoiceNumber))
+				.collect(Collectors.toList());
+		return allInvoices;
 	}
 }

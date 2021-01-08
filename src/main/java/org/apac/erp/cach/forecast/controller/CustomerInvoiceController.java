@@ -2,6 +2,8 @@ package org.apac.erp.cach.forecast.controller;
 
 import java.util.List;
 
+import org.apac.erp.cach.forecast.dtos.InvoicesCustomerPayment;
+import org.apac.erp.cach.forecast.persistence.entities.CustomerAttachedInvoices;
 import org.apac.erp.cach.forecast.persistence.entities.CustomerInvoice;
 import org.apac.erp.cach.forecast.service.CustomerInvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.apac.erp.cach.forecast.dtos.InvoicesCustomerPayment;
-import org.apac.erp.cach.forecast.persistence.entities.Invoice;
-import org.apac.erp.cach.forecast.persistence.entities.ProviderInvoice;
 
 @RestController
 @RequestMapping("/api/invoice-customer")
@@ -29,6 +28,13 @@ public class CustomerInvoiceController {
 
 		return customerInvoiceService.findAllCustomerInvoices();
 	}
+	
+	@CrossOrigin
+	@GetMapping("/with-attached-invoices")
+	public List<CustomerInvoice> findAllCustomerInvoicesAttached() {
+
+		return customerInvoiceService.findAllCustomerInvoicesAttached();
+	}
 
 	@CrossOrigin
 	@PostMapping()
@@ -38,7 +44,7 @@ public class CustomerInvoiceController {
 	
 	@CrossOrigin
 	@PostMapping("/pay")
-	public List<CustomerInvoice>  payInvoices(
+	public CustomerAttachedInvoices  payInvoices(
 			@RequestBody InvoicesCustomerPayment invoicePayment) {
 		return customerInvoiceService.payInvoices(invoicePayment);
 	}
