@@ -144,6 +144,8 @@ public class CustomerInvoiceService {
 				}
 
 			}
+			invoice.setAssociationNumber(invoice.getAssociationNumber() + 1);
+			this.invoiceService.saveInvoice(invoice);
 
 		}
 		attachedInvoices.setTotalPaidAmount(
@@ -155,8 +157,12 @@ public class CustomerInvoiceService {
 				this.invoiceService.saveInvoice(invoice);
 			});
 		}
+		invoicePayment.getPaymentRule().setRelatedToAnAttachedInvoices(true);
 		attachedInvoices.getPaymentRules().add(invoicePayment.getPaymentRule());
-		return this.customerAttachedInvoicesRepository.save(attachedInvoices);
+		CustomerAttachedInvoices savedInvoices = this.customerAttachedInvoicesRepository.save(attachedInvoices);
+		savedInvoices.getPaymentRules().get(savedInvoices.getPaymentRules().size() - 1).setAttachedInvoicesId(attachedInvoices.getAttachedInvoicesId());
+		paymentRuleRepository.save(savedInvoices.getPaymentRules().get(savedInvoices.getPaymentRules().size() - 1));
+		return savedInvoices;
 	}
 
 	public CustomerInvoice getCustomerInvoiceById(Long invoiceId) {
@@ -219,6 +225,7 @@ public class CustomerInvoiceService {
 			int rand = (int)(Math.random() * (10000 - 8050)) + 8050;
 			invoice.setInvoiceId((long) rand);
 			invoice.setInvoiceDeadlineDates(invoiceDeadlineDates);
+			invoice.setAssociatedAttachedInvoicesId(attachedInvoice.getAttachedInvoicesId());
 		});
 		return customerInvoices;
 	}

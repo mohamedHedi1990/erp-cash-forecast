@@ -6,10 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
+import org.apac.erp.cach.forecast.persistence.entities.CustomerAttachedInvoices;
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
 import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
+import org.apac.erp.cach.forecast.persistence.entities.ProviderAttachedInvoices;
+import org.apac.erp.cach.forecast.persistence.repositories.CustomerAttachedInvoicesRepository;
 import org.apac.erp.cach.forecast.persistence.repositories.InvoiceRepository;
 import org.apac.erp.cach.forecast.persistence.repositories.PaymentRuleRepository;
+import org.apac.erp.cach.forecast.persistence.repositories.ProviderAttachedInvoicesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +24,15 @@ public class InvoiceService {
 	private InvoiceRepository invoiceRepo;
     @Autowired
 	private PaymentRuleRepository paymentRuleRepository;
+    
+    @Autowired
+    private PaymentRuleService paymentRuleService;
+    
+    @Autowired
+	private CustomerAttachedInvoicesRepository customerAttachedInvocieRepo;
+
+	@Autowired
+	private ProviderAttachedInvoicesRepository providerAttachedInvocieRepo;
 	
 	public long betweenDates(java.util.Date date, java.util.Date date2) throws IOException {
 		return ChronoUnit.DAYS.between(date.toInstant(), date2.toInstant());
@@ -130,6 +143,62 @@ public class InvoiceService {
 		Invoice savedInvoice =  this.invoiceRepo.save(invoice);
 
 		return savedInvoice;
+	}
+	
+	public Invoice updatePaymentRule(Long invoiceId, PaymentRule paymentRule, String context) {
+		PaymentRule oldPaymentRule = paymentRuleService.findPaymentRuleBYId(paymentRule.getPaymentRuleId());
+		if (oldPaymentRule.isRelatedToAnAttachedInvoices() == true) {
+			if (context.equals("CUSTOMER")) {
+				CustomerAttachedInvoices attachedInvoices = this.customerAttachedInvocieRepo
+						.findOne(oldPaymentRule.getAttachedInvoicesId());
+				attachedInvoices.setTotalPaidAmount(
+						attachedInvoices.getTotalPaidAmount() - oldPaymentRule.getPaymentRuleAmount());
+				attachedInvoices.setTotalPaidAmount(
+						attachedInvoices.getTotalPaidAmount() + paymentRule.getPaymentRuleAmount());
+				attachedInvoices.getInvoices().stream().forEach(invoice -> {
+					if (attachedInvoices.getTotalPaidAmount() == attachedInvoices.getTotalRequiredAmount()) {
+						invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
+						invoice.setInvoicePayment(invoice.getInvoiceTotalAmount());
+						
+					} else {
+						invoice.setInvoiceStatus(InvoiceStatus.OPENED);
+						invoice.setInvoicePayment(0.0);
+					}
+					this.saveInvoice(invoice);
+				});
+				this.customerAttachedInvocieRepo.save(attachedInvoices);
+				this.paymentRuleRepository.save(paymentRule);
+				return attachedInvoices.getInvoices().get(0);
+			} else if (context.equals("PROVIDER")) {
+				ProviderAttachedInvoices attachedInvoices = this.providerAttachedInvocieRepo
+						.findOne(oldPaymentRule.getAttachedInvoicesId());
+				attachedInvoices.setTotalPaidAmount(
+						attachedInvoices.getTotalPaidAmount() - oldPaymentRule.getPaymentRuleAmount());
+				attachedInvoices.setTotalPaidAmount(
+						attachedInvoices.getTotalPaidAmount() + paymentRule.getPaymentRuleAmount());
+				attachedInvoices.getInvoices().stream().forEach(invoice -> {
+					if (attachedInvoices.getTotalPaidAmount() == attachedInvoices.getTotalRequiredAmount()) {
+						invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
+						invoice.setInvoicePayment(invoice.getInvoiceTotalAmount());
+						
+					} else {
+						invoice.setInvoiceStatus(InvoiceStatus.OPENED);
+						invoice.setInvoicePayment(0.0);
+					}
+					this.saveInvoice(invoice);
+				});
+				this.providerAttachedInvocieRepo.save(attachedInvoices);
+				this.paymentRuleRepository.save(paymentRule);
+				return attachedInvoices.getInvoices().get(0);
+			}
+
+			
+			
+		} else {
+			return this.updatePaymentRuleForInvoice(invoiceId, paymentRule);
+		}
+		
+		return null;
 	}
 
 	public Invoice closeInvoice(Long invoiceId) {

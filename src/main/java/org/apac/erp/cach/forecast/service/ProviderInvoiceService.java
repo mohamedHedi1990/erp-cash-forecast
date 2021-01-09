@@ -135,7 +135,8 @@ public class ProviderInvoiceService {
 				}
 				
 			}
-
+			invoice.setAssociationNumber(invoice.getAssociationNumber() + 1);
+			this.invoiceService.saveInvoice(invoice);
 		}
 		attachedInvoices.setTotalPaidAmount(attachedInvoices.getTotalPaidAmount() + invoicePayment.getPaymentRule().getPaymentRuleAmount());
 		if (attachedInvoices.getTotalPaidAmount() == attachedInvoices.getTotalRequiredAmount()) {
@@ -145,8 +146,12 @@ public class ProviderInvoiceService {
 			this.invoiceService.saveInvoice(invoice);
 			});
 		}
+		invoicePayment.getPaymentRule().setRelatedToAnAttachedInvoices(true);
 		attachedInvoices.getPaymentRules().add(invoicePayment.getPaymentRule());
-		return this.providerAttachedInvoicesRepository.save(attachedInvoices);
+		ProviderAttachedInvoices savedInvoices = this.providerAttachedInvoicesRepository.save(attachedInvoices);
+		savedInvoices.getPaymentRules().get(savedInvoices.getPaymentRules().size() - 1).setAttachedInvoicesId(attachedInvoices.getAttachedInvoicesId());
+		paymentRuleRepository.save(savedInvoices.getPaymentRules().get(savedInvoices.getPaymentRules().size() - 1));
+		return savedInvoices;
 	}
 	public List<ProviderInvoice> findAllProviderInvoicesByProviderId(Long providerId) {
 		Provider provider = providerService.getProviderById(providerId);
@@ -202,9 +207,10 @@ public class ProviderInvoiceService {
 			invoice.setInvoicePaymentRules(attachedInvoice.getPaymentRules());
 			providerInvoices.add(invoice);
 			invoice.setInvoiceDates(invoiceDates);
-			int rand = (int)(Math.random() * (10000 - 8050)) + 8050;
+			int rand = (int)(Math.random() * (10000 - 8050)) + 8050; //random start and end values
 			invoice.setInvoiceId((long) rand);
 			invoice.setInvoiceDeadlineDates(invoiceDeadlineDates);
+			invoice.setAssociatedAttachedInvoicesId(attachedInvoice.getAttachedInvoicesId());
 		});
 		return providerInvoices;
 	}

@@ -58,6 +58,9 @@ public class  PaymentRule extends AuditableSql implements Serializable {
 	
 	private boolean isRelatedComissionValidated = false;
 	
+	private boolean isRelatedToAnAttachedInvoices = false;
+	private Long attachedInvoicesId;
+	
 	@Enumerated(EnumType.STRING)
 	private OperationType paymentRuleOperationType;
 

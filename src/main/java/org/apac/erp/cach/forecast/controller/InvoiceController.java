@@ -60,10 +60,11 @@ public class InvoiceController {
 		return invoiceService.addPaymentRuleForInvoice(invoiceId, paymentRule);
 	}
 	@CrossOrigin
-	@PostMapping("updatePaymentRule/{invoiceId}")
+	@PostMapping("updatePaymentRule/{invoiceId}/{context}")
 	public Invoice updatePaymentRuleForInvoice(@PathVariable("invoiceId") Long invoiceId,
+			@PathVariable("context") String context,
 											@RequestBody PaymentRule paymentRule) {
-		return invoiceService.updatePaymentRuleForInvoice(invoiceId, paymentRule);
+		return invoiceService.updatePaymentRule(invoiceId, paymentRule, context);
 	}
 	
 }

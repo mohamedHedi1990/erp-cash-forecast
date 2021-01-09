@@ -32,6 +32,7 @@ public class ProviderAttachedInvoices  implements Serializable {
 	private Long attachedInvoicesId;
 
 	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name="provider_attached_invoices_id")
 	private List<PaymentRule> paymentRules = new ArrayList<>();
 
 	private double totalPaidAmount;

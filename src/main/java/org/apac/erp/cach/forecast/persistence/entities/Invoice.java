@@ -83,6 +83,11 @@ public class Invoice extends AuditableSql implements Serializable {
 	@Transient
 	private boolean isAssocited;
 	
+	@Transient
+	private Long associatedAttachedInvoicesId;
+	
+	private int associationNumber;
+	
 	@PrePersist
 	public void initInvoice() {
 		if (this.invoiceId == null) {
