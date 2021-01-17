@@ -29,4 +29,10 @@ public class CompanyService {
 		companyRepo.delete(companyId);
 	}
 
+	public Company updateCompanyLogoUrl(String fileDownloadUri, Long companyId) {
+		Company company = this.findCompanyById(companyId);
+		company.setCompanyLogoUrl(fileDownloadUri);
+		return this.saveNewCompany(company);
+	}
+
 }
