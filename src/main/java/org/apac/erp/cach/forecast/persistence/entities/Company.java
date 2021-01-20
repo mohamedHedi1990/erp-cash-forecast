@@ -37,5 +37,7 @@ public class Company extends AuditableSql implements Serializable {
 	private String companyManagerName;
 	
 	private String campanyEmail;
+	
+	private String companyLogoUrl;
 
 }
