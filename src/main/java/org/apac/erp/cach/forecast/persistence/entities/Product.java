@@ -20,8 +20,8 @@ public class Product  extends  AuditableSql implements Serializable {
     private String productDescription;
     private String productUrlImage;
     private Double productPrixHT;
+    private Double productFaudec;
     private Double productTVA;
-    private Double productTaux;
     private Double productTTC;
     @Enumerated(EnumType.STRING)
     private Unite productUnite;
