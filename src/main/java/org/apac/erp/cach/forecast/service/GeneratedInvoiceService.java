@@ -74,8 +74,9 @@ public class GeneratedInvoiceService {
    {   GeneratedInvoice generatedInvoice=this.generatedInvoiceRepository.findOne(id);
    if(generatedInvoice != null && generatedInvoice.getGeneratedInvoiceLines() != null){
        this.generatedInvoiceLineService.deleteAllLines(generatedInvoice.getGeneratedInvoiceLines());
-   }
+   } if(generatedInvoice.getInvoiceCustomerId() != null) {
        customerInvoiceService.deleteCustomerInvoice(generatedInvoice.getInvoiceCustomerId());
+   }
        generatedInvoiceRepository.delete(id);
    }
 
