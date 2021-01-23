@@ -29,8 +29,8 @@ public class GeneratedInvoiceService {
    public GeneratedInvoice saveGeneratedInvoice(GeneratedInvoice generatedInvoice)
    {
        GeneratedInvoice savedGeneratedInvoice=generatedInvoiceRepository.save(generatedInvoice);
-       if(generatedInvoice.getGeneratedInvoiceLines() != null){
-           generatedInvoice.getGeneratedInvoiceLines().forEach(generatedInvoiceLine -> {
+       if(savedGeneratedInvoice.getGeneratedInvoiceLines() != null){
+           savedGeneratedInvoice.getGeneratedInvoiceLines().forEach(generatedInvoiceLine -> {
                generatedInvoiceLine.setGeneratedInvoice(savedGeneratedInvoice);
                generatedInvoiceLineService.saveGeneratedInvoiceLine(generatedInvoiceLine);
            });

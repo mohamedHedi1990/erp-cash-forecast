@@ -5,9 +5,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "erp_generatedInvoice")
@@ -31,7 +29,7 @@ public class GeneratedInvoice  extends  AuditableSql implements Serializable {
     private Customer customer;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "generatedInvoice")
-    private Set<GeneratedInvoiceLine> generatedInvoiceLines = new HashSet<>();
+    private List<GeneratedInvoiceLine> generatedInvoiceLines = new ArrayList<>();
 
     private Double totalHTBrut;
     private Double remise;

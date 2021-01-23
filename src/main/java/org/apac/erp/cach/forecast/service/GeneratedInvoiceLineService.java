@@ -31,7 +31,7 @@ public class GeneratedInvoiceLineService {
         return generatedInvoiceLineRepository.findByGeneratedInvoice(generatedInvoice);
     }
 
-    public void deleteAllLines(Set<GeneratedInvoiceLine> generatedInvoiceLines) {
+    public void deleteAllLines(List<GeneratedInvoiceLine> generatedInvoiceLines) {
         generatedInvoiceLines.forEach(generatedInvoiceLine -> {
             this.generatedInvoiceLineRepository.delete(generatedInvoiceLine);
         });

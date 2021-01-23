@@ -28,6 +28,12 @@ public class CompanyController {
 	}
 
 	@CrossOrigin
+	@GetMapping("/current")
+	public Company findCompanie() {
+		return companyService.findCompanie();
+	}
+
+	@CrossOrigin
 	@PostMapping()
 	public Company saveNewCompany(@RequestBody Company company) {
 		return companyService.saveNewCompany(company);
