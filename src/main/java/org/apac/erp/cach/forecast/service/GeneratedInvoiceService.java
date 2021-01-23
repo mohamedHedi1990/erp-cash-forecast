@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -33,20 +34,26 @@ public class GeneratedInvoiceService {
    public GeneratedInvoice saveGeneratedInvoice(GeneratedInvoice generatedInvoice)
    {
        CustomerInvoice customerInvoice=createCustomerInvoiceFromGeneratedInvoice(generatedInvoice);
-       if(generatedInvoice.getGeneratedInvoiceId()!=null && generatedInvoice.getInvoiceCustomerId()!=null)
+
+       if(generatedInvoice.getGeneratedInvoiceId()!=null)
        {
-          customerInvoice.setInvoiceId(generatedInvoice.getInvoiceCustomerId());
+           if(generatedInvoice.getInvoiceCustomerId()!=null)
+           {
+               customerInvoice.setInvoiceId(generatedInvoice.getInvoiceCustomerId());
+           }
        }
+
        CustomerInvoice customerInvoiceSaved=customerInvoiceService.saveCustomerInvoice(customerInvoice);
        generatedInvoice.setInvoiceCustomerId(customerInvoiceSaved.getInvoiceId());
        GeneratedInvoice savedGeneratedInvoice=generatedInvoiceRepository.save(generatedInvoice);
-       if(generatedInvoice.getGeneratedInvoiceLines() != null){
-           generatedInvoice.getGeneratedInvoiceLines().forEach(generatedInvoiceLine -> {
+       if(savedGeneratedInvoice.getGeneratedInvoiceLines() != null){
+           savedGeneratedInvoice.getGeneratedInvoiceLines().forEach(generatedInvoiceLine -> {
                generatedInvoiceLine.setGeneratedInvoice(savedGeneratedInvoice);
                generatedInvoiceLineService.saveGeneratedInvoiceLine(generatedInvoiceLine);
            });
        }
-       return generatedInvoiceRepository.save(generatedInvoice);
+       return savedGeneratedInvoice;
+
    }
 
     private CustomerInvoice createCustomerInvoiceFromGeneratedInvoice(GeneratedInvoice generatedInvoice) {
@@ -58,6 +65,7 @@ public class GeneratedInvoiceService {
       customerInvoice.setInvoiceDeadlineDate(generatedInvoice.getGeneratedInvoiceDeadlineDate());
       customerInvoice.setInvoiceDeadlineInNumberOfDays(generatedInvoice.getGeneratedInvoiceDeadlineInNumberOfDays());
       customerInvoice.setInvoiceTotalAmount(generatedInvoice.getTotalTTC());
+      customerInvoice.setInvoicePayment(0D);
       customerInvoice.setIsGeneratedInvoice(true);
       return  customerInvoice;
     }
@@ -67,6 +75,7 @@ public class GeneratedInvoiceService {
    if(generatedInvoice != null && generatedInvoice.getGeneratedInvoiceLines() != null){
        this.generatedInvoiceLineService.deleteAllLines(generatedInvoice.getGeneratedInvoiceLines());
    }
+       customerInvoiceService.deleteCustomerInvoice(generatedInvoice.getInvoiceCustomerId());
        generatedInvoiceRepository.delete(id);
    }
 

@@ -1,7 +1,9 @@
 package org.apac.erp.cach.forecast.persistence.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -29,6 +31,6 @@ public class GeneratedInvoiceLine extends  AuditableSql implements Serializable 
     @ManyToOne
     private Product product;
     @ManyToOne
-    @JsonIgnoreProperties("generatedInvoiceLines")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private GeneratedInvoice generatedInvoice;
 }
