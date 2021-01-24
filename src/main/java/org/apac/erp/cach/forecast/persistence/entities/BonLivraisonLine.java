@@ -1,26 +1,20 @@
 package org.apac.erp.cach.forecast.persistence.entities;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
-@Table(name = "erp_generatedInvoiceLine")
+@Table(name = "erp_bonLivraisonLine")
 @Data
-public class GeneratedInvoiceLine extends  AuditableSql implements Serializable {
+public class BonLivraisonLine extends  AuditableSql implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long generatedInvoiceLineId;
+    private Long bonLivraisonLineId;
     private int quantity;
     private Double montantHt;
     private Double montantHtBrut;
@@ -32,5 +26,5 @@ public class GeneratedInvoiceLine extends  AuditableSql implements Serializable 
     private Product product;
     @ManyToOne
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private GeneratedInvoice generatedInvoice;
+    private BonLivraison bonLivraison;
 }
