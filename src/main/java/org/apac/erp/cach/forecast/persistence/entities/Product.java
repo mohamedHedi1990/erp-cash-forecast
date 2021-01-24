@@ -26,8 +26,8 @@ public class Product  extends  AuditableSql implements Serializable {
     private Double productPrixHT;
     private String productPrixHTS;
 
-    private Double productFaudec;
-    private String productFaudecS;
+    private Double productFodec;
+    private String productFodecS;
 
     private Double productTVA;
     private String productTVAS;
@@ -47,8 +47,8 @@ public class Product  extends  AuditableSql implements Serializable {
         this.productPrixHT =Double.parseDouble(new DecimalFormat("##.###",simbolos).format(this.productPrixHT));
         this.productPrixHTS = Utils.convertAmountToStringWithSeperator(this.productPrixHT);
 
-        this.productFaudec =Double.parseDouble(new DecimalFormat("##.###",simbolos).format(this.productFaudec));
-        this.productFaudecS = Utils.convertAmountToStringWithSeperator(this.productFaudec);
+        this.productFodec =Double.parseDouble(new DecimalFormat("##.###",simbolos).format(this.productFodec));
+        this.productFodecS = Utils.convertAmountToStringWithSeperator(this.productFodec);
 
         this.productTVA =Double.parseDouble(new DecimalFormat("##.###",simbolos).format(this.productTVA));
         this.productTVAS = Utils.convertAmountToStringWithSeperator(this.productTVA);
@@ -67,8 +67,9 @@ public class Product  extends  AuditableSql implements Serializable {
         this.productPrixHT =Double.parseDouble(new DecimalFormat("##.###",simbolos).format(this.productPrixHT));
         this.productPrixHTS = Utils.convertAmountToStringWithSeperator(this.productPrixHT);
 
-        this.productFaudec =Double.parseDouble(new DecimalFormat("##.###",simbolos).format(this.productFaudec));
-        this.productFaudecS = Utils.convertAmountToStringWithSeperator(this.productFaudec);
+        this.productFodec =Double.parseDouble(new DecimalFormat("##.###",simbolos).format(this.productFodec));
+        this.productFodecS = Utils.convertAmountToStringWithSeperator(this.productFodec);
+
 
         this.productTVA =Double.parseDouble(new DecimalFormat("##.###",simbolos).format(this.productTVA));
         this.productTVAS = Utils.convertAmountToStringWithSeperator(this.productTVA);
