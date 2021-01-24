@@ -17,6 +17,14 @@ public class CompanyService {
 		return companyRepo.findAll();
 	}
 
+	public Company findCompanie() {
+		List<Company> companies=companyRepo.findAll();
+		if(companies.size()>0) {
+			return companies.get(0);
+		}else
+			return null;
+	}
+
 	public Company saveNewCompany(Company company) {
 		return companyRepo.save(company);
 	}

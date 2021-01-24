@@ -63,7 +63,7 @@ public class CustomerInvoiceService {
 			e.printStackTrace();
 		}
 
-		if (invoice.getInvoiceId() != null) {
+		if (invoice.getInvoiceId() != null ) {
 
 			if (invoice.getInvoiceTotalAmount().compareTo(invoice.getInvoicePayment()) == 0) {
 				invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
@@ -82,25 +82,7 @@ public class CustomerInvoiceService {
 		return savedInvoice;
 	}
 
-	/*
-	 * public List<CustomerInvoice> payInvoices(InvoicesCustomerPayment
-	 * invoicePayment) {
-	 * invoicePayment.getSelectedInvoices().stream().forEach(invoice -> {
-	 * List<PaymentRule> paymentRules = invoice.getInvoicePaymentRules();
-	 * if(paymentRules == null) { paymentRules = new ArrayList<PaymentRule>(); }
-	 * if(invoicePayment.getPaymentRule().getPaymentRuleInvoices() == null) {
-	 * invoicePayment.getPaymentRule().setPaymentRuleInvoices(""+invoice.
-	 * getInvoiceId()); } else {
-	 * invoicePayment.getPaymentRule().setPaymentRuleInvoices(invoicePayment.
-	 * getPaymentRule().getPaymentRuleInvoices() + ","+invoice.getInvoiceId());
-	 * } paymentRules.add(invoicePayment.getPaymentRule());
-	 * invoice.setInvoicePayment(invoice.getInvoiceTotalAmount());
-	 * invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
-	 * invoice.setInvoicePaymentRules(paymentRules); });
-	 * 
-	 * return
-	 * this.customerInvoiceRepo.save(invoicePayment.getSelectedInvoices()); }
-	 */
+
 
 	public CustomerAttachedInvoices payInvoices(InvoicesCustomerPayment invoicePayment) {
 
@@ -241,6 +223,10 @@ public class CustomerInvoiceService {
 		allInvoices = allInvoices.stream().sorted(Comparator.comparing(CustomerInvoice::getInvoiceNumber))
 				.collect(Collectors.toList());
 		return allInvoices;
+	}
+	public void deleteCustomerInvoice(Long id)
+	{
+		this.customerInvoiceRepo.delete(id);
 	}
 
 }
