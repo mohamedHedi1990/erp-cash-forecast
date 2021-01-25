@@ -28,6 +28,12 @@ public class Company extends AuditableSql implements Serializable {
 
 	private String campanyName;
 
+	private String campanyDetail;
+
+	private String campanyRCNumber;
+
+	private String campanyFax;
+
 	private String campanyAddress;
 
 	private String campanyUniqueIdentifier;
