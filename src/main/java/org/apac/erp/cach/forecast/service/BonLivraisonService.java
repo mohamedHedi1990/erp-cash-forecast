@@ -33,7 +33,7 @@ public class BonLivraisonService {
    }
    public BonLivraison saveBonLivraison(BonLivraison bonLivraison)
    {
-       CustomerInvoice customerInvoice=createCustomerInvoiceFromBonLivraison(bonLivraison);
+       /*CustomerInvoice customerInvoice=createCustomerInvoiceFromBonLivraison(bonLivraison);
 
        if(bonLivraison.getBonLivraisonId()!=null)
        {
@@ -45,6 +45,7 @@ public class BonLivraisonService {
 
        CustomerInvoice customerInvoiceSaved=customerInvoiceService.saveCustomerInvoice(customerInvoice);
        bonLivraison.setInvoiceCustomerId(customerInvoiceSaved.getInvoiceId());
+       */
        BonLivraison savedBonLivraison=bonLivraisonRepository.save(bonLivraison);
        if(savedBonLivraison.getBonLivraisonLines() != null){
            savedBonLivraison.getBonLivraisonLines().forEach(bonLivraisonLine -> {
@@ -56,7 +57,7 @@ public class BonLivraisonService {
 
    }
 
-    private CustomerInvoice createCustomerInvoiceFromBonLivraison(BonLivraison bonLivraison) {
+    /*private CustomerInvoice createCustomerInvoiceFromBonLivraison(BonLivraison bonLivraison) {
       CustomerInvoice customerInvoice=new CustomerInvoice();
       customerInvoice.setInvoiceNumber(bonLivraison.getBonLivraisonNumber());
       customerInvoice.setCustomer(bonLivraison.getCustomer());
@@ -68,15 +69,15 @@ public class BonLivraisonService {
       customerInvoice.setInvoicePayment(0D);
       customerInvoice.setIsBonLivraison(true);
       return  customerInvoice;
-    }
+    }*/
 
     public void deleteBonLivraisonById(Long id)
    {   BonLivraison bonLivraison=this.bonLivraisonRepository.findOne(id);
    if(bonLivraison != null && bonLivraison.getBonLivraisonLines() != null){
        this.bonLivraisonLineService.deleteAllLines(bonLivraison.getBonLivraisonLines());
-   } if(bonLivraison.getInvoiceCustomerId() != null) {
+   } /*if(bonLivraison.getInvoiceCustomerId() != null) {
        customerInvoiceService.deleteCustomerInvoice(bonLivraison.getInvoiceCustomerId());
-   }
+   }*/
        bonLivraisonRepository.delete(id);
    }
 
