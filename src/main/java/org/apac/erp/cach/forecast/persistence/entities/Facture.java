@@ -6,33 +6,35 @@ import org.apac.erp.cach.forecast.constants.Utils;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.*;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Entity
-@Table(name = "erp_bonLivraison")
+@Table(name = "erp_facture")
 @Data
-public class BonLivraison extends  AuditableSql implements Serializable {
+public class Facture extends  AuditableSql implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long bonLivraisonId;
-    private String bonLivraisonNumber;
-    private Integer bonLivraisonDeadlineInNumberOfDays;
-    private String bonLivraisonCurrency;
+    private Long factureId;
+    private String factureNumber;
+    private Integer factureDeadlineInNumberOfDays;
+    private String factureCurrency;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
     @Temporal(TemporalType.DATE)
-    private Date bonLivraisonDeadlineDate;
+    private Date factureDeadlineDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
     @Temporal(TemporalType.DATE)
-    private Date bonLivraisonDate;
+    private Date factureDate;
     @ManyToOne
     private Customer customer;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bonLivraison")
-    private List<BonLivraisonLine> bonLivraisonLines = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "facture")
+    private List<FactureLine> factureLines = new ArrayList<>();
 
     private Double totalHTBrut;
     private String totalHTBrutS;
@@ -58,8 +60,8 @@ public class BonLivraison extends  AuditableSql implements Serializable {
     private Double totalTTC;
     private String totalTTCS;
 
-    //private Double montantBonLivraison;
-    //private String montantBonLivraisonS;
+    //private Double montantFacture;
+    //private String montantFactureS;
     private Long invoiceCustomerId;
 
     @PrePersist
@@ -84,8 +86,8 @@ public class BonLivraison extends  AuditableSql implements Serializable {
         this.timbreFiscalS = Utils.convertAmountToStringWithSeperator(this.timbreFiscal);
         this.totalTTC =Double.parseDouble(new DecimalFormat("##.###",simbolos).format(this.totalTTC));
         this.totalTTCS = Utils.convertAmountToStringWithSeperator(this.totalTTC);
-        //this.montantBonLivraison =Double.parseDouble(new DecimalFormat("##.###",simbolos).format(this.montantBonLivraison));
-        //this.montantBonLivraisonS = Utils.convertAmountToStringWithSeperator(this.montantBonLivraison);
+        //this.montantFacture =Double.parseDouble(new DecimalFormat("##.###",simbolos).format(this.montantFacture));
+        //this.montantFactureS = Utils.convertAmountToStringWithSeperator(this.montantFacture);
     }
 
     @PreUpdate
@@ -110,7 +112,7 @@ public class BonLivraison extends  AuditableSql implements Serializable {
         this.timbreFiscalS = Utils.convertAmountToStringWithSeperator(this.timbreFiscal);
         this.totalTTC =Double.parseDouble(new DecimalFormat("##.###",simbolos).format(this.totalTTC));
         this.totalTTCS = Utils.convertAmountToStringWithSeperator(this.totalTTC);
-        //this.montantBonLivraison =Double.parseDouble(new DecimalFormat("##.###",simbolos).format(this.montantBonLivraison));
-        //this.montantBonLivraisonS = Utils.convertAmountToStringWithSeperator(this.montantBonLivraison);
+        //this.montantFacture =Double.parseDouble(new DecimalFormat("##.###",simbolos).format(this.montantFacture));
+        //this.montantFactureS = Utils.convertAmountToStringWithSeperator(this.montantFacture);
     }
 }
