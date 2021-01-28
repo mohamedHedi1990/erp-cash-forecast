@@ -10,10 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class FactureService {
@@ -59,10 +56,12 @@ public class FactureService {
                 facturegenerer.setFactureCurrency(bonLivraison.getBonLivraisonCurrency());
             }
             if(facturegenerer.getFactureDeadlineDate() == null){
-                facturegenerer.setFactureDeadlineDate(bonLivraison.getBonLivraisonDeadlineDate());
+                Calendar c=Calendar.getInstance();
+                c.add(Calendar.DATE,30);
+                facturegenerer.setFactureDeadlineDate(c.getTime());
             }
             if(facturegenerer.getFactureDeadlineInNumberOfDays() == null){
-                facturegenerer.setFactureDeadlineInNumberOfDays(bonLivraison.getBonLivraisonDeadlineInNumberOfDays());
+                facturegenerer.setFactureDeadlineInNumberOfDays(30);
             }
             facturegenerer.setTotalHTBrut(facturegenerer.getTotalHTBrut()+bonLivraison.getTotalHTBrut());
             facturegenerer.setRemise(facturegenerer.getRemise()+bonLivraison.getRemise());
@@ -87,7 +86,11 @@ public class FactureService {
                 factureLine.setFacture(savedFacture);
                 factureLineService.saveFactureLine(factureLine);
             });
-            return factureRepository.save(savedFacture);
+        Facture savedFact=factureRepository.save(facturegenerer);
+        bonLivraisons.forEach(bonLivraison -> {
+            bonLivraisonService.deleteBonLivraisonById(bonLivraison.getBonLivraisonId());
+        });
+        return savedFact;
         }else {
             return null;
         }
