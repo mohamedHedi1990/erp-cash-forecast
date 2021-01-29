@@ -1,9 +1,6 @@
 package org.apac.erp.cach.forecast.service;
 
-import org.apac.erp.cach.forecast.persistence.entities.BonLivraison;
-import org.apac.erp.cach.forecast.persistence.entities.BonLivraisonLine;
-import org.apac.erp.cach.forecast.persistence.entities.Facture;
-import org.apac.erp.cach.forecast.persistence.entities.FactureLine;
+import org.apac.erp.cach.forecast.persistence.entities.*;
 import org.apac.erp.cach.forecast.persistence.repositories.FactureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -78,10 +75,18 @@ public class FactureService {
         final DateFormat df = new SimpleDateFormat("yyyy");
 
         Facture savedFacture=factureRepository.save(facturegenerer);
-        if(savedFacture != null){
+        CustomerInvoice customerInvoice=this.createCustomerInvoiceFromFacture(savedFacture);
+        savedFacture.setInvoiceCustomerId(customerInvoice.getInvoiceId());
+       if(savedFacture != null){
             String year=df.format(savedFacture.getFactureDate());
-            String id=String.valueOf(savedFacture.getFactureId());
-            savedFacture.setFactureNumber(year+"-"+id);
+            Long id=savedFacture.getFactureId();
+            String ids="";
+            if(id<10){
+                ids="0"+String.valueOf(id);
+            }else{
+                ids=String.valueOf(id);
+            }
+            savedFacture.setFactureNumber("Fact-"+year+"-"+ids);
             savedFacture.getFactureLines().forEach(factureLine -> {
                 factureLine.setFacture(savedFacture);
                 factureLineService.saveFactureLine(factureLine);
@@ -114,7 +119,7 @@ public class FactureService {
         return factureLines;
     }
 
-    /*private CustomerInvoice createCustomerInvoiceFromFacture(Facture facture) {
+    private CustomerInvoice createCustomerInvoiceFromFacture(Facture facture) {
       CustomerInvoice customerInvoice=new CustomerInvoice();
       customerInvoice.setInvoiceNumber(facture.getFactureNumber());
       customerInvoice.setCustomer(facture.getCustomer());
@@ -125,8 +130,18 @@ public class FactureService {
       customerInvoice.setInvoiceTotalAmount(facture.getTotalTTC());
       customerInvoice.setInvoicePayment(0D);
       customerInvoice.setIsFacture(true);
+
+        if(facture.getFactureId()!=null)
+        {
+            if(facture.getInvoiceCustomerId()!=null)
+            {
+                customerInvoice.setInvoiceId(facture.getInvoiceCustomerId());
+            }
+        }
+
+        customerInvoice=customerInvoiceService.saveCustomerInvoice(customerInvoice);
       return  customerInvoice;
-    }*/
+    }
 
     public void deleteFactureById(Long id)
    {   Facture facture=this.factureRepository.findOne(id);
