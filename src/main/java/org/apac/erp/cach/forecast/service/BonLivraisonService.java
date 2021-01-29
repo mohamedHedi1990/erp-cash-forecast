@@ -85,4 +85,8 @@ public class BonLivraisonService {
    {
        bonLivraisonRepository.deleteAll();
    }
+
+    public List<BonLivraison> findByBonLivraisonIds(List<Long> blsIds) {
+        return bonLivraisonRepository.findByBonLivraisonIdIn(blsIds);
+    }
 }
