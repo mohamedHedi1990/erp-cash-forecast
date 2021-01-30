@@ -75,7 +75,7 @@ public class FactureService {
         final DateFormat df = new SimpleDateFormat("yyyy");
 
         Facture savedFacture=factureRepository.save(facturegenerer);
-        CustomerInvoice customerInvoice=this.createCustomerInvoiceFromFacture(savedFacture);
+        CustomerInvoice customerInvoice=this.genererCustomerInvoiceFromFacture(savedFacture);
         savedFacture.setInvoiceCustomerId(customerInvoice.getInvoiceId());
        if(savedFacture != null){
             String year=df.format(savedFacture.getFactureDate());
@@ -103,6 +103,34 @@ public class FactureService {
         }
    }
 
+
+    public Facture saveFacture(Facture facture)
+    {
+       CustomerInvoice customerInvoice=createCustomerInvoiceFromFacture(facture);
+
+       if(facture.getFactureId()!=null)
+       {
+           if(facture.getInvoiceCustomerId()!=null)
+           {
+               customerInvoice.setInvoiceId(facture.getInvoiceCustomerId());
+           }
+       }
+
+       CustomerInvoice customerInvoiceSaved=customerInvoiceService.saveCustomerInvoice(customerInvoice);
+       facture.setInvoiceCustomerId(customerInvoiceSaved.getInvoiceId());
+
+        Facture savedFacture=factureRepository.save(facture);
+        if(savedFacture.getFactureLines() != null){
+            savedFacture.getFactureLines().forEach(factureLine -> {
+                factureLine.setFacture(savedFacture);
+                factureLineService.saveFactureLine(factureLine);
+            });
+        }
+        return savedFacture;
+
+    }
+
+
     private List<FactureLine> blLinesToFactureLines(List<BonLivraisonLine> bonLivraisonLines) {
         ArrayList<FactureLine> factureLines=new ArrayList<>();
         bonLivraisonLines.forEach(bonLivraisonLine -> {
@@ -121,7 +149,7 @@ public class FactureService {
         return factureLines;
     }
 
-    private CustomerInvoice createCustomerInvoiceFromFacture(Facture facture) {
+    private CustomerInvoice genererCustomerInvoiceFromFacture(Facture facture) {
       CustomerInvoice customerInvoice=new CustomerInvoice();
       customerInvoice.setInvoiceNumber(facture.getFactureNumber());
       customerInvoice.setCustomer(facture.getCustomer());
@@ -143,6 +171,20 @@ public class FactureService {
 
         customerInvoice=customerInvoiceService.saveCustomerInvoice(customerInvoice);
       return  customerInvoice;
+    }
+
+    private CustomerInvoice createCustomerInvoiceFromFacture(Facture facture) {
+        CustomerInvoice customerInvoice=new CustomerInvoice();
+        customerInvoice.setInvoiceNumber(facture.getFactureNumber());
+        customerInvoice.setCustomer(facture.getCustomer());
+        customerInvoice.setInvoiceCurrency(facture.getFactureCurrency());
+        customerInvoice.setInvoiceDate(facture.getFactureDate());
+        customerInvoice.setInvoiceDeadlineDate(facture.getFactureDeadlineDate());
+        customerInvoice.setInvoiceDeadlineInNumberOfDays(facture.getFactureDeadlineInNumberOfDays());
+        customerInvoice.setInvoiceTotalAmount(facture.getTotalTTC());
+        customerInvoice.setInvoicePayment(0D);
+        customerInvoice.setIsFacture(true);
+        return  customerInvoice;
     }
 
     public void deleteFactureById(Long id)
