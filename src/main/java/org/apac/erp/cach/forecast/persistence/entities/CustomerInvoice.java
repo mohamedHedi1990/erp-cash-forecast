@@ -18,6 +18,7 @@ public class CustomerInvoice extends Invoice implements Serializable {
 
 	@ManyToOne
 	private Customer customer;
-	private Boolean isBonLivraison;
+	private Boolean isFacture;
+
 
 }
