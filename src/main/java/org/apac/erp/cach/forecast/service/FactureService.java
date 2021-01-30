@@ -92,6 +92,8 @@ public class FactureService {
                 factureLineService.saveFactureLine(factureLine);
             });
         Facture savedFact=factureRepository.save(facturegenerer);
+        customerInvoice.setInvoiceNumber(savedFacture.getFactureNumber());
+        this.customerInvoiceService.saveCustomerInvoice(customerInvoice);
         bonLivraisons.forEach(bonLivraison -> {
             bonLivraisonService.deleteBonLivraisonById(bonLivraison.getBonLivraisonId());
         });
