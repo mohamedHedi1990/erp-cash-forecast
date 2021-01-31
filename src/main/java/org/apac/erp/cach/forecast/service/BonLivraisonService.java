@@ -1,17 +1,11 @@
 package org.apac.erp.cach.forecast.service;
 
-import org.apac.erp.cach.forecast.persistence.entities.Customer;
-import org.apac.erp.cach.forecast.persistence.entities.CustomerInvoice;
 import org.apac.erp.cach.forecast.persistence.entities.BonLivraison;
-import org.apac.erp.cach.forecast.persistence.entities.BonLivraisonLine;
 import org.apac.erp.cach.forecast.persistence.repositories.BonLivraisonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class BonLivraisonService {

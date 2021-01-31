@@ -1,5 +1,6 @@
 package org.apac.erp.cach.forecast.controller;
 
+import org.apac.erp.cach.forecast.persistence.entities.BonLivraison;
 import org.apac.erp.cach.forecast.persistence.entities.Facture;
 import org.apac.erp.cach.forecast.service.FactureService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +29,17 @@ public class FactureController {
     }
 
     @CrossOrigin
-    @PostMapping()
+    @PostMapping("/generer")
     Facture genererFacture(@RequestBody List<Long> blsIds)
     {
         return  this.factureService.genererFacture(blsIds);
+    }
+
+    @CrossOrigin
+    @PostMapping()
+    Facture saveFacture(@RequestBody Facture facture)
+    {
+        return  this.factureService.saveFacture(facture);
     }
 
     @CrossOrigin
