@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface FactureLineRepository extends JpaRepository<FactureLine, Long> {
-    List<FactureLine> findByFacture(Facture bonLivraison);
+    List<FactureLine> findByFacture(Facture facture);
 }
