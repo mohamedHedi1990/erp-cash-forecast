@@ -29,10 +29,17 @@ public class FactureController {
     }
 
     @CrossOrigin
-    @PostMapping("/generer")
+    @PostMapping("/generer-from-bl")
     Facture genererFacture(@RequestBody List<Long> blsIds)
     {
-        return  this.factureService.genererFacture(blsIds);
+        return  this.factureService.genererFactureFromBL(blsIds);
+    }
+
+    @CrossOrigin
+    @PostMapping("/generer-from-devis")
+    Facture genererFacture(@RequestBody Long devisId)
+    {
+        return  this.factureService.genererFactureFromDevis(devisId);
     }
 
     @CrossOrigin
