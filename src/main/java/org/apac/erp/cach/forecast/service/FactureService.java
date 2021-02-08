@@ -18,6 +18,8 @@ public class FactureService {
     FactureLineService factureLineService;
     @Autowired
     CustomerInvoiceService customerInvoiceService;
+    @Autowired
+    DevisService devisService;
 
     @Autowired
     BonLivraisonService bonLivraisonService;
@@ -33,8 +35,7 @@ public class FactureService {
    }
 
 
-   public Facture genererFacture(List<Long> blsIds)
-   {    Facture facturegenerer=new Facture();
+    public Facture genererFactureFromBL(List<Long> blsIds)   {    Facture facturegenerer=new Facture();
         facturegenerer.setTotalHTBrut(0d);
         facturegenerer.setRemise(0d);
         facturegenerer.setTotalHT(0d);
@@ -103,6 +104,72 @@ public class FactureService {
         }
    }
 
+    public Facture genererFactureFromDevis(Long devisId)
+    {    Facture facturegenerer=new Facture();
+        facturegenerer.setTotalHTBrut(0d);
+        facturegenerer.setRemise(0d);
+        facturegenerer.setTotalHT(0d);
+        facturegenerer.setTotalTVA(0d);
+        facturegenerer.setTotalFodec(0d);
+        facturegenerer.setTotalTaxe(0d);
+        facturegenerer.setTimbreFiscal(0d);
+        facturegenerer.setTotalTTC(0d);
+        Devis devis=devisService.devisRepository.findOne(devisId);
+        List<FactureLine> factureLines=new ArrayList<>();
+        if(facturegenerer.getCustomer() == null){
+            facturegenerer.setCustomer(devis.getCustomer());
+        }
+        if(facturegenerer.getFactureCurrency() == null){
+            facturegenerer.setFactureCurrency(devis.getDevisCurrency());
+        }
+        if(facturegenerer.getFactureDeadlineDate() == null){
+            Calendar c=Calendar.getInstance();
+            c.add(Calendar.DATE,30);
+            facturegenerer.setFactureDeadlineDate(c.getTime());
+        }
+        if(facturegenerer.getFactureDeadlineInNumberOfDays() == null){
+            facturegenerer.setFactureDeadlineInNumberOfDays(30);
+        }
+        facturegenerer.setTotalHTBrut(facturegenerer.getTotalHTBrut()+devis.getTotalHTBrut());
+        facturegenerer.setRemise(facturegenerer.getRemise()+devis.getRemise());
+        facturegenerer.setTotalHT(facturegenerer.getTotalHT()+devis.getTotalHT());
+        facturegenerer.setTotalTVA(facturegenerer.getTotalTVA()+devis.getTotalTVA());
+        facturegenerer.setTotalFodec(facturegenerer.getTotalFodec()+devis.getTotalFodec());
+        facturegenerer.setTotalTaxe(facturegenerer.getTotalTaxe()+devis.getTotalTaxe());
+        facturegenerer.setTimbreFiscal(facturegenerer.getTimbreFiscal()+devis.getTimbreFiscal());
+        facturegenerer.setTotalTTC(facturegenerer.getTotalTTC()+devis.getTotalTTC());
+        facturegenerer.setFactureDate(new Date());
+        factureLines.addAll(this.devisLinesToFactureLines(devis.getDevisLines()));
+
+        facturegenerer.setFactureLines(factureLines);
+        final DateFormat df = new SimpleDateFormat("yyyy");
+
+        Facture savedFacture=factureRepository.save(facturegenerer);
+        CustomerInvoice customerInvoice=this.genererCustomerInvoiceFromFacture(savedFacture);
+        savedFacture.setInvoiceCustomerId(customerInvoice.getInvoiceId());
+        if(savedFacture != null){
+            String year=df.format(savedFacture.getFactureDate());
+            Long id=savedFacture.getFactureId();
+            String ids="";
+            if(id<10){
+                ids="0"+String.valueOf(id);
+            }else{
+                ids=String.valueOf(id);
+            }
+            savedFacture.setFactureNumber("Fact-"+year+"-"+ids);
+            savedFacture.getFactureLines().forEach(factureLine -> {
+                factureLine.setFacture(savedFacture);
+                factureLineService.saveFactureLine(factureLine);
+            });
+            Facture savedFact=factureRepository.save(facturegenerer);
+            customerInvoice.setInvoiceNumber(savedFacture.getFactureNumber());
+            this.customerInvoiceService.saveCustomerInvoice(customerInvoice);
+            devisService.deleteDevisById(devis.getDevisId());
+            return savedFact;
+        }else {
+            return null;
+        }
+    }
 
     public Facture saveFacture(Facture facture)
     {
@@ -201,4 +268,22 @@ public class FactureService {
    {
        factureRepository.deleteAll();
    }
+
+    private List<FactureLine> devisLinesToFactureLines(List<DevisLine> devisLines) {
+        ArrayList<FactureLine> factureLines=new ArrayList<>();
+        devisLines.forEach(devisLine -> {
+            FactureLine fl=new FactureLine();
+            fl.setMontantFaudec(devisLine.getMontantFaudec());
+            fl.setMontantHt(devisLine.getMontantHt());
+            fl.setMontantHtBrut(devisLine.getMontantHtBrut());
+            fl.setMontantHtBrut(devisLine.getMontantHtBrut());
+            fl.setMontantTva(devisLine.getMontantTva());
+            fl.setProduct(devisLine.getProduct());
+            fl.setQuantity(devisLine.getQuantity());
+            fl.setRemiseTaux(devisLine.getRemiseTaux());
+            fl.setRemiseValeur(devisLine.getRemiseValeur());
+            factureLines.add(fl);
+        });
+        return factureLines;
+    }
 }
