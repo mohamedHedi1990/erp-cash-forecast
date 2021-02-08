@@ -15,13 +15,8 @@ public class FactureLineConroller {
 	@Autowired
 	private FactureLineService factureLineService;
 
-	@CrossOrigin
-	@GetMapping("/findallbybonlivraison")
-	public List<FactureLine> findAllByFacture(@RequestBody Facture facture) {
-		return this.factureLineService.findByFacture(facture);
-	}
 
-	@CrossOrigin
+	/*@CrossOrigin
 	@PostMapping()
 	public FactureLine saveFactureLine(@RequestBody FactureLine  factureLine) {
 		return factureLineService.saveFactureLine(factureLine);
@@ -31,7 +26,7 @@ public class FactureLineConroller {
 	@GetMapping("/findbyline/{factureLineId}")
 	public FactureLine getFactureLineById(@PathVariable("factureLineId") Long factureLineId) {
 		return this.factureLineService.findById(factureLineId);
-	}
+	}*/
 
 	@CrossOrigin
 	@DeleteMapping("/{factureLineId}")

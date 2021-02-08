@@ -10,22 +10,17 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
 @Entity
-@Table(name = "erp_bonLivraisonLine")
+@Table(name = "erp_avoirLine")
 @Data
-public class BonLivraisonLine extends  AuditableSql implements Serializable {
+public class AvoirLine extends  AuditableSql implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long bonLivraisonLineId;
+    private Long avoirLineId;
     private int quantity;
     private Double montantHt;
     private String montantHtS;
-    private Double montantHtBrut;
-    private String montantHtBrutS;
-    private Double remiseTaux;
-    private Double remiseValeur;
-    private String remiseValeurS;
     private Double montantFaudec;
     private String montantFaudecS;
     private Double montantTva;
@@ -35,7 +30,7 @@ public class BonLivraisonLine extends  AuditableSql implements Serializable {
     private Product product;
     @ManyToOne
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private BonLivraison bonLivraison;
+    private Avoir avoir;
 
     @PrePersist
     public void prePersist() {
@@ -48,10 +43,6 @@ public class BonLivraisonLine extends  AuditableSql implements Serializable {
         this.montantTvaS = Utils.convertAmountToStringWithSeperator(this.montantTva);
         this.montantFaudec = Double.parseDouble(new DecimalFormat("##.###", simbolos).format(this.montantFaudec));
         this.montantFaudecS = Utils.convertAmountToStringWithSeperator(this.montantFaudec);
-        this.remiseValeur = Double.parseDouble(new DecimalFormat("##.###", simbolos).format(this.remiseValeur));
-        this.remiseValeurS = Utils.convertAmountToStringWithSeperator(this.remiseValeur);
-        this.montantHtBrut = Double.parseDouble(new DecimalFormat("##.###", simbolos).format(this.montantHtBrut));
-        this.montantHtBrutS = Utils.convertAmountToStringWithSeperator(this.montantHtBrut);
     }
 
 
@@ -66,10 +57,6 @@ public class BonLivraisonLine extends  AuditableSql implements Serializable {
         this.montantTvaS = Utils.convertAmountToStringWithSeperator(this.montantTva);
         this.montantFaudec = Double.parseDouble(new DecimalFormat("##.###", simbolos).format(this.montantFaudec));
         this.montantFaudecS = Utils.convertAmountToStringWithSeperator(this.montantFaudec);
-        this.remiseValeur = Double.parseDouble(new DecimalFormat("##.###", simbolos).format(this.remiseValeur));
-        this.remiseValeurS = Utils.convertAmountToStringWithSeperator(this.remiseValeur);
-        this.montantHtBrut = Double.parseDouble(new DecimalFormat("##.###", simbolos).format(this.montantHtBrut));
-        this.montantHtBrutS = Utils.convertAmountToStringWithSeperator(this.montantHtBrut);
     }
 
-}
+    }
