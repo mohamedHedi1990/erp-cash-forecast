@@ -187,11 +187,24 @@ public class FactureService {
        facture.setInvoiceCustomerId(customerInvoiceSaved.getInvoiceId());
 
         Facture savedFacture=factureRepository.save(facture);
-        if(savedFacture.getFactureLines() != null){
-            savedFacture.getFactureLines().forEach(factureLine -> {
-                factureLine.setFacture(savedFacture);
+        if(savedFacture != null && (savedFacture.getFactureNumber() == null || savedFacture.getFactureNumber().equals(""))){
+            final DateFormat df = new SimpleDateFormat("yyyy");
+            String year=df.format(savedFacture.getFactureDate());
+            Long id=savedFacture.getFactureId();
+            String ids="";
+            if(id<10){
+                ids="0"+String.valueOf(id);
+            }else{
+                ids=String.valueOf(id);
+        }
+        savedFacture.setFactureNumber("Fact-"+year+"-"+ids);
+        Facture savedFact=factureRepository.save(savedFacture);
+        if(savedFact.getFactureLines() != null){
+            savedFact.getFactureLines().forEach(factureLine -> {
+                factureLine.setFacture(savedFact);
                 factureLineService.saveFactureLine(factureLine);
             });
+        }
         }
         return savedFacture;
 

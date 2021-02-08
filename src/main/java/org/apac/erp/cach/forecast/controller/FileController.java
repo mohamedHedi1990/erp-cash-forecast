@@ -55,7 +55,7 @@ public class FileController {
 	
 	@CrossOrigin
 	@PostMapping("/logo/{companyId}")
-	public Company uploadIdentityFile(@RequestParam("file") MultipartFile file, @PathVariable("companyId") Long companyId) {
+	public Company uploadLogoFile(@RequestParam("file") MultipartFile file, @PathVariable("companyId") Long companyId) {
 		String fileName;
 		try {
 			fileName = DBFileStorageService.storeFile(file);
@@ -65,6 +65,26 @@ public class FileController {
 					.path(fileName).toUriString();
 
 			return companyService.updateCompanyLogoUrl(fileDownloadUri, companyId);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+
+	@CrossOrigin
+	@PostMapping("/signature/{companyId}")
+	public Company uploadSignatureFile(@RequestParam("file") MultipartFile file, @PathVariable("companyId") Long companyId) {
+		String fileName;
+		try {
+			fileName = DBFileStorageService.storeFile(file);
+			String fileDownloadUri = "";
+
+			fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/file/downloadFile/")
+					.path(fileName).toUriString();
+
+			return companyService.updateCompanySignatureUrl(fileDownloadUri, companyId);
 
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -1,10 +1,13 @@
 package org.apac.erp.cach.forecast.service;
 
 import org.apac.erp.cach.forecast.persistence.entities.BonLivraison;
+import org.apac.erp.cach.forecast.persistence.entities.Facture;
 import org.apac.erp.cach.forecast.persistence.repositories.BonLivraisonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Service
@@ -41,11 +44,25 @@ public class BonLivraisonService {
        bonLivraison.setInvoiceCustomerId(customerInvoiceSaved.getInvoiceId());
        */
        BonLivraison savedBonLivraison=bonLivraisonRepository.save(bonLivraison);
-       if(savedBonLivraison.getBonLivraisonLines() != null){
-           savedBonLivraison.getBonLivraisonLines().forEach(bonLivraisonLine -> {
-               bonLivraisonLine.setBonLivraison(savedBonLivraison);
-               bonLivraisonLineService.saveBonLivraisonLine(bonLivraisonLine);
-           });
+
+       if(savedBonLivraison != null && (savedBonLivraison.getBonLivraisonNumber() == null || savedBonLivraison.getBonLivraisonNumber().equals(""))) {
+           final DateFormat df = new SimpleDateFormat("yyyy");
+           String year = df.format(savedBonLivraison.getBonLivraisonDate());
+           Long id = savedBonLivraison.getBonLivraisonId();
+           String ids = "";
+           if (id < 10) {
+               ids = "0" + String.valueOf(id);
+           } else {
+               ids = String.valueOf(id);
+           }
+           savedBonLivraison.setBonLivraisonNumber("BL-" + year + "-" + ids);
+           BonLivraison savedBL = bonLivraisonRepository.save(savedBonLivraison);
+           if (savedBL.getBonLivraisonLines() != null) {
+               savedBL.getBonLivraisonLines().forEach(bonLivraisonLine -> {
+                   bonLivraisonLine.setBonLivraison(savedBL);
+                   bonLivraisonLineService.saveBonLivraisonLine(bonLivraisonLine);
+               });
+           }
        }
        return savedBonLivraison;
 
