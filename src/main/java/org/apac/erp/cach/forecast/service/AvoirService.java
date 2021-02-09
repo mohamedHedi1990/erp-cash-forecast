@@ -85,8 +85,8 @@ public class AvoirService {
                 avoirLineService.saveAvoirLine(avoirLine);
             });
             Avoir savedFact=avoirRepository.save(avoirgenerer);
-            customerInvoiceService.deleteCustomerInvoice(facture.getInvoiceCustomerId());
-            factureService.deleteFactureById(facture.getFactureId());
+            // customerInvoiceService.deleteCustomerInvoice(facture.getInvoiceCustomerId());
+            // factureService.deleteFactureById(facture.getFactureId());
             return savedFact;
         }else {
             return null;
