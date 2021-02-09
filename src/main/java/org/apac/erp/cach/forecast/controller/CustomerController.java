@@ -1,20 +1,16 @@
 package org.apac.erp.cach.forecast.controller;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.apac.erp.cach.forecast.dtos.CustomerDTO;
 import org.apac.erp.cach.forecast.persistence.entities.BankAccount;
 import org.apac.erp.cach.forecast.persistence.entities.Customer;
 import org.apac.erp.cach.forecast.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/customer")
@@ -45,4 +41,11 @@ public class CustomerController {
 	public void deleteCustomer(@PathVariable("customerId") Long customerId) {
 		customerService.deleteCustomer(customerId);
 	}
+
+	@CrossOrigin
+	@PostMapping(value = "/import",headers = {"content-type=multipart/mixed", "content-type=multipart/form-data"},consumes = {"multipart/form-data"})
+	public void importCustomersFromExcelFile(@RequestParam("file") MultipartFile file) throws IOException {
+		customerService.importCustomersFromExcelFile(file);
+	}
+
 }
