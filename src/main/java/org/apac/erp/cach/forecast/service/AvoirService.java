@@ -85,6 +85,8 @@ public class AvoirService {
                 avoirLineService.saveAvoirLine(avoirLine);
             });
             Avoir savedFact=avoirRepository.save(avoirgenerer);
+            // customerInvoiceService.deleteCustomerInvoice(facture.getInvoiceCustomerId());
+            // factureService.deleteFactureById(facture.getFactureId());
             return savedFact;
         }else {
             return null;
@@ -110,7 +112,7 @@ public class AvoirService {
         ArrayList<AvoirLine> avoirLines=new ArrayList<>();
         factureLines.forEach(factureLine -> {
             AvoirLine avoirLine=new AvoirLine();
-            avoirLine.setMontantHt(factureLine.getProduct().getProductPrixHT()*factureLine.getQuantity());
+            avoirLine.setMontantHt(factureLine.getMontantHt());
             avoirLine.setMontantFaudec(avoirLine.getMontantHt()*factureLine.getProduct().getProductFodec()/100);
             avoirLine.setMontantTva((avoirLine.getMontantFaudec()+avoirLine.getMontantHt())*factureLine.getProduct().getProductTVA()/100);
             avoirLine.setProduct(factureLine.getProduct());
