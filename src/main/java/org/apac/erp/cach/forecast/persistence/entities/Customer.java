@@ -35,7 +35,7 @@ public class Customer extends AuditableSql implements Serializable {
 	private String customerManagerName;
 
 	private String customerTel;
-	
+
 	private String customerEmail;
 
 	@OneToMany(cascade = CascadeType.ALL)
