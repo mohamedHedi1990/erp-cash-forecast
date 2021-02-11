@@ -85,10 +85,10 @@ public class CustomerService {
 					row.getCell(2).setCellType(Cell.CELL_TYPE_STRING);
 					customerManagerContactPhone = row.getCell(2).getStringCellValue();
 				}
-				if (row.getCell(3) != null || !(row.getCell(3).getStringCellValue().equals(""))) {
+				if (row.getCell(3) != null && !(row.getCell(3).getStringCellValue().equals(""))) {
 					customerContactName = row.getCell(3).getStringCellValue();
 				}
-				if (row.getCell(4) != null || !(row.getCell(4).getStringCellValue().equals(""))) {
+				if (row.getCell(4) != null && !(row.getCell(4).getStringCellValue().equals(""))) {
 					customerContactPoste = row.getCell(4).getStringCellValue();
 				}
 				if (row.getCell(5) != null) {
@@ -101,17 +101,15 @@ public class CustomerService {
 				}
 				
 				
-				if (row.getCell(7) != null || !(row.getCell(7).getStringCellValue().equals(""))) {
+				if (row.getCell(7) != null && !(row.getCell(7).getStringCellValue().equals(""))) {
 					customerAdresse = row.getCell(7).getStringCellValue();
 				}
-				if (row.getCell(8) != null || !(row.getCell(8).getStringCellValue().equals(""))) {
+				if (row.getCell(8) != null && !(row.getCell(8).getStringCellValue().equals(""))) {
 					customerMail = row.getCell(8).getStringCellValue();
 				}
-				if (row.getCell(9) != null || !(row.getCell(9).getStringCellValue().equals(""))) {
+				if (row.getCell(9) != null && !(row.getCell(9).getStringCellValue().equals(""))) {
 					customerUniqueIdentifier = row.getCell(9).getStringCellValue();
 				}
-				
-				
 
 				Customer customer = this.customerRepo.findByCustomerLabel(customerLabel);
 				if (customer == null) {
