@@ -187,6 +187,11 @@ public class FactureService {
             CustomerInvoice customerInvoiceSaved = customerInvoiceService.saveCustomerInvoice(customerInvoice);
             facture.setInvoiceCustomerId(customerInvoiceSaved.getInvoiceId());
         }
+        if (facture.getFactureType() == FactureType.AVOIR) {
+        	facture.setFactureDate(new Date());
+        	facture.setFactureDeadlineInNumberOfDays(0);
+        	facture.setFactureDeadlineDate(new Date());
+        }
         Facture savedFacture = factureRepository.save(facture);
         if (savedFacture != null) {
             if (savedFacture.getFactureNumber() == null || savedFacture.getFactureNumber().equals("")) {
