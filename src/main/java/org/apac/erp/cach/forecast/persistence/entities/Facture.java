@@ -3,6 +3,7 @@ package org.apac.erp.cach.forecast.persistence.entities;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.apac.erp.cach.forecast.constants.Utils;
+import org.apac.erp.cach.forecast.enumeration.FactureType;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -38,6 +39,9 @@ public class Facture extends  AuditableSql implements Serializable {
 
     private Double totalHTBrut;
     private String totalHTBrutS;
+
+    @Enumerated(EnumType.STRING)
+    private FactureType factureType;
 
     private Double remise;
     private String remiseS;

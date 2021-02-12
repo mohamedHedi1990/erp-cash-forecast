@@ -54,7 +54,7 @@ public class AvoirService {
             avoirgenerer.setAvoirCurrency(facture.getFactureCurrency());
         }
         avoirgenerer.setTotalHTBrut(0D);
-        avoirgenerer.setRemise(facture.getTotalHTBrut()*(-1));
+        //avoirgenerer.setRemise(facture.getTotalHTBrut()*(-1));
         avoirLines.addAll(this.factureLinesToAvoirLines(facture.getFactureLines()));
         avoirLines.forEach(avoirLine -> {
             avoirgenerer.setTotalTVA(avoirgenerer.getTotalTVA()+avoirLine.getMontantTva());

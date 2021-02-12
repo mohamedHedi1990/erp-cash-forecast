@@ -1,5 +1,6 @@
 package org.apac.erp.cach.forecast.service;
 
+import org.apac.erp.cach.forecast.enumeration.FactureType;
 import org.apac.erp.cach.forecast.persistence.entities.*;
 import org.apac.erp.cach.forecast.persistence.repositories.FactureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class FactureService {
 
     public List<Facture>getAllInvoices()
    {
-    return factureRepository.findAll();
+    return factureRepository.findAllByOrderByFactureDate();
    }
 
    public Facture getInvoiceById(Long id)
@@ -44,6 +45,7 @@ public class FactureService {
         facturegenerer.setTotalTaxe(0d);
         facturegenerer.setTimbreFiscal(0d);
         facturegenerer.setTotalTTC(0d);
+        facturegenerer.setFactureType(FactureType.FACTURE);
         List<BonLivraison> bonLivraisons=bonLivraisonService.findByBonLivraisonIds(blsIds);
         List<FactureLine> factureLines=new ArrayList<>();
         bonLivraisons.forEach(bonLivraison -> {
@@ -114,6 +116,7 @@ public class FactureService {
         facturegenerer.setTotalTaxe(0d);
         facturegenerer.setTimbreFiscal(0d);
         facturegenerer.setTotalTTC(0d);
+        facturegenerer.setFactureType(FactureType.FACTURE);
         Devis devis=devisService.devisRepository.findOne(devisId);
         List<FactureLine> factureLines=new ArrayList<>();
         if(facturegenerer.getCustomer() == null){
@@ -171,40 +174,50 @@ public class FactureService {
         }
     }
 
-    public Facture saveFacture(Facture facture)
-    {
-       CustomerInvoice customerInvoice=createCustomerInvoiceFromFacture(facture);
+    public Facture saveFacture(Facture facture) {
+        if (facture.getFactureType().equals(FactureType.FACTURE)) {
+            CustomerInvoice customerInvoice = createCustomerInvoiceFromFacture(facture);
 
-       if(facture.getFactureId()!=null)
-       {
-           if(facture.getInvoiceCustomerId()!=null)
-           {
-               customerInvoice.setInvoiceId(facture.getInvoiceCustomerId());
-           }
-       }
+            if (facture.getFactureId() != null) {
+                if (facture.getInvoiceCustomerId() != null) {
+                    customerInvoice.setInvoiceId(facture.getInvoiceCustomerId());
+                }
+            }
 
-       CustomerInvoice customerInvoiceSaved=customerInvoiceService.saveCustomerInvoice(customerInvoice);
-       facture.setInvoiceCustomerId(customerInvoiceSaved.getInvoiceId());
-
-        Facture savedFacture=factureRepository.save(facture);
-        if(savedFacture != null && (savedFacture.getFactureNumber() == null || savedFacture.getFactureNumber().equals(""))){
-            final DateFormat df = new SimpleDateFormat("yyyy");
-            String year=df.format(savedFacture.getFactureDate());
-            Long id=savedFacture.getFactureId();
-            String ids="";
-            if(id<10){
-                ids="0"+String.valueOf(id);
-            }else{
-                ids=String.valueOf(id);
+            CustomerInvoice customerInvoiceSaved = customerInvoiceService.saveCustomerInvoice(customerInvoice);
+            facture.setInvoiceCustomerId(customerInvoiceSaved.getInvoiceId());
         }
-        savedFacture.setFactureNumber("Fact-"+year+"-"+ids);
-        Facture savedFact=factureRepository.save(savedFacture);
-        if(savedFact.getFactureLines() != null){
-            savedFact.getFactureLines().forEach(factureLine -> {
-                factureLine.setFacture(savedFact);
-                factureLineService.saveFactureLine(factureLine);
-            });
+        if (facture.getFactureType() == FactureType.AVOIR) {
+        	facture.setFactureDate(new Date());
+        	facture.setFactureDeadlineInNumberOfDays(0);
+        	facture.setFactureDeadlineDate(new Date());
         }
+        Facture savedFacture = factureRepository.save(facture);
+        if (savedFacture != null) {
+            if (savedFacture.getFactureNumber() == null || savedFacture.getFactureNumber().equals("")) {
+                final DateFormat df = new SimpleDateFormat("yyyy");
+                String year = df.format(savedFacture.getFactureDate());
+                Long id = savedFacture.getFactureId();
+                String ids = "";
+                if (id < 10) {
+                    ids = "0" + String.valueOf(id);
+                } else {
+                    ids = String.valueOf(id);
+                }
+
+                if (facture.getFactureType().equals(FactureType.FACTURE)) {
+                    savedFacture.setFactureNumber("Fact-" + year + "-" + ids);
+                } else {
+                    savedFacture.setFactureNumber("FV-" + year + "-" + ids);
+                }
+            }
+            Facture savedFact = factureRepository.save(savedFacture);
+            if (savedFacture.getFactureLines() != null) {
+                savedFacture.getFactureLines().forEach(factureLine -> {
+                    factureLine.setFacture(savedFact);
+                    factureLineService.saveFactureLine(factureLine);
+                });
+            }
         }
         return savedFacture;
 
