@@ -1,5 +1,7 @@
 package org.apac.erp.cach.forecast.service;
 
+import org.apac.erp.cach.forecast.dtos.FactureFilterDto;
+import org.apac.erp.cach.forecast.dtos.FactureProductDto;
 import org.apac.erp.cach.forecast.enumeration.FactureType;
 import org.apac.erp.cach.forecast.persistence.entities.*;
 import org.apac.erp.cach.forecast.persistence.repositories.FactureRepository;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class FactureService {
@@ -175,7 +178,6 @@ public class FactureService {
     }
 
     public Facture saveFacture(Facture facture) {
-        if (facture.getFactureType().equals(FactureType.FACTURE)) {
             CustomerInvoice customerInvoice = createCustomerInvoiceFromFacture(facture);
 
             if (facture.getFactureId() != null) {
@@ -186,7 +188,7 @@ public class FactureService {
 
             CustomerInvoice customerInvoiceSaved = customerInvoiceService.saveCustomerInvoice(customerInvoice);
             facture.setInvoiceCustomerId(customerInvoiceSaved.getInvoiceId());
-        }
+
         if (facture.getFactureType() == FactureType.AVOIR) {
         	facture.setFactureDate(new Date());
         	facture.setFactureDeadlineInNumberOfDays(0);
@@ -210,6 +212,8 @@ public class FactureService {
                 } else {
                     savedFacture.setFactureNumber("FV-" + year + "-" + ids);
                 }
+                customerInvoiceSaved.setInvoiceNumber(savedFacture.getFactureNumber());
+                customerInvoiceService.saveCustomerInvoice(customerInvoiceSaved);
             }
             Facture savedFact = factureRepository.save(savedFacture);
             if (savedFacture.getFactureLines() != null) {
@@ -274,7 +278,11 @@ public class FactureService {
         customerInvoice.setInvoiceDate(facture.getFactureDate());
         customerInvoice.setInvoiceDeadlineDate(facture.getFactureDeadlineDate());
         customerInvoice.setInvoiceDeadlineInNumberOfDays(facture.getFactureDeadlineInNumberOfDays());
-        customerInvoice.setInvoiceTotalAmount(facture.getTotalTTC());
+        if(facture.getFactureType() == FactureType.AVOIR) {
+            customerInvoice.setInvoiceTotalAmount((-1)*facture.getTotalTTC());
+        }else{
+            customerInvoice.setInvoiceTotalAmount(facture.getTotalTTC());
+        }
         customerInvoice.setInvoicePayment(0D);
         customerInvoice.setIsFacture(true);
         return  customerInvoice;
@@ -284,9 +292,7 @@ public class FactureService {
    {   Facture facture=this.factureRepository.findOne(id);
    if(facture != null && facture.getFactureLines() != null){
        this.factureLineService.deleteAllLines(facture.getFactureLines());
-   } /*if(facture.getInvoiceCustomerId() != null) {
-       customerInvoiceService.deleteCustomerInvoice(facture.getInvoiceCustomerId());
-   }*/
+   }
        factureRepository.delete(id);
    }
 
@@ -311,5 +317,43 @@ public class FactureService {
             factureLines.add(fl);
         });
         return factureLines;
+    }
+
+    public List<Facture> findAllFacturesDateBetween(Map<String, Date> dates) {
+        return this.factureRepository.findByFactureDeadlineDateBetweenOrderByFactureDate(dates.get("beginDate"),dates.get("endDate"));
+    }
+
+    public List<Facture> findByFilterWithoutProduct(FactureFilterDto factureFilterDto) {
+        List<Facture> factures=this.factureRepository.findByFactureDeadlineDateBetweenOrderByFactureDate(factureFilterDto.getBeginDate(),factureFilterDto.getEndDate());
+        List<Customer> customers=factureFilterDto.getCustomerList();
+        if(factureFilterDto.getCustomerList().size()>0) {
+            factures = factures.stream().filter(facture -> customers.stream().map(Customer::getCustomerId).anyMatch(name -> name.equals(facture.getCustomer().getCustomerId())))
+                    .collect(Collectors.toList());
+        }
+        return factures;
+    }
+
+    public List<FactureProductDto> findByFilterWithProduct(FactureFilterDto factureFilterDto) {
+        List<FactureProductDto> factureProductDtos=new ArrayList<>();
+        List<Facture> factures=this.factureRepository.findByFactureDeadlineDateBetweenOrderByFactureDate(factureFilterDto.getBeginDate(),factureFilterDto.getEndDate());
+        List<Customer> customers=factureFilterDto.getCustomerList();
+        List<Product> products=factureFilterDto.getProductList();
+
+        if(factureFilterDto.getCustomerList().size()>0) {
+            factures = factures.stream().filter(facture -> customers.stream().map(Customer::getCustomerId).anyMatch(name -> name.equals(facture.getCustomer().getCustomerId())))
+                    .collect(Collectors.toList());
+        }
+        factures.forEach(facture -> {
+            facture.getFactureLines().forEach(factureLine -> {
+                Optional<Product> product=products.stream().filter(product1 -> product1.getProductId().equals(factureLine.getProduct().getProductId())).findFirst();
+                if(product.isPresent()){
+                    FactureProductDto factureProductDto=new FactureProductDto();
+                    factureProductDto.setFacture(facture);
+                    factureProductDto.setFactureLine(factureLine);
+                    factureProductDtos.add(factureProductDto);
+                }
+            });
+        });
+        return factureProductDtos;
     }
 }
