@@ -1,5 +1,6 @@
 package org.apac.erp.cach.forecast.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apac.erp.cach.forecast.dtos.ProviderDTO;
@@ -7,14 +8,8 @@ import org.apac.erp.cach.forecast.persistence.entities.Customer;
 import org.apac.erp.cach.forecast.persistence.entities.Provider;
 import org.apac.erp.cach.forecast.service.ProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/provider")
@@ -44,5 +39,11 @@ public class ProviderController {
 	@DeleteMapping("/{providerId}")
 	public void deleteProvider(@PathVariable("providerId") Long providerId) {
 		providerService.deleteProvider(providerId);
+	}
+
+	@CrossOrigin
+	@PostMapping(value = "/import",headers = {"content-type=multipart/mixed", "content-type=multipart/form-data"},consumes = {"multipart/form-data"})
+	public void importProviderssFromExcelFile(@RequestParam("file") MultipartFile file) throws IOException {
+		providerService.importProvidersFromExcelFile(file);
 	}
 }

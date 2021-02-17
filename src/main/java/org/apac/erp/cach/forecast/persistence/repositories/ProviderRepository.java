@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProviderRepository extends JpaRepository<Provider, Long> {
 	List<Provider> findAllByOrderByProviderLabel();
+
+    Provider findByProviderLabel(String providerLabel);
 }
