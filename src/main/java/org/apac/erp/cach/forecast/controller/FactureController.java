@@ -6,6 +6,8 @@ import org.apac.erp.cach.forecast.persistence.entities.BonLivraison;
 import org.apac.erp.cach.forecast.persistence.entities.Facture;
 import org.apac.erp.cach.forecast.service.FactureService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -57,9 +59,13 @@ public class FactureController {
 
     @CrossOrigin
     @PostMapping()
-    Facture saveFacture(@RequestBody Facture facture)
+    ResponseEntity<Facture> saveFacture(@RequestBody Facture facture)
     {
-        return  this.factureService.saveFacture(facture);
+        if(this.factureService.existesByFactureNumberAndOtherId(facture)) {
+            return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+        }else {
+            return new ResponseEntity<>(this.factureService.saveFacture(facture), HttpStatus.OK);
+        }
     }
 
     @CrossOrigin
