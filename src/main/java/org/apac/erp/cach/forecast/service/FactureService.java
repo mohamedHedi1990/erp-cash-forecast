@@ -79,21 +79,22 @@ public class FactureService {
         });
         facturegenerer.setFactureLines(factureLines);
         final DateFormat df = new SimpleDateFormat("yyyy");
-
+        Optional<Facture> lastFacture=factureRepository.findTopByFactureTypeOrderByCreatedAtDesc(FactureType.FACTURE);
+        String factureNumber="";
+        if(! lastFacture.isPresent()) {
+            factureNumber="FACT" + "-" + df.format(Calendar.getInstance().getTime())+ "-" +String.format("%04d", 1);
+        }else if(! df.format(lastFacture.get().getCreatedAt()).equals(df.format(Calendar.getInstance().getTime()))){
+            factureNumber="FACT" + "-" + df.format(Calendar.getInstance().getTime())+ "-" +String.format("%04d", 1);
+        }else{
+            String currentFactNumber=lastFacture.get().getFactureNumber();
+            String sequanceNumber=String.format("%04d",Integer.parseInt(currentFactNumber.substring(currentFactNumber.length()-4))+1);
+            factureNumber="FACT" + "-" + df.format(Calendar.getInstance().getTime())+ "-" +sequanceNumber;
+        }
+        facturegenerer.setFactureNumber(factureNumber);
         Facture savedFacture=factureRepository.save(facturegenerer);
         CustomerInvoice customerInvoice=this.genererCustomerInvoiceFromFacture(savedFacture);
         savedFacture.setInvoiceCustomerId(customerInvoice.getInvoiceId());
-       if(savedFacture != null){
-            String year=df.format(savedFacture.getFactureDate());
-            Long id=savedFacture.getFactureId();
-            String ids="";
-            if(id<10){
-                ids="0"+String.valueOf(id);
-            }else{
-                ids=String.valueOf(id);
-            }
-            savedFacture.setFactureNumber("Fact-"+year+"-"+ids);
-            savedFacture.getFactureLines().forEach(factureLine -> {
+        savedFacture.getFactureLines().forEach(factureLine -> {
                 factureLine.setFacture(savedFacture);
                 factureLineService.saveFactureLine(factureLine);
             });
@@ -104,9 +105,7 @@ public class FactureService {
             bonLivraisonService.deleteBonLivraisonById(bonLivraison.getBonLivraisonId());
         });
         return savedFact;
-        }else {
-            return null;
-        }
+
    }
 
     public Facture genererFactureFromDevis(Long devisId)
@@ -149,20 +148,23 @@ public class FactureService {
 
         facturegenerer.setFactureLines(factureLines);
         final DateFormat df = new SimpleDateFormat("yyyy");
+        Optional<Facture> lastFacture=factureRepository.findTopByFactureTypeOrderByCreatedAtDesc(FactureType.FACTURE);
+        String factureNumber="";
+        if(! lastFacture.isPresent()) {
+            factureNumber="FACT" + "-" + df.format(Calendar.getInstance().getTime())+ "-" +String.format("%04d", 1);
+        }else if(! df.format(lastFacture.get().getCreatedAt()).equals(df.format(Calendar.getInstance().getTime()))){
+            factureNumber="FACT" + "-" + df.format(Calendar.getInstance().getTime())+ "-" +String.format("%04d", 1);
+        }else{
+            String currentFactNumber=lastFacture.get().getFactureNumber();
+            String sequanceNumber=String.format("%04d",Integer.parseInt(currentFactNumber.substring(currentFactNumber.length()-4))+1);
+            factureNumber="FACT" + "-" + df.format(Calendar.getInstance().getTime())+ "-" +sequanceNumber;
+        }
+        facturegenerer.setFactureNumber(factureNumber);
 
         Facture savedFacture=factureRepository.save(facturegenerer);
         CustomerInvoice customerInvoice=this.genererCustomerInvoiceFromFacture(savedFacture);
         savedFacture.setInvoiceCustomerId(customerInvoice.getInvoiceId());
         if(savedFacture != null){
-            String year=df.format(savedFacture.getFactureDate());
-            Long id=savedFacture.getFactureId();
-            String ids="";
-            if(id<10){
-                ids="0"+String.valueOf(id);
-            }else{
-                ids=String.valueOf(id);
-            }
-            savedFacture.setFactureNumber("Fact-"+year+"-"+ids);
             savedFacture.getFactureLines().forEach(factureLine -> {
                 factureLine.setFacture(savedFacture);
                 factureLineService.saveFactureLine(factureLine);
@@ -194,27 +196,40 @@ public class FactureService {
         	facture.setFactureDeadlineInNumberOfDays(0);
         	facture.setFactureDeadlineDate(new Date());
         }
-        Facture savedFacture = factureRepository.save(facture);
-        if (savedFacture != null) {
-            if (savedFacture.getFactureNumber() == null || savedFacture.getFactureNumber().equals("")) {
-                final DateFormat df = new SimpleDateFormat("yyyy");
-                String year = df.format(savedFacture.getFactureDate());
-                Long id = savedFacture.getFactureId();
-                String ids = "";
-                if (id < 10) {
-                    ids = "0" + String.valueOf(id);
+        if(facture.getFactureId() == null) {
+            final DateFormat df = new SimpleDateFormat("yyyy");
+            if (facture.getFactureType().equals(FactureType.FACTURE)) {
+                Optional<Facture> lastFacture = factureRepository.findTopByFactureTypeOrderByCreatedAtDesc(FactureType.FACTURE);
+                String factureNumber = "";
+                if (!lastFacture.isPresent()) {
+                    factureNumber = "FACT" + "-" + df.format(Calendar.getInstance().getTime()) + "-" + String.format("%04d", 1);
+                } else if (!df.format(lastFacture.get().getCreatedAt()).equals(df.format(Calendar.getInstance().getTime()))) {
+                    factureNumber = "FACT" + "-" + df.format(Calendar.getInstance().getTime()) + "-" + String.format("%04d", 1);
                 } else {
-                    ids = String.valueOf(id);
+                    String currentFactNumber = lastFacture.get().getFactureNumber();
+                    String sequanceNumber = String.format("%04d", Integer.parseInt(currentFactNumber.substring(currentFactNumber.length() - 4)) + 1);
+                    factureNumber = "FACT" + "-" + df.format(Calendar.getInstance().getTime()) + "-" + sequanceNumber;
                 }
-
-                if (facture.getFactureType().equals(FactureType.FACTURE)) {
-                    savedFacture.setFactureNumber("Fact-" + year + "-" + ids);
+                facture.setFactureNumber(factureNumber);
+            } else {
+                Optional<Facture> lastFacture = factureRepository.findTopByFactureTypeOrderByCreatedAtDesc(FactureType.AVOIR);
+                String factureNumber = "";
+                if (!lastFacture.isPresent()) {
+                    factureNumber = "FV" + "-" + df.format(Calendar.getInstance().getTime()) + "-" + String.format("%04d", 1);
+                } else if (!df.format(lastFacture.get().getCreatedAt()).equals(df.format(Calendar.getInstance().getTime()))) {
+                    factureNumber = "FV" + "-" + df.format(Calendar.getInstance().getTime()) + "-" + String.format("%04d", 1);
                 } else {
-                    savedFacture.setFactureNumber("FV-" + year + "-" + ids);
+                    String currentFactNumber = lastFacture.get().getFactureNumber();
+                    String sequanceNumber = String.format("%04d", Integer.parseInt(currentFactNumber.substring(currentFactNumber.length() - 4)) + 1);
+                    factureNumber = "FV" + "-" + df.format(Calendar.getInstance().getTime()) + "-" + sequanceNumber;
                 }
+                facture.setFactureNumber(factureNumber);
+            }
+        }
+                Facture savedFacture = factureRepository.save(facture);
                 customerInvoiceSaved.setInvoiceNumber(savedFacture.getFactureNumber());
                 customerInvoiceService.saveCustomerInvoice(customerInvoiceSaved);
-            }
+
             Facture savedFact = factureRepository.save(savedFacture);
             if (savedFacture.getFactureLines() != null) {
                 savedFacture.getFactureLines().forEach(factureLine -> {
@@ -222,9 +237,7 @@ public class FactureService {
                     factureLineService.saveFactureLine(factureLine);
                 });
             }
-        }
         return savedFacture;
-
     }
 
 
@@ -355,5 +368,13 @@ public class FactureService {
             });
         });
         return factureProductDtos;
+    }
+
+    public boolean existesByFactureNumberAndOtherId(Facture facture) {
+        if(facture.getFactureId() == null  ){
+            return false;
+        }else {
+            return this.factureRepository.findByFactureIdNotLikeAndFactureNumberAndFactureType(facture.getFactureId(),facture.getFactureNumber(),facture.getFactureType()).isPresent();
+        }
     }
 }

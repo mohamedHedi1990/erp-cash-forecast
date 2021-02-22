@@ -1,6 +1,7 @@
 package org.apac.erp.cach.forecast.service;
 
 import org.apac.erp.cach.forecast.persistence.entities.BonLivraison;
+import org.apac.erp.cach.forecast.persistence.entities.Devis;
 import org.apac.erp.cach.forecast.persistence.entities.Facture;
 import org.apac.erp.cach.forecast.persistence.repositories.BonLivraisonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,9 @@ import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BonLivraisonService {
@@ -28,42 +31,29 @@ public class BonLivraisonService {
    {
     return bonLivraisonRepository.findOne(id);
    }
-   public BonLivraison saveBonLivraison(BonLivraison bonLivraison)
-   {
-       /*CustomerInvoice customerInvoice=createCustomerInvoiceFromBonLivraison(bonLivraison);
-
-       if(bonLivraison.getBonLivraisonId()!=null)
-       {
-           if(bonLivraison.getInvoiceCustomerId()!=null)
-           {
-               customerInvoice.setInvoiceId(bonLivraison.getInvoiceCustomerId());
-           }
+   public BonLivraison saveBonLivraison(BonLivraison bonLivraison) {
+       if(bonLivraison.getBonLivraisonId() == null){
+       final DateFormat df = new SimpleDateFormat("yyyy");
+       Optional<BonLivraison> lastBL = bonLivraisonRepository.findTopByOrderByCreatedAtDesc();
+       String blNumber = "";
+       if (!lastBL.isPresent()) {
+           blNumber = "BL" + "-" + df.format(Calendar.getInstance().getTime()) + "-" + String.format("%04d", 1);
+       } else if (!df.format(lastBL.get().getCreatedAt()).equals(df.format(Calendar.getInstance().getTime()))) {
+           blNumber = "BL" + "-" + df.format(Calendar.getInstance().getTime()) + "-" + String.format("%04d", 1);
+       } else {
+           String currentFactNumber = lastBL.get().getBonLivraisonNumber();
+           String sequanceNumber = String.format("%04d", Integer.parseInt(currentFactNumber.substring(currentFactNumber.length() - 4)) + 1);
+           blNumber = "BL" + "-" + df.format(Calendar.getInstance().getTime()) + "-" + sequanceNumber;
        }
-
-       CustomerInvoice customerInvoiceSaved=customerInvoiceService.saveCustomerInvoice(customerInvoice);
-       bonLivraison.setInvoiceCustomerId(customerInvoiceSaved.getInvoiceId());
-       */
-       BonLivraison savedBonLivraison=bonLivraisonRepository.save(bonLivraison);
-
-       if(savedBonLivraison != null && (savedBonLivraison.getBonLivraisonNumber() == null || savedBonLivraison.getBonLivraisonNumber().equals(""))) {
-           final DateFormat df = new SimpleDateFormat("yyyy");
-           String year = df.format(savedBonLivraison.getBonLivraisonDate());
-           Long id = savedBonLivraison.getBonLivraisonId();
-           String ids = "";
-           if (id < 10) {
-               ids = "0" + String.valueOf(id);
-           } else {
-               ids = String.valueOf(id);
-           }
-           savedBonLivraison.setBonLivraisonNumber("BL-" + year + "-" + ids);
-           BonLivraison savedBL = bonLivraisonRepository.save(savedBonLivraison);
-           if (savedBL.getBonLivraisonLines() != null) {
-               savedBL.getBonLivraisonLines().forEach(bonLivraisonLine -> {
-                   bonLivraisonLine.setBonLivraison(savedBL);
+       bonLivraison.setBonLivraisonNumber(blNumber);
+        }
+           BonLivraison savedBonLivraison = bonLivraisonRepository.save(bonLivraison);
+           if (savedBonLivraison.getBonLivraisonLines() != null) {
+               savedBonLivraison.getBonLivraisonLines().forEach(bonLivraisonLine -> {
+                   bonLivraisonLine.setBonLivraison(savedBonLivraison);
                    bonLivraisonLineService.saveBonLivraisonLine(bonLivraisonLine);
                });
            }
-       }
        return savedBonLivraison;
 
    }
@@ -99,5 +89,13 @@ public class BonLivraisonService {
 
     public List<BonLivraison> findByBonLivraisonIds(List<Long> blsIds) {
         return bonLivraisonRepository.findByBonLivraisonIdIn(blsIds);
+    }
+
+    public boolean existesByBonLivaisonNumberAndOtherId(BonLivraison bonLivraison) {
+        if(bonLivraison.getBonLivraisonId() == null  ){
+            return false;
+        }else {
+            return this.bonLivraisonRepository.findByBonLivraisonIdNotLikeAndBonLivraisonNumber(bonLivraison.getBonLivraisonId(),bonLivraison.getBonLivraisonNumber()).isPresent();
+        }
     }
 }

@@ -1,13 +1,17 @@
 package org.apac.erp.cach.forecast.service;
 
+import org.apac.erp.cach.forecast.enumeration.FactureType;
 import org.apac.erp.cach.forecast.persistence.entities.Devis;
+import org.apac.erp.cach.forecast.persistence.entities.Facture;
 import org.apac.erp.cach.forecast.persistence.repositories.DevisRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DevisService {
@@ -27,25 +31,26 @@ public class DevisService {
    {
     return devisRepository.findOne(id);
    }
-   public Devis saveDevis(Devis devis)
-   {
-       Devis savedDevis=devisRepository.save(devis);
-       if((savedDevis != null )&& (savedDevis.getDevisNumber() == null || savedDevis.getDevisNumber().equals(""))){
-           final DateFormat df = new SimpleDateFormat("yyyy");
-           String year=df.format(savedDevis.getDevisDate());
-           Long id=savedDevis.getDevisId();
-           String ids="";
-           if(id<10){
-               ids="0"+String.valueOf(id);
-           }else{
-               ids=String.valueOf(id);
-           }
-           savedDevis.setDevisNumber("DEV-"+year+"-"+ids);
+   public Devis saveDevis(Devis devis) {
+       if(devis.getDevisId() == null){
+        final DateFormat df = new SimpleDateFormat("yyyy");
+       Optional<Devis> lastDevis = devisRepository.findTopByOrderByCreatedAtDesc();
+       String devisNumber = "";
+       if (!lastDevis.isPresent()) {
+           devisNumber = "DEV" + "-" + df.format(Calendar.getInstance().getTime()) + "-" + String.format("%04d", 1);
+       } else if (!df.format(lastDevis.get().getCreatedAt()).equals(df.format(Calendar.getInstance().getTime()))) {
+           devisNumber = "DEV" + "-" + df.format(Calendar.getInstance().getTime()) + "-" + String.format("%04d", 1);
+       } else {
+           String currentFactNumber = lastDevis.get().getDevisNumber();
+           String sequanceNumber = String.format("%04d", Integer.parseInt(currentFactNumber.substring(currentFactNumber.length() - 4)) + 1);
+           devisNumber = "DEV" + "-" + df.format(Calendar.getInstance().getTime()) + "-" + sequanceNumber;
        }
-       Devis savedDev=devisRepository.save(savedDevis);
+       devis.setDevisNumber(devisNumber);
+        }
+       Devis savedDevis=devisRepository.save(devis);
        if(savedDevis.getDevisLines() != null){
            savedDevis.getDevisLines().forEach(devisLine -> {
-               devisLine.setDevis(savedDev);
+               devisLine.setDevis(savedDevis);
                devisLineService.saveDevisLine(devisLine);
            });
        }
@@ -67,5 +72,13 @@ public class DevisService {
 
     public List<Devis> findByDevisIds(List<Long> blsIds) {
         return devisRepository.findByDevisIdIn(blsIds);
+    }
+
+    public boolean existesByDevisNumberAndOtherId(Devis devis) {
+        if(devis.getDevisId() == null  ){
+            return false;
+        }else {
+            return this.devisRepository.findByDevisIdNotLikeAndDevisNumber(devis.getDevisId(),devis.getDevisNumber()).isPresent();
+        }
     }
 }
