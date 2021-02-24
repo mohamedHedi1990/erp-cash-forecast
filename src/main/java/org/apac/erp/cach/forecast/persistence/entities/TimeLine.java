@@ -37,7 +37,7 @@ public class TimeLine extends AuditableSql implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long timeLineId;
 	
-	private String timeLineLabel;
+	private String creditInstitution;
 	
 	@ManyToOne
 	private BankAccount timeLineAccount;
