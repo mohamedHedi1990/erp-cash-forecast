@@ -23,6 +23,7 @@ public class OperationTreserorieDto {
 	private String opperationFacultatifLabel;
 	private List<String> opperationDetails;
 	private OperationType opperationType;
+	private String beneficiaryName;
 	private boolean isValidated = false;
 	private Long operationRealId;
 	private OperationDtoType operationRealType;

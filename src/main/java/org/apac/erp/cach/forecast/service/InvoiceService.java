@@ -6,14 +6,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
+import org.apac.erp.cach.forecast.enumeration.OperationDtoType;
 import org.apac.erp.cach.forecast.persistence.entities.CustomerAttachedInvoices;
+import org.apac.erp.cach.forecast.persistence.entities.CustomerInvoice;
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
 import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
 import org.apac.erp.cach.forecast.persistence.entities.ProviderAttachedInvoices;
+import org.apac.erp.cach.forecast.persistence.entities.ProviderInvoice;
 import org.apac.erp.cach.forecast.persistence.repositories.CustomerAttachedInvoicesRepository;
+import org.apac.erp.cach.forecast.persistence.repositories.CustomerInvoiceRepository;
 import org.apac.erp.cach.forecast.persistence.repositories.InvoiceRepository;
 import org.apac.erp.cach.forecast.persistence.repositories.PaymentRuleRepository;
 import org.apac.erp.cach.forecast.persistence.repositories.ProviderAttachedInvoicesRepository;
+import org.apac.erp.cach.forecast.persistence.repositories.ProviderInvoiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +32,12 @@ public class InvoiceService {
     
     @Autowired
     private PaymentRuleService paymentRuleService;
+    
+    @Autowired
+    private CustomerInvoiceRepository customerInvoiceRepo;
+    
+    @Autowired
+    private ProviderInvoiceRepository providerInvoiceRepo;
     
     @Autowired
 	private CustomerAttachedInvoicesRepository customerAttachedInvocieRepo;
@@ -104,8 +115,15 @@ public class InvoiceService {
 	}
 */
 
-	public Invoice addPaymentRuleForInvoice(Long invoiceId, PaymentRule paymentRule) {
+	public Invoice addPaymentRuleForInvoice(Long invoiceId, PaymentRule paymentRule, OperationDtoType operationType) {
 		paymentRule.setPaymentRuleInvoices(""+invoiceId);
+		if(operationType == OperationDtoType.REGLEMENT_FACTURE_CLIENT) {
+			CustomerInvoice customerInvoice = this.customerInvoiceRepo.findOne(invoiceId);
+			paymentRule.setCustomer(customerInvoice.getCustomer());
+		} else {
+			ProviderInvoice providerInvoice = this.providerInvoiceRepo.findOne(invoiceId);
+			paymentRule.setProvider(providerInvoice.getProvider());
+		}
 		paymentRule.setInvoice(invoiceRepo.findOne(invoiceId));
 		Invoice  invoice = findInvoiceById(invoiceId);
 		List<PaymentRule> paymentRules = invoice.getInvoicePaymentRules();

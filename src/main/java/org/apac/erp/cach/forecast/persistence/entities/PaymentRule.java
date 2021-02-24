@@ -61,6 +61,12 @@ public class  PaymentRule extends AuditableSql implements Serializable {
 	private boolean isRelatedToAnAttachedInvoices = false;
 	private Long attachedInvoicesId;
 	
+	@ManyToOne
+	private Customer customer;
+	
+	@ManyToOne
+	private Provider provider;
+	
 	@Enumerated(EnumType.STRING)
 	private OperationType paymentRuleOperationType;
 

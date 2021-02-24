@@ -1,5 +1,6 @@
 package org.apac.erp.cach.forecast.controller;
 
+import org.apac.erp.cach.forecast.enumeration.OperationDtoType;
 import org.apac.erp.cach.forecast.persistence.entities.Invoice;
 import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
 import org.apac.erp.cach.forecast.service.InvoiceService;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -56,8 +58,9 @@ public class InvoiceController {
 	@CrossOrigin
 	@PostMapping("/{invoiceId}")
 	public Invoice addPaymentRuleForInvoice(@PathVariable("invoiceId") Long invoiceId,
+			@RequestParam("operationType") OperationDtoType operationType,
 			@RequestBody PaymentRule paymentRule) {
-		return invoiceService.addPaymentRuleForInvoice(invoiceId, paymentRule);
+		return invoiceService.addPaymentRuleForInvoice(invoiceId, paymentRule, operationType);
 	}
 	@CrossOrigin
 	@PostMapping("updatePaymentRule/{invoiceId}/{context}")

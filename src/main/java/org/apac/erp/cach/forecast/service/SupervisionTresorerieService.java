@@ -302,6 +302,12 @@ public class SupervisionTresorerieService {
 			operation.setOperationAmount(paymentRule.getPaymentRuleAmount());
 			operation.setOperationRealId(paymentRule.getPaymentRuleId());
 			operation.setValidated(paymentRule.isValidated());
+			if(paymentRule.getCustomer() != null) {
+				operation.setBeneficiaryName(paymentRule.getCustomer().getCustomerLabel());
+			} else if (paymentRule.getProvider() != null) {
+				operation.setBeneficiaryName(paymentRule.getProvider().getProviderLabel());
+			}
+			
 			operation.setOperationAccount(paymentRule.getPaymentRuleAccount());
 			operation.setIsInTheSimulatedPeriod(isInTheSimulatedPeriod);
 			
@@ -518,6 +524,11 @@ public class SupervisionTresorerieService {
 			operation.setValidated(decaissement.isValidated());
 			operation.setIsInTheSimulatedPeriod(isInTheSimulatedPeriod);
 			operation.setOperationAccount(decaissement.getDecaissementBankAccount());
+			if(decaissement.getDecaissementProvider() != null) {
+				operation.setBeneficiaryName(decaissement.getDecaissementProvider().getProviderLabel());
+			} else {
+				operation.setBeneficiaryName(decaissement.getBeneficaryName());
+			}
 			List<String> detailsPayements = new ArrayList<String>();
 			detailsPayements.add(decaissement.getDecaissementPaymentType().toString());
 			detailsPayements.add(decaissement.getDecaissementPaymentRuleNumber());
@@ -696,6 +707,11 @@ public class SupervisionTresorerieService {
 			operation.setOperationRealId(encaissement.getEncaissementId());
 			operation.setOperationRealType(OperationDtoType.ENCAISSEMENT);
 			operation.setValidated(encaissement.isValidated());
+			if(encaissement.getEncaissementCustomer() != null) {
+				operation.setBeneficiaryName(encaissement.getEncaissementCustomer().getCustomerLabel());
+			} else {
+				operation.setBeneficiaryName(encaissement.getBeneficaryName());
+			}
 			operation.setIsInTheSimulatedPeriod(isInTheSimulatedPeriod);
 
 			operation.setOpperationDetails(detailsPayements);

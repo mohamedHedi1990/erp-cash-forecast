@@ -75,6 +75,8 @@ public class Decaissement extends AuditableSql implements Serializable {
 	
 	private boolean isRelatedComissionValidated = false;
 	
+	private String beneficaryName;
+	
 	@PrePersist
 	public void initPR() {
 		
