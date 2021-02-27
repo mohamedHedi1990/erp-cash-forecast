@@ -72,6 +72,9 @@ public class Encaissement extends AuditableSql implements Serializable {
 	private String encaissementCurrency;
 	
 	private String beneficaryName;
+
+	private boolean isRelatedComissionValidated = false;
+
 	
 	
 	@PrePersist

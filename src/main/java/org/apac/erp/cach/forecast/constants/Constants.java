@@ -7,5 +7,6 @@ public class Constants {
 	
 public static final String PAYMENT_RULE = "PAYMENT_RULE";
 public static final String DECAISSEMENT = "DECAISSEMENT";
+public static final String ENCAISSEMENT = "ENCAISSEMENT";
 
 }
