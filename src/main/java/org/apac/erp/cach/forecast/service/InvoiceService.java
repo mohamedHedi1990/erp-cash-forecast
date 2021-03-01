@@ -132,7 +132,10 @@ public class InvoiceService {
 		}
 		paymentRules.add(paymentRule);
 		invoice.setInvoicePaymentRules(paymentRules);
-		invoice.setInvoicePayment(invoice.getInvoicePayment() + paymentRule.getPaymentRuleAmount());
+		double newAmount = invoice.getInvoicePayment() + paymentRule.getPaymentRuleAmount();
+		newAmount = (double)(Math.round(newAmount * 1000))/1000;
+		invoice.setInvoicePayment(newAmount);
+		
 		if(Double.compare(invoice.getInvoicePayment(),invoice.getInvoiceTotalAmount()) == 0) {
 			invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
 		}
@@ -151,6 +154,8 @@ public class InvoiceService {
 		Double paymentOlderInvoice=invoice.getInvoicePayment();
 		Double newMontant=paymentOlderInvoice-paymentolders;
 		newMontant=newMontant+ paymentRule.getPaymentRuleAmount();
+		newMontant = (double)(Math.round(newMontant * 1000))/1000;
+		
 		invoice.setInvoicePayment(newMontant);
 		if(Double.compare(invoice.getInvoicePayment(),invoice.getInvoiceTotalAmount()) == 0) {
 			invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
