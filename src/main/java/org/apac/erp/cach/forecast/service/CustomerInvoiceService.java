@@ -75,6 +75,7 @@ public class CustomerInvoiceService {
 			if (customerInvoice.getInvoicePaymentRules() != null) {
 				customerInvoice.getInvoicePaymentRules().forEach(rule -> {
 					rule.setInvoice(savedInvoice);
+					rule.setCustomer(savedInvoice.getCustomer());
 					paymentRuleRepository.save(rule);
 				});
 			}
@@ -143,6 +144,7 @@ public class CustomerInvoiceService {
 		attachedInvoices.getPaymentRules().add(invoicePayment.getPaymentRule());
 		CustomerAttachedInvoices savedInvoices = this.customerAttachedInvoicesRepository.save(attachedInvoices);
 		savedInvoices.getPaymentRules().get(savedInvoices.getPaymentRules().size() - 1).setAttachedInvoicesId(attachedInvoices.getAttachedInvoicesId());
+		savedInvoices.getPaymentRules().get(savedInvoices.getPaymentRules().size() - 1).setCustomer(invoicePayment.getSelectedInvoices().get(0).getCustomer());
 		paymentRuleRepository.save(savedInvoices.getPaymentRules().get(savedInvoices.getPaymentRules().size() - 1));
 		return savedInvoices;
 	}

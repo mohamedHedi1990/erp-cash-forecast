@@ -67,6 +67,7 @@ public class ProviderInvoiceService {
 			if(providerInvoice.getInvoicePaymentRules()!=null) {
 				providerInvoice.getInvoicePaymentRules().forEach(rule -> {
 					rule.setInvoice(savedInvoice);
+					rule.setProvider(savedInvoice.getProvider());
 					paymentRuleRepository.save(rule);
 				});
 			}
@@ -150,6 +151,7 @@ public class ProviderInvoiceService {
 		attachedInvoices.getPaymentRules().add(invoicePayment.getPaymentRule());
 		ProviderAttachedInvoices savedInvoices = this.providerAttachedInvoicesRepository.save(attachedInvoices);
 		savedInvoices.getPaymentRules().get(savedInvoices.getPaymentRules().size() - 1).setAttachedInvoicesId(attachedInvoices.getAttachedInvoicesId());
+		savedInvoices.getPaymentRules().get(savedInvoices.getPaymentRules().size() - 1).setProvider(invoicePayment.getSelectedInvoices().get(0).getProvider());
 		paymentRuleRepository.save(savedInvoices.getPaymentRules().get(savedInvoices.getPaymentRules().size() - 1));
 		return savedInvoices;
 	}
