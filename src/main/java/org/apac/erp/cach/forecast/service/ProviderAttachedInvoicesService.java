@@ -23,9 +23,9 @@ public class ProviderAttachedInvoicesService {
 				 if(invoice.getInvoiceStatus() == InvoiceStatus.CLOSED) {
 					 invoice.setInvoicePayment(invoice.getInvoicePaymentRules().stream().mapToDouble(paymentRule -> paymentRule.getPaymentRuleAmount()).sum());
 					 invoice.setInvoiceStatus(InvoiceStatus.OPENED);
-					 invoice.setAssociationNumber(invoice.getAssociationNumber() - 1);
-					 this.invoiceService.saveInvoice(invoice);
 				 }
+				 invoice.setAssociationNumber(invoice.getAssociationNumber() - 1);
+				 this.invoiceService.saveInvoice(invoice);
 			 }
 			 this.ProviderAttachedInvoicesRepo.delete(ProviderAttachedInvoicesId);
 		 }

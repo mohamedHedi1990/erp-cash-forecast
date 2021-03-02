@@ -16,4 +16,10 @@ public class InvoicesCustomerPayment {
 	
 	private PaymentRule paymentRule;
 
+	public InvoicesCustomerPayment() {
+		super();
+	}
+	
+	
+
 }
