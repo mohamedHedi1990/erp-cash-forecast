@@ -215,13 +215,13 @@ public class FactureService {
                 Optional<Facture> lastFacture = factureRepository.findTopByFactureTypeOrderByCreatedAtDesc(FactureType.AVOIR);
                 String factureNumber = "";
                 if (!lastFacture.isPresent()) {
-                    factureNumber = "FV" + "-" + df.format(Calendar.getInstance().getTime()) + "-" + String.format("%04d", 1);
+                    factureNumber = "AV" + "-" + df.format(Calendar.getInstance().getTime()) + "-" + String.format("%04d", 1);
                 } else if (!df.format(lastFacture.get().getCreatedAt()).equals(df.format(Calendar.getInstance().getTime()))) {
-                    factureNumber = "FV" + "-" + df.format(Calendar.getInstance().getTime()) + "-" + String.format("%04d", 1);
+                    factureNumber = "AV" + "-" + df.format(Calendar.getInstance().getTime()) + "-" + String.format("%04d", 1);
                 } else {
                     String currentFactNumber = lastFacture.get().getFactureNumber();
                     String sequanceNumber = String.format("%04d", Integer.parseInt(currentFactNumber.substring(currentFactNumber.length() - 4)) + 1);
-                    factureNumber = "FV" + "-" + df.format(Calendar.getInstance().getTime()) + "-" + sequanceNumber;
+                    factureNumber = "AV" + "-" + df.format(Calendar.getInstance().getTime()) + "-" + sequanceNumber;
                 }
                 facture.setFactureNumber(factureNumber);
             }
@@ -333,11 +333,11 @@ public class FactureService {
     }
 
     public List<Facture> findAllFacturesDateBetween(Map<String, Date> dates) {
-        return this.factureRepository.findByFactureDeadlineDateBetweenOrderByFactureDate(dates.get("beginDate"),dates.get("endDate"));
+        return this.factureRepository.findByFactureDateBetweenOrderByFactureDate(dates.get("beginDate"),dates.get("endDate"));
     }
 
     public List<Facture> findByFilterWithoutProduct(FactureFilterDto factureFilterDto) {
-        List<Facture> factures=this.factureRepository.findByFactureDeadlineDateBetweenOrderByFactureDate(factureFilterDto.getBeginDate(),factureFilterDto.getEndDate());
+        List<Facture> factures=this.factureRepository.findByFactureDateBetweenOrderByFactureDate(factureFilterDto.getBeginDate(),factureFilterDto.getEndDate());
         List<Customer> customers=factureFilterDto.getCustomerList();
         if(factureFilterDto.getCustomerList().size()>0) {
             factures = factures.stream().filter(facture -> customers.stream().map(Customer::getCustomerId).anyMatch(name -> name.equals(facture.getCustomer().getCustomerId())))
@@ -348,7 +348,7 @@ public class FactureService {
 
     public List<FactureProductDto> findByFilterWithProduct(FactureFilterDto factureFilterDto) {
         List<FactureProductDto> factureProductDtos=new ArrayList<>();
-        List<Facture> factures=this.factureRepository.findByFactureDeadlineDateBetweenOrderByFactureDate(factureFilterDto.getBeginDate(),factureFilterDto.getEndDate());
+        List<Facture> factures=this.factureRepository.findByFactureDateBetweenOrderByFactureDate(factureFilterDto.getBeginDate(),factureFilterDto.getEndDate());
         List<Customer> customers=factureFilterDto.getCustomerList();
         List<Product> products=factureFilterDto.getProductList();
 
