@@ -386,6 +386,7 @@ public class SupervisionTresorerieService {
 						operationCom.setOperationAccount(paymentRule.getPaymentRuleAccount());
 						operationCom.setDecaissementType(Constants.PAYMENT_RULE);
 						operationCom.setIsInTheSimulatedPeriod(isInTheSimulatedPeriod);
+						operationCom.setBeneficiaryName("COMISSION BANCAIRE");
 						operationCom
 								.setOpperationLabel("COMISSION REMISE CHEQUE N° " + paymentRule.getPaymentRuleNumber());
 						operationCom.setOpperationCurrency(operation.getOpperationCurrency());
@@ -415,6 +416,8 @@ public class SupervisionTresorerieService {
 						operationCom.setValidated(paymentRule.isRelatedComissionValidated());
 						operationCom.setDecaissementType(Constants.PAYMENT_RULE);
 						operationCom.setIsInTheSimulatedPeriod(isInTheSimulatedPeriod);
+						operationCom.setBeneficiaryName("COMISSION BANCAIRE");
+
 						List<String> detailsPayementsCom = new ArrayList<String>();
 						detailsPayements.add("Comission de virement ");
 						operationCom.setOpperationDetails(detailsPayements);
@@ -438,6 +441,7 @@ public class SupervisionTresorerieService {
 						operationCom.setOperationRealType(OperationDtoType.COMISSION);
 						operationCom.setIsInTheSimulatedPeriod(isInTheSimulatedPeriod);
 						operationCom.setOperationAccount(paymentRule.getPaymentRuleAccount());
+						operationCom.setBeneficiaryName("COMISSION BANCAIRE");
 
 						operationCom
 								.setOpperationLabel("COMISSION REMISE TRAITE N° " + paymentRule.getPaymentRuleNumber());
@@ -466,6 +470,7 @@ public class SupervisionTresorerieService {
 						operationCom.setOperationRealType(OperationDtoType.COMISSION);
 						operationCom.setIsInTheSimulatedPeriod(isInTheSimulatedPeriod);
 						operationCom.setOperationAccount(paymentRule.getPaymentRuleAccount());
+						operationCom.setBeneficiaryName("COMISSION BANCAIRE");
 
 						operationCom
 								.setOpperationLabel("COMISSION REMISE TRAITE ESCOMPTE N° " + paymentRule.getPaymentRuleNumber());
@@ -547,6 +552,7 @@ public class SupervisionTresorerieService {
 						operationCom.setOperationRealType(OperationDtoType.COMISSION);
 						operationCom.setIsInTheSimulatedPeriod(isInTheSimulatedPeriod);
 						operationCom.setOperationAccount(paymentRule.getPaymentRuleAccount());
+						operationCom.setBeneficiaryName("COMISSION BANCAIRE");
 
 						operationCom
 								.setOpperationLabel("COMISSION REMISE TRAITE N° " + paymentRule.getPaymentRuleNumber());
@@ -626,6 +632,8 @@ public class SupervisionTresorerieService {
 					operationCom.setOperationRealType(OperationDtoType.COMISSION);
 					operationCom.setIsInTheSimulatedPeriod(isInTheSimulatedPeriod);
 					operationCom.setOperationAccount(decaissement.getDecaissementBankAccount());
+					operationCom.setBeneficiaryName("COMISSION BANCAIRE");
+
 
 					operationCom
 							.setOpperationLabel("COMISSION REMISE TRAITE N° " + decaissement.getDecaissementPaymentRuleNumber());
@@ -844,6 +852,8 @@ public class SupervisionTresorerieService {
 						detailsPayements
 								.add("Comission de remise de chèque numéro " + encaissement.getEncaissementPaymentRuleNumber());
 						operationCom.setOpperationDetails(detailsPayements);
+						operationCom.setBeneficiaryName("COMISSION BANCAIRE");
+
 						operations.add(operationCom);
 					});
 
@@ -869,6 +879,8 @@ public class SupervisionTresorerieService {
 						List<String> detailsPayementsCom = new ArrayList<String>();
 						detailsPayements.add("Comission de virement ");
 						operationCom.setOpperationDetails(detailsPayements);
+						operationCom.setBeneficiaryName("COMISSION BANCAIRE");
+
 						operations.add(operationCom);
 					});
 
@@ -889,6 +901,7 @@ public class SupervisionTresorerieService {
 						operationCom.setOperationRealType(OperationDtoType.COMISSION);
 						operationCom.setIsInTheSimulatedPeriod(isInTheSimulatedPeriod);
 						operationCom.setOperationAccount(encaissement.getEncaissementBankAccount());
+						operationCom.setBeneficiaryName("COMISSION BANCAIRE");
 
 						operationCom
 								.setOpperationLabel("COMISSION REMISE TRAITE N° " + encaissement.getEncaissementPaymentRuleNumber());
@@ -917,6 +930,7 @@ public class SupervisionTresorerieService {
 						operationCom.setOperationRealType(OperationDtoType.COMISSION);
 						operationCom.setIsInTheSimulatedPeriod(isInTheSimulatedPeriod);
 						operationCom.setOperationAccount(encaissement.getEncaissementBankAccount());
+						operationCom.setBeneficiaryName("COMISSION BANCAIRE");
 
 						operationCom
 								.setOpperationLabel("COMISSION REMISE TRAITE ESCOMPTE N° " + encaissement.getEncaissementPaymentRuleNumber());

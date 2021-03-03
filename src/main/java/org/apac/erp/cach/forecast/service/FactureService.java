@@ -100,6 +100,7 @@ public class FactureService {
             });
         Facture savedFact=factureRepository.save(facturegenerer);
         customerInvoice.setInvoiceNumber(savedFacture.getFactureNumber());
+        customerInvoice.setIsGeneratedInvoice(true);
         this.customerInvoiceService.saveCustomerInvoice(customerInvoice);
         bonLivraisons.forEach(bonLivraison -> {
             bonLivraisonService.deleteBonLivraisonById(bonLivraison.getBonLivraisonId());

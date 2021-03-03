@@ -51,6 +51,9 @@ public class Utils {
 			} else if(tab[1].length() == 2) {
 				tab[1] = "." + tab[1] + "0";
 				initialAmount = tab[0] + tab[1];
+			} else if(tab[1].length() == 3) {
+				tab[1] = "." + tab[1];
+				initialAmount = tab[0] + tab[1];
 			}
 			
 			System.out.println("init amount :"+initialAmount);
