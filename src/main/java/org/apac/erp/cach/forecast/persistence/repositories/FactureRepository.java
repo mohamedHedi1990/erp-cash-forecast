@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface FactureRepository extends JpaRepository<Facture,Long> {
     List<Facture> findAllByOrderByFactureDate();
-    List<Facture> findByFactureDeadlineDateBetweenOrderByFactureDate(Date begin,Date end);
+    List<Facture> findByFactureDateBetweenOrderByFactureDate(Date begin,Date end);
     //Facture findTopByOrderByCreatedAtDesc();
     Optional<Facture> findTopByFactureTypeOrderByCreatedAtDesc(FactureType type);
 
