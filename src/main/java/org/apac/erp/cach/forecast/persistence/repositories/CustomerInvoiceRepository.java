@@ -1,5 +1,6 @@
 package org.apac.erp.cach.forecast.persistence.repositories;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
@@ -14,5 +15,6 @@ public interface CustomerInvoiceRepository extends JpaRepository<CustomerInvoice
 	List<CustomerInvoice> findByCustomer(Customer customer);
 	List<CustomerInvoice>findAllByCustomerAndInvoiceStatus(Customer customer, InvoiceStatus invoiceStatus);
 	List<CustomerInvoice>findAllByOrderByInvoiceNumberDesc();
+	List<CustomerInvoice>  findByInvoiceStatusAndInvoiceDeadlineDateBetween(InvoiceStatus invoiceStatus, Date startDate, Date endDate);
 
 }

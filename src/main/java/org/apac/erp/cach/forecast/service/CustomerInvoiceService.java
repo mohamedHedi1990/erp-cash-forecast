@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -229,6 +230,10 @@ public class CustomerInvoiceService {
 	public void deleteCustomerInvoice(Long id)
 	{
 		this.customerInvoiceRepo.delete(id);
+	}
+	
+	public List<CustomerInvoice> findByInvoiceStatusAndInvoiceDeadlineDate(InvoiceStatus invoiceStatus, Date startDate, Date endDate) {
+		return this.customerInvoiceRepo.findByInvoiceStatusAndInvoiceDeadlineDateBetween(invoiceStatus, startDate, endDate);
 	}
 
 }

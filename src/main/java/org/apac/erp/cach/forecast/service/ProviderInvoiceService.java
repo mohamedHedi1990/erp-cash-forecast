@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -228,5 +229,9 @@ public class ProviderInvoiceService {
 		allInvoices = allInvoices.stream().sorted(Comparator.comparing(ProviderInvoice::getInvoiceNumber))
 				.collect(Collectors.toList());
 		return allInvoices;
+	}
+	
+	public List<ProviderInvoice> findByInvoiceStatusAndInvoiceDeadlineDate(InvoiceStatus invoiceStatus, Date startDate, Date endDate) {
+		return this.providerInvoiceRepo.findByInvoiceStatusAndInvoiceDeadlineDateBetween(invoiceStatus, startDate, endDate);
 	}
 }

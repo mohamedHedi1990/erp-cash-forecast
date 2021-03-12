@@ -11,16 +11,19 @@ import java.util.stream.Collectors;
 import org.apac.erp.cach.forecast.constants.Constants;
 import org.apac.erp.cach.forecast.constants.Utils;
 import org.apac.erp.cach.forecast.dtos.OperationTreserorieDto;
+import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
 import org.apac.erp.cach.forecast.enumeration.Operation;
 import org.apac.erp.cach.forecast.enumeration.OperationDtoType;
 import org.apac.erp.cach.forecast.enumeration.OperationType;
 import org.apac.erp.cach.forecast.enumeration.PaymentMethod;
 import org.apac.erp.cach.forecast.persistence.entities.BankAccount;
 import org.apac.erp.cach.forecast.persistence.entities.Comission;
+import org.apac.erp.cach.forecast.persistence.entities.CustomerInvoice;
 import org.apac.erp.cach.forecast.persistence.entities.Decaissement;
 import org.apac.erp.cach.forecast.persistence.entities.Encaissement;
 import org.apac.erp.cach.forecast.persistence.entities.HistoricAccountSold;
 import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
+import org.apac.erp.cach.forecast.persistence.entities.ProviderInvoice;
 import org.apac.erp.cach.forecast.persistence.entities.TimeLine;
 import org.apac.erp.cach.forecast.persistence.entities.TimeLineEntry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1173,4 +1176,58 @@ public class SupervisionTresorerieService {
 		}
 
 	}
+
+
+
+//etat non engagé
+	
+
+	public List<OperationTreserorieDto> nonEngageSupervision(Date startDate, Date endDate) {
+		
+		
+		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
+
+		//Trouver toutes les factures clients ouvertes
+		List<CustomerInvoice> customerInvoices = this.customerInvoiceService.findByInvoiceStatusAndInvoiceDeadlineDate(InvoiceStatus.OPENED, startDate, endDate);
+		customerInvoices.stream().forEach(customerInvocie -> {
+			OperationTreserorieDto operation = new OperationTreserorieDto();
+			if(customerInvocie.getInvoiceTotalAmount() < 0)
+				operation.setOpperationType(OperationType.DECAISSEMENT);
+			else
+			operation.setOpperationType(OperationType.ENCAISSEMENT);
+			operation.setOperationDate(customerInvocie.getInvoiceDeadlineDate());
+			double montantRestant = customerInvocie.getInvoiceTotalAmount() - customerInvocie.getInvoicePayment();
+			String montantRestantS = Utils.convertAmountToStringWithSeperator(montantRestant);
+			operation.setOperationAmountS(montantRestantS);
+			operation.setOperationAmount(montantRestant);
+			operation.setOperationRealId(customerInvocie.getInvoiceId());
+			operation.setBeneficiaryName(customerInvocie.getCustomer().getCustomerLabel());
+			String label = "REGLEMENT FACTURE CLIENT N° " + customerInvocie.getInvoiceNumber();
+			operation.setOpperationLabel(label);
+			operations.add(operation);
+			
+		});
+		
+		//Trouver toutes les factures fournisseurs ouvertes
+		List<ProviderInvoice> providerInvoices = this.providerInvoiceService.findByInvoiceStatusAndInvoiceDeadlineDate(InvoiceStatus.OPENED, startDate, endDate);
+		providerInvoices.stream().forEach(providerInvocie -> {
+			OperationTreserorieDto operation = new OperationTreserorieDto();
+			operation.setOpperationType(OperationType.DECAISSEMENT);
+			operation.setOperationDate(providerInvocie.getInvoiceDeadlineDate());
+			double montantRestant = providerInvocie.getInvoiceTotalAmount() - providerInvocie.getInvoicePayment();
+			String montantRestantS = Utils.convertAmountToStringWithSeperator(montantRestant);
+			operation.setOperationAmountS(montantRestantS);
+			operation.setOperationAmount(montantRestant);
+			operation.setOperationRealId(providerInvocie.getInvoiceId());
+			operation.setBeneficiaryName(providerInvocie.getProvider().getProviderLabel());
+			String label = "DECAISSEMENT FACTURE CLIENT N° " + providerInvocie.getInvoiceNumber();
+			operation.setOpperationLabel(label);
+			operations.add(operation);
+			
+		});
+
+		return operations;
+	}
+
+
 }
