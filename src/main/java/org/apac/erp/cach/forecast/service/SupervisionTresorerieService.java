@@ -1230,4 +1230,18 @@ public class SupervisionTresorerieService {
 	}
 
 
+	public List<OperationTreserorieDto> globalSupervision(Date startDate, Date endDate, Boolean isValidated)
+	{
+	  List<OperationTreserorieDto> operationTreserories=new ArrayList<>();
+	  List<BankAccount> bankAccounts=bankAccountService.getAllBankAccounts();
+		for (BankAccount bankAccount : bankAccounts) {
+		  operationTreserories.addAll(this.globalSupervisionEngage(bankAccount.getAccountId(),startDate,endDate,isValidated));
+	  }
+
+	  operationTreserories.addAll(this.nonEngageSupervision(startDate,endDate));
+	  operationTreserories = operationTreserories.stream().sorted(Comparator.comparing(OperationTreserorieDto::getOperationDate))
+				.collect(Collectors.toList());
+	  return operationTreserories;
+	}
+
 }
