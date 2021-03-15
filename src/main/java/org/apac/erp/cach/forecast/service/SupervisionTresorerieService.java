@@ -1225,25 +1225,83 @@ public class SupervisionTresorerieService {
 			operations.add(operation);
 			
 		});
-		operations = operations.stream().sorted(Comparator.comparing(OperationTreserorieDto::getOperationDate))
+		List<OperationTreserorieDto> sortedOperations = operations.stream().sorted(Comparator.comparing(OperationTreserorieDto::getOperationDate))
 					.collect(Collectors.toList());
 
-		return operations;
+		return sortedOperations;
 	}
 
 
 	public List<OperationTreserorieDto> globalSupervision(Date startDate, Date endDate, Boolean isValidated)
 	{
-	  List<OperationTreserorieDto> operationTreserories=new ArrayList<>();
+	  List<OperationTreserorieDto> operations=new ArrayList<>();
 	  List<BankAccount> bankAccounts=bankAccountService.getAllBankAccounts();
 		for (BankAccount bankAccount : bankAccounts) {
-		  operationTreserories.addAll(this.globalSupervisionEngage(bankAccount.getAccountId(),startDate,endDate,isValidated));
+			operations.addAll(this.globalSupervisionEngage(bankAccount.getAccountId(),startDate,endDate,isValidated));
 	  }
 
-	  operationTreserories.addAll(this.nonEngageSupervision(startDate,endDate));
-	  operationTreserories = operationTreserories.stream().sorted(Comparator.comparing(OperationTreserorieDto::getOperationDate))
+		operations.addAll(this.nonEngageSupervision(startDate,endDate));
+		operations = operations.stream().sorted(Comparator.comparing(OperationTreserorieDto::getOperationDate))
 				.collect(Collectors.toList());
-	  return operationTreserories;
+	  
+	  //Trouver le solde progressive
+	  
+	  //Etape 1: Trouver la somme de montant dans tout les comptes bancaire (initial amount)
+	  double initialAmount = bankAccounts.stream().mapToDouble(account -> account.getAccountInitialAmount()).sum();
+	  
+	  //Etape2: trouver le solde progressive
+	  for (int i = 0; i < operations.size(); i++) {
+
+			if (i == 0) {
+				if (isValidated) {
+					if (operations.get(i).isValidated()) {
+						if (operations.get(i).getOpperationType() == OperationType.ENCAISSEMENT)
+							operations.get(i)
+									.setProgressiveAmount(initialAmount + operations.get(i).getOperationAmount());
+						else
+							operations.get(i)
+									.setProgressiveAmount(initialAmount - operations.get(i).getOperationAmount());
+					} else {
+						operations.get(i).setProgressiveAmount(initialAmount);
+					}
+				} else {
+					if (operations.get(i).getOpperationType() == OperationType.ENCAISSEMENT)
+						operations.get(i).setProgressiveAmount(initialAmount + operations.get(i).getOperationAmount());
+					else
+						operations.get(i).setProgressiveAmount(initialAmount - operations.get(i).getOperationAmount());
+				}
+
+			} else {
+				if (isValidated) {
+					if (operations.get(i).isValidated()) {
+						if (operations.get(i).getOpperationType() == OperationType.ENCAISSEMENT)
+							operations.get(i).setProgressiveAmount(operations.get(i - 1).getProgressiveAmount()
+									+ operations.get(i).getOperationAmount());
+						else
+							operations.get(i).setProgressiveAmount(operations.get(i - 1).getProgressiveAmount()
+									- operations.get(i).getOperationAmount());
+					} else {
+						operations.get(i).setProgressiveAmount(operations.get(i - 1).getProgressiveAmount());
+					}
+				} else {
+					if (operations.get(i).getOpperationType() == OperationType.ENCAISSEMENT)
+						operations.get(i).setProgressiveAmount(
+								operations.get(i - 1).getProgressiveAmount() + operations.get(i).getOperationAmount());
+					else
+						operations.get(i).setProgressiveAmount(
+								operations.get(i - 1).getProgressiveAmount() - operations.get(i).getOperationAmount());
+				}
+
+			}
+			double progressiveAmount = (double) Math.round(operations.get(i).getProgressiveAmount() * 100) / 100;
+			operations.get(i).setProgressiveAmount(progressiveAmount);
+			operations.get(i)
+					.setProgressiveAmountS(Utils.convertAmountToString(operations.get(i).getProgressiveAmount()));
+		}
+
+
+	  
+	  return operations;
 	}
 
 }
