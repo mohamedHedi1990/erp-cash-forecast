@@ -1196,7 +1196,7 @@ public class SupervisionTresorerieService {
 			else
 			operation.setOpperationType(OperationType.ENCAISSEMENT);
 			operation.setOperationDate(customerInvocie.getInvoiceDeadlineDate());
-			double montantRestant = customerInvocie.getInvoiceTotalAmount() - customerInvocie.getInvoicePayment();
+			double montantRestant = customerInvocie.getInvoiceNet() - customerInvocie.getInvoicePayment();
 			String montantRestantS = Utils.convertAmountToStringWithSeperator(montantRestant);
 			operation.setOperationAmountS(montantRestantS);
 			operation.setOperationAmount(montantRestant);

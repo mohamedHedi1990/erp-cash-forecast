@@ -136,7 +136,7 @@ public class InvoiceService {
 		newAmount = (double)(Math.round(newAmount * 1000))/1000;
 		invoice.setInvoicePayment(newAmount);
 		
-		if(Double.compare(invoice.getInvoicePayment(),invoice.getInvoiceTotalAmount()) == 0) {
+		if(Double.compare(invoice.getInvoicePayment(),invoice.getInvoiceNet()) == 0) {
 			invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
 		}
 		Invoice savedInvoice =  this.invoiceRepo.save(invoice);
@@ -157,7 +157,7 @@ public class InvoiceService {
 		newMontant = (double)(Math.round(newMontant * 1000))/1000;
 		
 		invoice.setInvoicePayment(newMontant);
-		if(Double.compare(invoice.getInvoicePayment(),invoice.getInvoiceTotalAmount()) == 0) {
+		if(Double.compare(invoice.getInvoicePayment(),invoice.getInvoiceNet()) == 0) {
 			invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
 		}
 		else if(Double.compare(invoice.getInvoicePayment(),invoice.getInvoiceTotalAmount()) != 0) {
