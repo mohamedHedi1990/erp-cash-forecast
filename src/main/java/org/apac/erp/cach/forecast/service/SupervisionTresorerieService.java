@@ -1225,6 +1225,8 @@ public class SupervisionTresorerieService {
 			operations.add(operation);
 			
 		});
+		operations = operations.stream().sorted(Comparator.comparing(OperationTreserorieDto::getOperationDate))
+					.collect(Collectors.toList());
 
 		return operations;
 	}
