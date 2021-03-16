@@ -234,4 +234,8 @@ public class ProviderInvoiceService {
 	public List<ProviderInvoice> findByInvoiceStatusAndInvoiceDeadlineDate(InvoiceStatus invoiceStatus, Date startDate, Date endDate) {
 		return this.providerInvoiceRepo.findByInvoiceStatusAndInvoiceDeadlineDateBetween(invoiceStatus, startDate, endDate);
 	}
+	
+	public List<ProviderInvoice> findByInvoiceStatusAndInvoiceDeadlineDate(InvoiceStatus invoiceStatus, Date startDate) {
+		return this.providerInvoiceRepo.findByInvoiceStatusAndInvoiceDeadlineDateBefore(invoiceStatus, startDate);
+	}
 }

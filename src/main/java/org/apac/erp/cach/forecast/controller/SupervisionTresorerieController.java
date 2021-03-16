@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -49,8 +50,8 @@ public class SupervisionTresorerieController {
 	@CrossOrigin
 	@GetMapping("non-engage/{startDate}/{endDate}")
 	public List<OperationTreserorieDto> nonEngage(@PathVariable("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-			@PathVariable("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-		return supervisionTresorerieService.nonEngageSupervision(startDate, endDate);
+			@PathVariable("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate, @RequestParam("isCustomer") boolean isCustomer, @RequestParam("isCustomer") boolean isProvider) {
+		return supervisionTresorerieService.nonEngageSupervision(startDate, endDate, isCustomer, isProvider);
 
 	}
 

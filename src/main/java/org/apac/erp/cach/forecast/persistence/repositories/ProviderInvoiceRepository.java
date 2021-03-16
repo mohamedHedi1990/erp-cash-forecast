@@ -15,5 +15,6 @@ public interface ProviderInvoiceRepository extends JpaRepository<ProviderInvoice
 	List<ProviderInvoice>findAllByProviderAndInvoiceStatus(Provider provider, InvoiceStatus invoiceStatus);
 	List<ProviderInvoice>findAllByOrderByInvoiceDateDesc();
 	List<ProviderInvoice> findByInvoiceStatusAndInvoiceDeadlineDateBetween(InvoiceStatus invoiceStatus, Date startDate, Date endDate);
+	List<ProviderInvoice> findByInvoiceStatusAndInvoiceDeadlineDateBefore(InvoiceStatus invoiceStatus, Date startDate);
 
 }
