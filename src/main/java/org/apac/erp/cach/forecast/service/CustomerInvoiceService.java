@@ -239,5 +239,12 @@ public class CustomerInvoiceService {
 	public List<CustomerInvoice> findByInvoiceStatusAndInvoiceDeadlineDate(InvoiceStatus invoiceStatus, Date startDate) {
 		return this.customerInvoiceRepo.findByInvoiceStatusAndInvoiceDeadlineDateBefore(invoiceStatus, startDate);
 	}
+	public boolean findInvoiceCustomerIfExists(String customerInvoiceNumber)
+	{
+		if(customerInvoiceRepo.findByInvoiceNumberIgnoreCase(customerInvoiceNumber).size()==0)
+		return false;
+		else
+		return true;
+	}
 
 }

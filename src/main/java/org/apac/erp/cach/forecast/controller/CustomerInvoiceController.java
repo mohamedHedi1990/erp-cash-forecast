@@ -59,7 +59,12 @@ public class CustomerInvoiceController {
 	public List<CustomerInvoice> findAllCustomerInvoicesByCustomerIdAndIsOpened(@PathVariable("customerId") Long customerId) {
 		return customerInvoiceService.findAllCustomerInvoicesByCustomerIdAndIsOpened(customerId);
 	}
-
+    @CrossOrigin
+	@GetMapping("/invoiceIfExist/{customerInvoiceNumber}")
+	public Boolean findInvoiceCustomerIfExists(@PathVariable("customerInvoiceNumber") String customerInvoiceNumber)
+	{
+		return customerInvoiceService.findInvoiceCustomerIfExists(customerInvoiceNumber);
+	}
 
 
 }

@@ -17,5 +17,5 @@ public interface CustomerInvoiceRepository extends JpaRepository<CustomerInvoice
 	List<CustomerInvoice>findAllByOrderByInvoiceNumberDesc();
 	List<CustomerInvoice>  findByInvoiceStatusAndInvoiceDeadlineDateBetween(InvoiceStatus invoiceStatus, Date startDate, Date endDate);
 	List<CustomerInvoice>  findByInvoiceStatusAndInvoiceDeadlineDateBefore(InvoiceStatus invoiceStatus, Date startDate);
-
+	List<CustomerInvoice>   findByInvoiceNumberIgnoreCase(String invoiceNumber);
 }
