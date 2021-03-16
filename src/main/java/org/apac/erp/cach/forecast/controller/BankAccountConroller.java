@@ -46,4 +46,10 @@ public class BankAccountConroller {
 	public void deleteAccount(@PathVariable("accountId") Long accountId) {
 		bankAccountService.deleteAccount(accountId);
 	}
+	
+	@CrossOrigin
+	@GetMapping("/global-amount")
+	public double getGlobalAmount() {
+		return this.bankAccountService.getGlobalAmount();
+	}
 }

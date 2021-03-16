@@ -37,4 +37,8 @@ public class BankAccountService {
 		 this.bankAccountRepo.delete(accountId);
 		
 	}
+
+	public double getGlobalAmount() {
+		return getAllBankAccounts().stream().mapToDouble(account -> account.getAccountInitialAmount()).sum();
+	}
 }

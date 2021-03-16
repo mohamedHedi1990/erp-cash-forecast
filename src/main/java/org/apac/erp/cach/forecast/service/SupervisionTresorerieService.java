@@ -1199,6 +1199,7 @@ public class SupervisionTresorerieService {
 				double montantRestant = customerInvocie.getInvoiceNet() - customerInvocie.getInvoicePayment();
 				String montantRestantS = Utils.convertAmountToStringWithSeperator(montantRestant);
 				operation.setOperationAmountS(montantRestantS);
+				operation.setValidated(false);
 				operation.setOperationAmount(montantRestant);
 				operation.setOperationRealId(customerInvocie.getInvoiceId());
 				operation.setBeneficiaryName(customerInvocie.getCustomer().getCustomerLabel());
@@ -1221,6 +1222,7 @@ public class SupervisionTresorerieService {
 				double montantRestant = providerInvocie.getInvoiceTotalAmount() - providerInvocie.getInvoicePayment();
 				String montantRestantS = Utils.convertAmountToStringWithSeperator(montantRestant);
 				operation.setOperationAmountS(montantRestantS);
+				operation.setValidated(false);
 				operation.setOperationAmount(montantRestant);
 				operation.setOperationRealId(providerInvocie.getInvoiceId());
 				operation.setBeneficiaryName(providerInvocie.getProvider().getProviderLabel());
