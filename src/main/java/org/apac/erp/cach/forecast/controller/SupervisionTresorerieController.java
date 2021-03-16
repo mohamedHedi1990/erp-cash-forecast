@@ -50,7 +50,7 @@ public class SupervisionTresorerieController {
 	@CrossOrigin
 	@GetMapping("non-engage/{startDate}/{endDate}")
 	public List<OperationTreserorieDto> nonEngage(@PathVariable("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-			@PathVariable("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate, @RequestParam("isCustomer") boolean isCustomer, @RequestParam("isCustomer") boolean isProvider) {
+			@PathVariable("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate, @RequestParam("isCustomer") boolean isCustomer, @RequestParam("isProvider") boolean isProvider) {
 		return supervisionTresorerieService.nonEngageSupervision(startDate, endDate, isCustomer, isProvider);
 
 	}
