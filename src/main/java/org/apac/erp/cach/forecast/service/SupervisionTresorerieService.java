@@ -1191,6 +1191,11 @@ public class SupervisionTresorerieService {
 			customerInvoices.addAll(this.customerInvoiceService.findByInvoiceStatusAndInvoiceDeadlineDate(InvoiceStatus.OPENED, startDate));
 			customerInvoices.stream().forEach(customerInvocie -> {
 				OperationTreserorieDto operation = new OperationTreserorieDto();
+				if(customerInvocie.getInvoiceDeadlineDate().compareTo(startDate) < 0) {
+					operation.setIsInTheSimulatedPeriod(false);
+				} else {
+					operation.setIsInTheSimulatedPeriod(true);
+				}
 				if (customerInvocie.getInvoiceTotalAmount() < 0)
 					operation.setOpperationType(OperationType.DECAISSEMENT);
 				else
@@ -1217,6 +1222,11 @@ public class SupervisionTresorerieService {
 			providerInvoices.addAll(this.providerInvoiceService.findByInvoiceStatusAndInvoiceDeadlineDate(InvoiceStatus.OPENED, startDate));
 			providerInvoices.stream().forEach(providerInvocie -> {
 				OperationTreserorieDto operation = new OperationTreserorieDto();
+				if(providerInvocie.getInvoiceDeadlineDate().compareTo(startDate) < 0) {
+					operation.setIsInTheSimulatedPeriod(false);
+				} else {
+					operation.setIsInTheSimulatedPeriod(true);
+				}
 				operation.setOpperationType(OperationType.DECAISSEMENT);
 				operation.setOperationDate(providerInvocie.getInvoiceDeadlineDate());
 				double montantRestant = providerInvocie.getInvoiceTotalAmount() - providerInvocie.getInvoicePayment();
