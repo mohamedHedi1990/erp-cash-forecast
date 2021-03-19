@@ -3,7 +3,10 @@ package org.apac.erp.cach.forecast.service;
 import org.apac.erp.cach.forecast.dtos.FactureFilterDto;
 import org.apac.erp.cach.forecast.dtos.FactureProductDto;
 import org.apac.erp.cach.forecast.enumeration.FactureType;
+import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
+import org.apac.erp.cach.forecast.enumeration.RsTypeSaisie;
 import org.apac.erp.cach.forecast.persistence.entities.*;
+import org.apac.erp.cach.forecast.persistence.repositories.CustomerInvoiceRepository;
 import org.apac.erp.cach.forecast.persistence.repositories.FactureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +30,9 @@ public class FactureService {
 
     @Autowired
     BonLivraisonService bonLivraisonService;
+    
+    @Autowired
+    private CustomerInvoiceRepository customerInvoiceRepo;
 
     public List<Facture>getAllInvoices()
    {
@@ -101,7 +107,7 @@ public class FactureService {
         Facture savedFact=factureRepository.save(facturegenerer);
         customerInvoice.setInvoiceNumber(savedFacture.getFactureNumber());
         customerInvoice.setIsGeneratedInvoice(true);
-        this.customerInvoiceService.saveCustomerInvoice(customerInvoice);
+        this.customerInvoiceRepo.save(customerInvoice);
         bonLivraisons.forEach(bonLivraison -> {
             bonLivraisonService.deleteBonLivraisonById(bonLivraison.getBonLivraisonId());
         });
@@ -172,7 +178,7 @@ public class FactureService {
             });
             Facture savedFact=factureRepository.save(facturegenerer);
             customerInvoice.setInvoiceNumber(savedFacture.getFactureNumber());
-            this.customerInvoiceService.saveCustomerInvoice(customerInvoice);
+            this.customerInvoiceRepo.save(customerInvoice);
             devisService.deleteDevisById(devis.getDevisId());
             return savedFact;
         }else {
@@ -181,15 +187,33 @@ public class FactureService {
     }
 
     public Facture saveFacture(Facture facture) {
-            CustomerInvoice customerInvoice = createCustomerInvoiceFromFacture(facture);
+            CustomerInvoice customerInvoice = null;
 
             if (facture.getFactureId() != null) {
                 if (facture.getInvoiceCustomerId() != null) {
-                    customerInvoice.setInvoiceId(facture.getInvoiceCustomerId());
+                	customerInvoice = customerInvoiceRepo.findOne(facture.getInvoiceCustomerId());
+                	customerInvoice.setInvoiceTotalAmount(facture.getTotalTTC());
+                	if(customerInvoice.getInvoiceRsType() == RsTypeSaisie.POURCENTAGE) {
+                		double invoiceNet = facture.getTotalTTC() - (facture.getTotalTTC() * customerInvoice.getInvoiceRs() / 100);
+                		customerInvoice.setInvoiceNet(Math.round(invoiceNet * 1000.0) / 1000.0);
+                	} else {
+                		customerInvoice.setInvoiceNet(facture.getTotalTTC() -  customerInvoice.getInvoiceRs());
+                		if(customerInvoice.getInvoiceNet() > customerInvoice.getInvoiceTotalAmount()) {
+                			customerInvoice.setInvoiceNet(customerInvoice.getInvoiceTotalAmount());
+                			customerInvoice.setInvoiceRs(0.0);
+                			customerInvoice.setInvoiceRsType(RsTypeSaisie.POURCENTAGE);
+                		}
+                	}
+                	
+                    //customerInvoice.setInvoiceId(facture.getInvoiceCustomerId());
+                } else { 
+                	customerInvoice = createCustomerInvoiceFromFacture(facture);
                 }
+            } else {
+            	customerInvoice =  createCustomerInvoiceFromFacture(facture);
             }
 
-            CustomerInvoice customerInvoiceSaved = customerInvoiceService.saveCustomerInvoice(customerInvoice);
+            CustomerInvoice customerInvoiceSaved = customerInvoiceRepo.save(customerInvoice);
             facture.setInvoiceCustomerId(customerInvoiceSaved.getInvoiceId());
 
         if (facture.getFactureType() == FactureType.AVOIR) {
@@ -229,7 +253,7 @@ public class FactureService {
         }
                 Facture savedFacture = factureRepository.save(facture);
                 customerInvoiceSaved.setInvoiceNumber(savedFacture.getFactureNumber());
-                customerInvoiceService.saveCustomerInvoice(customerInvoiceSaved);
+                customerInvoiceRepo.save(customerInvoiceSaved);
 
             Facture savedFact = factureRepository.save(savedFacture);
             if (savedFacture.getFactureLines() != null) {
@@ -269,18 +293,30 @@ public class FactureService {
       customerInvoice.setInvoiceDeadlineDate(facture.getFactureDeadlineDate());
       customerInvoice.setInvoiceDeadlineInNumberOfDays(facture.getFactureDeadlineInNumberOfDays());
       customerInvoice.setInvoiceTotalAmount(facture.getTotalTTC());
-      customerInvoice.setInvoicePayment(0D);
+     
       customerInvoice.setIsFacture(true);
 
-        if(facture.getFactureId()!=null)
+      customerInvoice.setInvoiceId(facture.getInvoiceCustomerId());
+      customerInvoice.setInvoiceNet(facture.getTotalTTC());
+      customerInvoice.setInvoiceRs(0.0);
+      customerInvoice.setInvoiceRsType(RsTypeSaisie.POURCENTAGE);
+      customerInvoice.setInvoiceStatus(InvoiceStatus.OPENED);
+      customerInvoice.setInvoicePayment(0D);
+      
+        /*if(facture.getFactureId()!=null)
         {
             if(facture.getInvoiceCustomerId()!=null)
             {
                 customerInvoice.setInvoiceId(facture.getInvoiceCustomerId());
+            } else {
+            	 customerInvoice.setInvoiceNet(facture.getTotalTTC());
+                 customerInvoice.setInvoiceRs(0.0);
+                 customerInvoice.setInvoiceRsType(RsTypeSaisie.POURCENTAGE);
+                 customerInvoice.setInvoicePayment(0D);
             }
-        }
+        }*/
 
-        customerInvoice=customerInvoiceService.saveCustomerInvoice(customerInvoice);
+        customerInvoice=customerInvoiceRepo.save(customerInvoice);
       return  customerInvoice;
     }
 
@@ -297,8 +333,15 @@ public class FactureService {
         }else{
             customerInvoice.setInvoiceTotalAmount(facture.getTotalTTC());
         }
-        customerInvoice.setInvoicePayment(0D);
+        
         customerInvoice.setIsFacture(true);
+        customerInvoice.setIsGeneratedInvoice(true);
+     // Nouvelle facture à créer donc il faut initialiser ces champs
+    	customerInvoice.setInvoicePayment(0D);
+        customerInvoice.setInvoiceRs(0.0);
+        customerInvoice.setInvoiceRsType(RsTypeSaisie.POURCENTAGE);
+        customerInvoice.setInvoiceNet(facture.getTotalTTC());
+        customerInvoice.setInvoiceStatus(InvoiceStatus.OPENED);
         return  customerInvoice;
     }
 

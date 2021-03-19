@@ -57,6 +57,7 @@ public class CustomerInvoiceService {
 		// invoice.setInvoiceTotalAmount(invoice.getInvoiceNet() +
 		// invoice.getInvoiceRs());
 		CustomerInvoice customerInvoice = invoice;
+	
 		try {
 			long days = invoiceService.betweenDates(invoice.getInvoiceDate(), invoice.getInvoiceDeadlineDate());
 			invoice.setInvoiceDeadlineInNumberOfDays((int) days);

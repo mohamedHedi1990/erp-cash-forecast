@@ -1,8 +1,11 @@
 package org.apac.erp.cach.forecast.service;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
@@ -45,8 +48,15 @@ public class InvoiceService {
 	@Autowired
 	private ProviderAttachedInvoicesRepository providerAttachedInvocieRepo;
 	
-	public long betweenDates(java.util.Date date, java.util.Date date2) throws IOException {
-		return ChronoUnit.DAYS.between(date.toInstant(), date2.toInstant());
+	public long betweenDates(Date date, Date date2) throws IOException {
+		LocalDate localdate1 = date.toInstant()
+			      .atZone(ZoneId.systemDefault())
+			      .toLocalDate();
+		LocalDate localdate2 = date2.toInstant()
+			      .atZone(ZoneId.systemDefault())
+			      .toLocalDate();
+		long noOfDaysBetween = ChronoUnit.DAYS.between(localdate1, localdate2);
+		return noOfDaysBetween;
 	}
 	
 	public Invoice findInvoiceById(Long invoiceId) {
