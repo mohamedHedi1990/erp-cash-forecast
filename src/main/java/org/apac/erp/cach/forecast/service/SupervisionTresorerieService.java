@@ -1184,7 +1184,7 @@ public class SupervisionTresorerieService {
 
 		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
 
-		if (isCustomer) {
+		if (isCustomer ||(!isCustomer && !isProvider)) {
 			// Trouver toutes les factures clients ouvertes
 			List<CustomerInvoice> customerInvoices = this.customerInvoiceService
 					.findByInvoiceStatusAndInvoiceDeadlineDate(InvoiceStatus.OPENED, startDate, endDate);
@@ -1215,7 +1215,7 @@ public class SupervisionTresorerieService {
 			});
 		}
 
-		if (isProvider) {
+		if (isProvider ||(!isCustomer && !isProvider)) {
 			// Trouver toutes les factures fournisseurs ouvertes
 			List<ProviderInvoice> providerInvoices = this.providerInvoiceService
 					.findByInvoiceStatusAndInvoiceDeadlineDate(InvoiceStatus.OPENED, startDate, endDate);
