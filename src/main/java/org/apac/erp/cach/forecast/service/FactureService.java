@@ -345,13 +345,16 @@ public class FactureService {
         return  customerInvoice;
     }
 
-    public void deleteFactureById(Long id)
-   {   Facture facture=this.factureRepository.findOne(id);
-   if(facture != null && facture.getFactureLines() != null){
-       this.factureLineService.deleteAllLines(facture.getFactureLines());
-   }
-       factureRepository.delete(id);
-   }
+    public void deleteFactureById(Long id) {
+        Facture facture = this.factureRepository.findOne(id);
+        if (facture != null && facture.getFactureLines() != null) {
+            this.factureLineService.deleteAllLines(facture.getFactureLines());
+        }
+        if (facture.getInvoiceCustomerId() != null) {
+            this.customerInvoiceService.deleteCustomerInvoice(facture.getInvoiceCustomerId());
+        }
+        factureRepository.delete(id);
+    }
 
     public void deleteAllFacture()
    {
