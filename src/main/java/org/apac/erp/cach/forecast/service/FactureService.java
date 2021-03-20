@@ -64,14 +64,15 @@ public class FactureService {
             if(facturegenerer.getFactureCurrency() == null){
                 facturegenerer.setFactureCurrency(bonLivraison.getBonLivraisonCurrency());
             }
-            if(facturegenerer.getFactureDeadlineDate() == null){
+            /*if(facturegenerer.getFactureDeadlineDate() == null){
                 Calendar c=Calendar.getInstance();
                 c.add(Calendar.DATE,30);
                 facturegenerer.setFactureDeadlineDate(c.getTime());
             }
             if(facturegenerer.getFactureDeadlineInNumberOfDays() == null){
                 facturegenerer.setFactureDeadlineInNumberOfDays(30);
-            }
+            }*/
+            facturegenerer.setFactureCondition("");
             facturegenerer.setTotalHTBrut(facturegenerer.getTotalHTBrut()+bonLivraison.getTotalHTBrut());
             facturegenerer.setRemise(facturegenerer.getRemise()+bonLivraison.getRemise());
             facturegenerer.setTotalHT(facturegenerer.getTotalHT()+bonLivraison.getTotalHT());
@@ -134,14 +135,14 @@ public class FactureService {
         if(facturegenerer.getFactureCurrency() == null){
             facturegenerer.setFactureCurrency(devis.getDevisCurrency());
         }
-        if(facturegenerer.getFactureDeadlineDate() == null){
+        /*if(facturegenerer.getFactureDeadlineDate() == null){
             Calendar c=Calendar.getInstance();
             c.add(Calendar.DATE,30);
             facturegenerer.setFactureDeadlineDate(c.getTime());
         }
         if(facturegenerer.getFactureDeadlineInNumberOfDays() == null){
             facturegenerer.setFactureDeadlineInNumberOfDays(30);
-        }
+        }*/
         facturegenerer.setTotalHTBrut(facturegenerer.getTotalHTBrut()+devis.getTotalHTBrut());
         facturegenerer.setRemise(facturegenerer.getRemise()+devis.getRemise());
         facturegenerer.setTotalHT(facturegenerer.getTotalHT()+devis.getTotalHT());
@@ -216,11 +217,11 @@ public class FactureService {
             CustomerInvoice customerInvoiceSaved = customerInvoiceRepo.save(customerInvoice);
             facture.setInvoiceCustomerId(customerInvoiceSaved.getInvoiceId());
 
-        if (facture.getFactureType() == FactureType.AVOIR) {
+        /*if (facture.getFactureType() == FactureType.AVOIR) {
         	facture.setFactureDate(new Date());
         	facture.setFactureDeadlineInNumberOfDays(0);
         	facture.setFactureDeadlineDate(new Date());
-        }
+        }*/
         if(facture.getFactureId() == null) {
             final DateFormat df = new SimpleDateFormat("yyyy");
             if (facture.getFactureType().equals(FactureType.FACTURE)) {
@@ -290,8 +291,15 @@ public class FactureService {
       customerInvoice.setCustomer(facture.getCustomer());
       customerInvoice.setInvoiceCurrency(facture.getFactureCurrency());
       customerInvoice.setInvoiceDate(facture.getFactureDate());
-      customerInvoice.setInvoiceDeadlineDate(facture.getFactureDeadlineDate());
-      customerInvoice.setInvoiceDeadlineInNumberOfDays(facture.getFactureDeadlineInNumberOfDays());
+        if(customerInvoice.getInvoiceDeadlineDate() == null) {
+            Calendar c=Calendar.getInstance();
+            c.add(Calendar.DATE,30);
+            customerInvoice.setInvoiceDeadlineDate(c.getTime());
+        }
+        if(customerInvoice.getInvoiceDeadlineInNumberOfDays() == null) {
+            customerInvoice.setInvoiceDeadlineInNumberOfDays(0);
+        }
+
       customerInvoice.setInvoiceTotalAmount(facture.getTotalTTC());
      
       customerInvoice.setIsFacture(true);
@@ -326,8 +334,14 @@ public class FactureService {
         customerInvoice.setCustomer(facture.getCustomer());
         customerInvoice.setInvoiceCurrency(facture.getFactureCurrency());
         customerInvoice.setInvoiceDate(facture.getFactureDate());
-        customerInvoice.setInvoiceDeadlineDate(facture.getFactureDeadlineDate());
-        customerInvoice.setInvoiceDeadlineInNumberOfDays(facture.getFactureDeadlineInNumberOfDays());
+        if(customerInvoice.getInvoiceDeadlineDate() == null) {
+            Calendar c=Calendar.getInstance();
+            c.add(Calendar.DATE,30);
+            customerInvoice.setInvoiceDeadlineDate(c.getTime());
+        }
+        if(customerInvoice.getInvoiceDeadlineInNumberOfDays() == null) {
+            customerInvoice.setInvoiceDeadlineInNumberOfDays(0);
+        }
         if(facture.getFactureType() == FactureType.AVOIR) {
             customerInvoice.setInvoiceTotalAmount((-1)*facture.getTotalTTC());
         }else{

@@ -23,11 +23,12 @@ public class Facture extends  AuditableSql implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long factureId;
     private String factureNumber;
-    private Integer factureDeadlineInNumberOfDays;
+    private String factureCondition;
+    //private Integer factureDeadlineInNumberOfDays;
     private String factureCurrency;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
-    @Temporal(TemporalType.DATE)
-    private Date factureDeadlineDate;
+    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
+    //@Temporal(TemporalType.DATE)
+    //private Date factureDeadlineDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
     @Temporal(TemporalType.DATE)
     private Date factureDate;
