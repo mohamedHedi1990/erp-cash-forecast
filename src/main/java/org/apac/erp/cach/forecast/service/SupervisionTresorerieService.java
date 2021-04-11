@@ -197,10 +197,20 @@ public class SupervisionTresorerieService {
 						operations.get(i).setProgressiveAmount(initialAmount);
 					}
 				} else {
-					if (operations.get(i).getOpperationType() == OperationType.ENCAISSEMENT)
+					/*if (operations.get(i).getOpperationType() == OperationType.ENCAISSEMENT)
 						operations.get(i).setProgressiveAmount(initialAmount + operations.get(i).getOperationAmount());
 					else
-						operations.get(i).setProgressiveAmount(initialAmount - operations.get(i).getOperationAmount());
+						operations.get(i).setProgressiveAmount(initialAmount - operations.get(i).getOperationAmount());*/
+					if (!operations.get(i).isValidated()) {
+						if (operations.get(i).getOpperationType() == OperationType.ENCAISSEMENT)
+							operations.get(i)
+									.setProgressiveAmount(initialAmount + operations.get(i).getOperationAmount());
+						else
+							operations.get(i)
+									.setProgressiveAmount(initialAmount - operations.get(i).getOperationAmount());
+					} else {
+						operations.get(i).setProgressiveAmount(initialAmount);
+					}
 				}
 
 			} else {
@@ -216,12 +226,22 @@ public class SupervisionTresorerieService {
 						operations.get(i).setProgressiveAmount(operations.get(i - 1).getProgressiveAmount());
 					}
 				} else {
-					if (operations.get(i).getOpperationType() == OperationType.ENCAISSEMENT)
+					/*if (operations.get(i).getOpperationType() == OperationType.ENCAISSEMENT)
 						operations.get(i).setProgressiveAmount(
 								operations.get(i - 1).getProgressiveAmount() + operations.get(i).getOperationAmount());
 					else
 						operations.get(i).setProgressiveAmount(
-								operations.get(i - 1).getProgressiveAmount() - operations.get(i).getOperationAmount());
+								operations.get(i - 1).getProgressiveAmount() - operations.get(i).getOperationAmount());*/
+					if (!operations.get(i).isValidated()) {
+						if (operations.get(i).getOpperationType() == OperationType.ENCAISSEMENT)
+							operations.get(i).setProgressiveAmount(operations.get(i - 1).getProgressiveAmount()
+									+ operations.get(i).getOperationAmount());
+						else
+							operations.get(i).setProgressiveAmount(operations.get(i - 1).getProgressiveAmount()
+									- operations.get(i).getOperationAmount());
+					} else {
+						operations.get(i).setProgressiveAmount(operations.get(i - 1).getProgressiveAmount());
+					}
 				}
 
 			}
@@ -316,19 +336,19 @@ public class SupervisionTresorerieService {
 			operation.setOpperationDetails(detailsPayements);
 			String label = "";
 			if (paymentRule.getPaymentRuleOperationType() == OperationType.ENCAISSEMENT) {
-				label = "ENCAISSEMENT " + paymentRule.getPaymentRulePaymentMethod().toString().toUpperCase();
+				label = "ENCAISSEMENT " + paymentRule.getPaymentRulePaymentMethod().toString().toUpperCase().replace("_", " ");
 				operation.setOperationRealType(OperationDtoType.REGLEMENT_FACTURE_CLIENT);
 				operation.setOpperationType(OperationType.ENCAISSEMENT);
 			} else {
-				label = "DECAISSEMENT " + paymentRule.getPaymentRulePaymentMethod().toString().toUpperCase();
+				label = "DECAISSEMENT " + paymentRule.getPaymentRulePaymentMethod().toString().toUpperCase().replace("_", " ");
 				operation.setOperationRealType(OperationDtoType.PAIEMENT_FACTURE_FOURNISSEUR);
 				operation.setOpperationType(OperationType.DECAISSEMENT);
 			}
 
 			if (paymentRule.getPaymentRuleNumber() != null) {
-				label = label + " N° " + paymentRule.getPaymentRuleNumber().toUpperCase();
+				label = label + " N° " + paymentRule.getPaymentRuleNumber().toUpperCase().replace("_", " ");;
 			} else if (paymentRule.getPaymentRuleDetails() != null) {
-				label = label + " N° " + paymentRule.getPaymentRuleDetails().toUpperCase();
+				label = label + " N° " + paymentRule.getPaymentRuleDetails().toUpperCase().replace("_", " ");;
 			}
 			operation.setOpperationLabel(label);
 			// Ajouter une information sur la facture payé dans le label
@@ -591,13 +611,19 @@ public class SupervisionTresorerieService {
 			} else {
 				operation.setBeneficiaryName(decaissement.getBeneficaryName());
 			}
+			if(decaissement.getDecaissementPaymentType() == PaymentMethod.COMISSION_BANCAIRE && 
+					decaissement.getBeneficaryName() == null) {
+				operation.setBeneficiaryName("COMISSION BANCAIRE");
+			}
+				
 			List<String> detailsPayements = new ArrayList<String>();
 			detailsPayements.add(decaissement.getDecaissementPaymentType().toString());
 			detailsPayements.add(decaissement.getDecaissementPaymentRuleNumber());
 			detailsPayements.add(decaissement.getDecaissementDetails());
 
 			operation.setOpperationDetails(detailsPayements);
-			String label = "DECAISSEMENT " + decaissement.getDecaissementPaymentType().toString().toUpperCase();
+	
+			String label = "DECAISSEMENT " + decaissement.getDecaissementPaymentType().toString().toUpperCase().replace("_", " ");
 			if (decaissement.getDecaissementPaymentRuleNumber() != null) {
 				label = label + " N° " + decaissement.getDecaissementPaymentRuleNumber().toUpperCase();
 			} else if (decaissement.getDecaissementPaymentRuleDetails() != null) {
@@ -822,7 +848,7 @@ public class SupervisionTresorerieService {
 			operation.setIsInTheSimulatedPeriod(isInTheSimulatedPeriod);
 
 			operation.setOpperationDetails(detailsPayements);
-			String label = "ENCAISSEMENT " + encaissement.getEncaissementPaymentRuleNumber().toString().toUpperCase();
+			String label = "ENCAISSEMENT " + encaissement.getEncaissementPaymentType().toString().toUpperCase().replace("_", " ");;
 			if (encaissement.getEncaissementPaymentRuleNumber() != null) {
 				label = label + " N° " + encaissement.getEncaissementPaymentRuleNumber().toUpperCase();
 			} else if (encaissement.getEncaissementPaymentRuleDetails() != null) {
@@ -1271,8 +1297,8 @@ public class SupervisionTresorerieService {
 		for (int i = 0; i < operations.size(); i++) {
 
 			if (i == 0) {
-				if (isValidated) {
-					if (operations.get(i).isValidated()) {
+				if (!isValidated) {
+					if (!operations.get(i).isValidated()) {
 						if (operations.get(i).getOpperationType() == OperationType.ENCAISSEMENT)
 							operations.get(i)
 									.setProgressiveAmount(initialAmount + operations.get(i).getOperationAmount());
@@ -1290,8 +1316,8 @@ public class SupervisionTresorerieService {
 				}
 
 			} else {
-				if (isValidated) {
-					if (operations.get(i).isValidated()) {
+				if (!isValidated) {
+					if (!operations.get(i).isValidated()) {
 						if (operations.get(i).getOpperationType() == OperationType.ENCAISSEMENT)
 							operations.get(i).setProgressiveAmount(operations.get(i - 1).getProgressiveAmount()
 									+ operations.get(i).getOperationAmount());
