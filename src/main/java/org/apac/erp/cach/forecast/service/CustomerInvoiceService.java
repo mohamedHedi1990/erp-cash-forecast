@@ -112,7 +112,7 @@ public class CustomerInvoiceService {
 
 				attachedInvoices.getInvoices().add(invoice);
 				attachedInvoices.setTotalRequiredAmount(
-						attachedInvoices.getTotalRequiredAmount() + invoice.getInvoiceTotalAmount());
+						attachedInvoices.getTotalRequiredAmount() + invoice.getInvoiceNet());
 
 			}
 			attachedInvoices.setExternalId(externalId);
@@ -200,7 +200,8 @@ public class CustomerInvoiceService {
 			invoice.setInvoiceNumber(invoiceNum);
 			invoice.setAssocited(true);
 			invoice.setInvoiceStatus(attachedInvoice.getInvoices().get(0).getInvoiceStatus());
-			invoice.setInvoiceTotalAmount(attachedInvoice.getTotalRequiredAmount());
+			invoice.setInvoiceNet(attachedInvoice.getTotalRequiredAmount());
+			invoice.setInvoiceNetS(attachedInvoice.getTotalRequiredAmountS());
 			invoice.setInvoicePayment(attachedInvoice.getTotalPaidAmount());
 			invoice.setInvoiceTotalAmountS(attachedInvoice.getTotalRequiredAmountS());
 			invoice.setInvoicePaymentS(attachedInvoice.getTotalPaidAmountS());

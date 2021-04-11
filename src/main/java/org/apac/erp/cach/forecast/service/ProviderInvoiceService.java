@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apac.erp.cach.forecast.constants.Utils;
 import org.apac.erp.cach.forecast.dtos.InvoicesProviderPayment;
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
 import org.apac.erp.cach.forecast.persistence.entities.CustomerAttachedInvoices;
@@ -121,7 +122,7 @@ public class ProviderInvoiceService {
 
 				attachedInvoices.getInvoices().add(invoice);
 				attachedInvoices.setTotalRequiredAmount(
-						attachedInvoices.getTotalRequiredAmount() + invoice.getInvoiceTotalAmount());
+						attachedInvoices.getTotalRequiredAmount() + invoice.getInvoiceNet());
 
 			}
 			attachedInvoices.setExternalId(externalId);
@@ -202,7 +203,8 @@ public class ProviderInvoiceService {
 			invoice.setInvoiceNumber(invoiceNum);
 			invoice.setAssocited(true);
 			invoice.setInvoiceStatus(attachedInvoice.getInvoices().get(0).getInvoiceStatus());
-			invoice.setInvoiceTotalAmount(attachedInvoice.getTotalRequiredAmount());
+			invoice.setInvoiceNet(attachedInvoice.getTotalRequiredAmount());
+			invoice.setInvoiceNetS(attachedInvoice.getTotalRequiredAmountS());
 			invoice.setInvoicePayment(attachedInvoice.getTotalPaidAmount());
 			invoice.setInvoiceTotalAmountS(attachedInvoice.getTotalRequiredAmountS());
 			invoice.setInvoicePaymentS(attachedInvoice.getTotalPaidAmountS());

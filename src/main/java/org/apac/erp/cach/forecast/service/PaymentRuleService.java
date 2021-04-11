@@ -79,7 +79,7 @@ public class PaymentRuleService {
 					Invoice invoice = invoiceService.findInvoiceById(invoiceId);
 					invoice.setInvoicePayment(invoice.getInvoicePayment() - paymentRule.getPaymentRuleAmount());
 					invoice.setInvoicePayment(invoice.getInvoicePayment() + newPaymentRule.getPaymentRuleAmount());
-					if (invoice.getInvoicePayment() == invoice.getInvoiceTotalAmount()) {
+					if (invoice.getInvoicePayment() == invoice.getInvoiceNet()) {
 						invoice.setInvoiceStatus(InvoiceStatus.CLOSED);
 					} else {
 						invoice.setInvoiceStatus(InvoiceStatus.OPENED);
