@@ -1,5 +1,6 @@
 package org.apac.erp.cach.forecast.persistence.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import org.apac.erp.cach.forecast.constants.Utils;
 import org.apac.erp.cach.forecast.enumeration.Type;
@@ -39,6 +40,10 @@ public class Product  extends  AuditableSql implements Serializable {
     private Unite productUnite;
     @Enumerated(EnumType.STRING)
     private Type productType;
+
+    @ManyToOne
+    @JsonIgnoreProperties("productList")
+    private ProductGroup productGroup;
     @PrePersist
     public void prePersist() {
         DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
