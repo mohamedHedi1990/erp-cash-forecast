@@ -60,7 +60,10 @@ public class BankAccount extends AuditableSql implements Serializable {
 	
 	@OneToMany(mappedBy = "bankAccount",cascade = CascadeType.ALL)
 	private List<Comission> accountComissions;
-	
+
+	@OneToMany(mappedBy = "bankAccount",cascade = CascadeType.ALL)
+	private List<HistoryOperationBank> historyOperationBanks;
+
 	@PrePersist
 	public void initInvoice() {
 		this.accountInitialAmount =  (double)(Math.round(this.accountInitialAmount * 1000))/1000;
