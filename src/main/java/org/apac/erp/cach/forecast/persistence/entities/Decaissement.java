@@ -76,7 +76,11 @@ public class Decaissement extends AuditableSql implements Serializable {
 	private boolean isRelatedComissionValidated = false;
 	
 	private String beneficaryName;
-	
+
+
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date bankOperationDate;
 	@PrePersist
 	public void initPR() {
 		

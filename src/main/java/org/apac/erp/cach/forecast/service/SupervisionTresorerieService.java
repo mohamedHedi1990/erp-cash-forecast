@@ -16,16 +16,7 @@ import org.apac.erp.cach.forecast.enumeration.Operation;
 import org.apac.erp.cach.forecast.enumeration.OperationDtoType;
 import org.apac.erp.cach.forecast.enumeration.OperationType;
 import org.apac.erp.cach.forecast.enumeration.PaymentMethod;
-import org.apac.erp.cach.forecast.persistence.entities.BankAccount;
-import org.apac.erp.cach.forecast.persistence.entities.Comission;
-import org.apac.erp.cach.forecast.persistence.entities.CustomerInvoice;
-import org.apac.erp.cach.forecast.persistence.entities.Decaissement;
-import org.apac.erp.cach.forecast.persistence.entities.Encaissement;
-import org.apac.erp.cach.forecast.persistence.entities.HistoricAccountSold;
-import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
-import org.apac.erp.cach.forecast.persistence.entities.ProviderInvoice;
-import org.apac.erp.cach.forecast.persistence.entities.TimeLine;
-import org.apac.erp.cach.forecast.persistence.entities.TimeLineEntry;
+import org.apac.erp.cach.forecast.persistence.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -65,6 +56,8 @@ public class SupervisionTresorerieService {
 
 	@Autowired
 	private HistoricAccountSoldService historicAccountSoldService;
+	@Autowired
+	private HistoryOperationBankService historyOperationBankService;
 
 	public List<OperationTreserorieDto> globalSupervisionEngage(Long accountId, Date startDate, Date endDate,
 			Boolean isValidated) {
@@ -1131,18 +1124,24 @@ public class SupervisionTresorerieService {
 	}
 
 	public void validate(OperationDtoType operationRealType, Long operationRealId, OperationTreserorieDto operation) {
+		Double initalAmount=null;
+		Double finalAmount=null;
+		BankAccount bankAccount=null;
 		if (operationRealType == OperationDtoType.REGLEMENT_FACTURE_CLIENT
 				|| operationRealType == OperationDtoType.PAIEMENT_FACTURE_FOURNISSEUR) {
 			PaymentRule paymentRule = paymentRuleService.findPaymentRuleBYId(operationRealId);
 			paymentRule.setValidated(true);
 			paymentRuleService.modifyPaymentRule(paymentRule);
 			BankAccount account = paymentRule.getPaymentRuleAccount();
+			bankAccount=account;
+			initalAmount=account.getAccountInitialAmount();
 			if (operationRealType == OperationDtoType.REGLEMENT_FACTURE_CLIENT) {
 				account.setAccountInitialAmount(account.getAccountInitialAmount() + paymentRule.getPaymentRuleAmount());
 			} else if (operationRealType == OperationDtoType.PAIEMENT_FACTURE_FOURNISSEUR) {
 				account.setAccountInitialAmount(account.getAccountInitialAmount() - paymentRule.getPaymentRuleAmount());
-			}
 
+			}
+			finalAmount=account.getAccountInitialAmount();
 			bankAccountService.saveAccount(account);
 
 		} else if (operationRealType == OperationDtoType.DECAISSEMENT) {
@@ -1150,7 +1149,10 @@ public class SupervisionTresorerieService {
 			decaissement.setValidated(true);
 			decaissementService.saveDecaissement(decaissement);
 			BankAccount account = decaissement.getDecaissementBankAccount();
+			bankAccount=account;
+			initalAmount=account.getAccountInitialAmount();
 			account.setAccountInitialAmount(account.getAccountInitialAmount() - decaissement.getDecaissementAmount());
+			finalAmount=account.getAccountInitialAmount();
 			bankAccountService.saveAccount(account);
 
 		} else if (operationRealType == OperationDtoType.ENCAISSEMENT) {
@@ -1158,7 +1160,10 @@ public class SupervisionTresorerieService {
 			encaissement.setValidated(true);
 			encaissementService.saveEncaissement(encaissement);
 			BankAccount account = encaissement.getEncaissementBankAccount();
+			bankAccount=account;
+			initalAmount=account.getAccountInitialAmount();
 			account.setAccountInitialAmount(account.getAccountInitialAmount() + encaissement.getEncaissementAmount());
+			finalAmount=account.getAccountInitialAmount();
 			bankAccountService.saveAccount(account);
 
 		} else if (operationRealType == OperationDtoType.COMISSION) {
@@ -1168,8 +1173,11 @@ public class SupervisionTresorerieService {
 				paymentRuleService.modifyPaymentRule(paymentRule);
 				BankAccount account = operation.getOperationAccount();
 				BankAccount persistedAccound = bankAccountService.getAccountById(account.getAccountId());
-				persistedAccound
-						.setAccountInitialAmount(account.getAccountInitialAmount() - operation.getOperationAmount());
+				bankAccount=persistedAccound;
+				initalAmount=persistedAccound.getAccountInitialAmount();
+				persistedAccound.setAccountInitialAmount(account.getAccountInitialAmount() - operation.getOperationAmount());
+				finalAmount=persistedAccound.getAccountInitialAmount();
+
 				bankAccountService.saveAccount(persistedAccound);
 			} else if (operation.getDecaissementType().equals(Constants.DECAISSEMENT)) {
 				Decaissement decaissement = decaissementService.getDecaissementById(operationRealId);
@@ -1177,8 +1185,11 @@ public class SupervisionTresorerieService {
 				decaissementService.saveDecaissement(decaissement);
 				BankAccount account = operation.getOperationAccount();
 				BankAccount persistedAccound = bankAccountService.getAccountById(account.getAccountId());
-				persistedAccound
-						.setAccountInitialAmount(account.getAccountInitialAmount() - operation.getOperationAmount());
+				bankAccount=persistedAccound;
+				initalAmount=persistedAccound.getAccountInitialAmount();
+				persistedAccound.setAccountInitialAmount(account.getAccountInitialAmount() - operation.getOperationAmount());
+				finalAmount=persistedAccound.getAccountInitialAmount();
+
 				bankAccountService.saveAccount(persistedAccound);
 			} else if (operation.getDecaissementType().equals(Constants.ENCAISSEMENT)) {
 				Encaissement encaissement = encaissementService.getEncaissementById(operationRealId);
@@ -1186,8 +1197,11 @@ public class SupervisionTresorerieService {
 				encaissementService.saveEncaissement(encaissement);
 				BankAccount account = operation.getOperationAccount();
 				BankAccount persistedAccound = bankAccountService.getAccountById(account.getAccountId());
-				persistedAccound
-						.setAccountInitialAmount(account.getAccountInitialAmount() - operation.getOperationAmount());
+				bankAccount=persistedAccound;
+				initalAmount=persistedAccound.getAccountInitialAmount();
+				persistedAccound.setAccountInitialAmount(account.getAccountInitialAmount() - operation.getOperationAmount());
+				finalAmount=persistedAccound.getAccountInitialAmount();
+
 				bankAccountService.saveAccount(persistedAccound);
 			}
 
@@ -1196,10 +1210,25 @@ public class SupervisionTresorerieService {
 			entry.setIsValidated(true);
 			timeLineEntryService.saveTimeLineEntry(entry);
 			BankAccount account = operation.getOperationAccount();
+			bankAccount=account;
+			initalAmount=account.getAccountInitialAmount();
 			account.setAccountInitialAmount(account.getAccountInitialAmount() - operation.getOperationAmount());
+			finalAmount=account.getAccountInitialAmount();
+
 			bankAccountService.saveAccount(account);
 
 		}
+		HistoryOperationBank historyOperationBank=new HistoryOperationBank();
+		historyOperationBank.setBankAccount(bankAccount);
+		historyOperationBank.setHistoryOperationBankAmount(operation.getOperationAmount());
+		historyOperationBank.setHistoryOperationBankDate(operation.getHistoryOperationDate());
+		historyOperationBank.setHistoryOperationBankLabel(operation.getOpperationLabel());
+		historyOperationBank.setHistoryOperationBankValueDate(operation.getOperationDate());
+		historyOperationBank.setHistoryOperationBankType(operation.getOpperationType());
+		historyOperationBank.setHistoryOperationBankInitialAmount(initalAmount);
+		historyOperationBank.setHistoryOperationBankFinalAmount(finalAmount);
+        historyOperationBankService.saveHistoryOperationBank(historyOperationBank);
+
 
 	}
 
