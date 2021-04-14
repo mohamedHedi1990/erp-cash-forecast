@@ -1291,7 +1291,7 @@ public class SupervisionTresorerieService {
 				operation.setOperationAmount(montantRestant);
 				operation.setOperationRealId(providerInvocie.getInvoiceId());
 				operation.setBeneficiaryName(providerInvocie.getProvider().getProviderLabel());
-				String label = "DECAISSEMENT FACTURE CLIENT N° " + providerInvocie.getInvoiceNumber();
+				String label = "DECAISSEMENT FACTURE FOURNISSEUR N° " + providerInvocie.getInvoiceNumber();
 				operation.setOpperationLabel(label);
 				operations.add(operation);
 
