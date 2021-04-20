@@ -277,6 +277,7 @@ public class FactureService {
             fl.setMontantHtBrut(bonLivraisonLine.getMontantHtBrut());
             fl.setMontantTva(bonLivraisonLine.getMontantTva());
             fl.setProduct(bonLivraisonLine.getProduct());
+            fl.setProductGroup(bonLivraisonLine.getProductGroup());
             fl.setQuantity(bonLivraisonLine.getQuantity());
             fl.setRemiseTaux(bonLivraisonLine.getRemiseTaux());
             fl.setRemiseValeur(bonLivraisonLine.getRemiseValeur());
@@ -382,6 +383,7 @@ public class FactureService {
             fl.setMontantHtBrut(devisLine.getMontantHtBrut());
             fl.setMontantTva(devisLine.getMontantTva());
             fl.setProduct(devisLine.getProduct());
+            fl.setProductGroup(devisLine.getProductGroup());
             fl.setQuantity(devisLine.getQuantity());
             fl.setRemiseTaux(devisLine.getRemiseTaux());
             fl.setRemiseValeur(devisLine.getRemiseValeur());
