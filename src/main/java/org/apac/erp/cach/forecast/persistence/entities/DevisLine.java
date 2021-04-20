@@ -25,6 +25,8 @@ public class DevisLine extends  AuditableSql implements Serializable {
     @ManyToOne
     private Product product;
     @ManyToOne
+    private ProductGroup productGroup;
+    @ManyToOne
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Devis devis;
 }

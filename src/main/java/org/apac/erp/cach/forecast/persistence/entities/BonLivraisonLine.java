@@ -34,6 +34,8 @@ public class BonLivraisonLine extends  AuditableSql implements Serializable {
     @ManyToOne
     private Product product;
     @ManyToOne
+    private ProductGroup productGroup;
+    @ManyToOne
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private BonLivraison bonLivraison;
 
