@@ -166,7 +166,7 @@ public class SupervisionTresorerieService {
 				List<TimeLineEntry> entries = timeLine.getTimeLineTable();
 				entries = entries.stream().filter(entry -> entry.getLineDate().compareTo(startDate) >= 0
 						&& entry.getLineDate().compareTo(endDate) <= 0).collect(Collectors.toList());
-				List<OperationTreserorieDto> timeLineEntriesOperations = convertTimeLineEntriesToOperationsTreserorieList(
+				List<OperationTreserorieDto> timeLineEntriesOperations = convertTimeLineEntriesToOperationsTreserorieList(bankAccount,
 						entries, timeLine.getTimeLineCreditNumber(), timeLine.getCreditInstitution(), true);
 				operations.addAll(timeLineEntriesOperations);
 			}
@@ -247,7 +247,7 @@ public class SupervisionTresorerieService {
 		return operations;
 	}
 
-	private List<OperationTreserorieDto> convertTimeLineEntriesToOperationsTreserorieList(List<TimeLineEntry> entries,
+	private List<OperationTreserorieDto> convertTimeLineEntriesToOperationsTreserorieList(BankAccount bankAccount, List<TimeLineEntry> entries,
 			String creditNumber, String creditInstitution, Boolean isInTheSimulatedPeriod) {
 		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
 		entries.stream().forEach(entry -> {
@@ -264,6 +264,7 @@ public class SupervisionTresorerieService {
 			operation.setOperationRealType(OperationDtoType.ECHEANCHIER);
 			operation.setIsInTheSimulatedPeriod(isInTheSimulatedPeriod);
 			operation.setBeneficiaryName(creditInstitution);
+			operation.setOperationAccount(bankAccount);
 			operations.add(operation);
 
 			// code dedidé pour avoir deux opérations pour chaque entrée
