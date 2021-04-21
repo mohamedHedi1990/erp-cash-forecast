@@ -32,4 +32,6 @@ public class OperationTreserorieDto {
 	private BankAccount operationAccount;
 	private String decaissementType;
 	private Boolean isInTheSimulatedPeriod;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
+	private Date historyOperationDate;
 }

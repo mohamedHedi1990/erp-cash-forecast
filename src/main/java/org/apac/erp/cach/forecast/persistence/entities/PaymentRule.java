@@ -70,6 +70,10 @@ public class  PaymentRule extends AuditableSql implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private OperationType paymentRuleOperationType;
 
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date bankOperationDate;
+
 	@PrePersist
 	public void initPR() {
 		this.paymentRuleAmountS = Utils.convertAmountToStringWithSeperator(this.paymentRuleAmount);
