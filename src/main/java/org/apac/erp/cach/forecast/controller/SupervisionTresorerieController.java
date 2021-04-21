@@ -1,9 +1,12 @@
 package org.apac.erp.cach.forecast.controller;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
 import org.apac.erp.cach.forecast.dtos.OperationTreserorieDto;
+import org.apac.erp.cach.forecast.dtos.StatusCashDto;
+import org.apac.erp.cach.forecast.dtos.TurnoverDto;
 import org.apac.erp.cach.forecast.enumeration.OperationDtoType;
 import org.apac.erp.cach.forecast.service.SupervisionTresorerieService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +57,19 @@ public class SupervisionTresorerieController {
 		return supervisionTresorerieService.nonEngageSupervision(startDate, endDate, isCustomer, isProvider);
 
 	}
+	@CrossOrigin
+	@GetMapping("status-cash/{startDate}/{endDate}")
+	public List<StatusCashDto> statusCash(@PathVariable("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+										  @PathVariable("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate, @RequestParam("isNotEngaged") boolean isNotEngaged) throws ParseException {
+		return supervisionTresorerieService.statusCash(startDate,endDate,isNotEngaged);
 
+	}
+	@CrossOrigin
+	@GetMapping("turnover/{startDate}/{endDate}")
+	public List<TurnoverDto> turnover(@PathVariable("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,@PathVariable("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+		return supervisionTresorerieService.findTurnover(startDate,endDate );
+
+	}
 	@CrossOrigin
 	@PutMapping("rapprochement-bancaire")
 	public void rapprochementBancaireModifyOperation(@RequestBody OperationTreserorieDto operationDto) {
