@@ -298,7 +298,7 @@ public class FactureService {
             customerInvoice.setInvoiceDeadlineDate(c.getTime());
         }
         if(customerInvoice.getInvoiceDeadlineInNumberOfDays() == null) {
-            customerInvoice.setInvoiceDeadlineInNumberOfDays(0);
+            customerInvoice.setInvoiceDeadlineInNumberOfDays(30);
         }
 
       customerInvoice.setInvoiceTotalAmount(facture.getTotalTTC());
@@ -341,7 +341,7 @@ public class FactureService {
             customerInvoice.setInvoiceDeadlineDate(c.getTime());
         }
         if(customerInvoice.getInvoiceDeadlineInNumberOfDays() == null) {
-            customerInvoice.setInvoiceDeadlineInNumberOfDays(0);
+            customerInvoice.setInvoiceDeadlineInNumberOfDays(30);
         }
         if(facture.getFactureType() == FactureType.AVOIR) {
             customerInvoice.setInvoiceTotalAmount((-1)*facture.getTotalTTC());
