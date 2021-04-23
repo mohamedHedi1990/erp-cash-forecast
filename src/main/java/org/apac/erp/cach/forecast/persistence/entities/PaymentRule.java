@@ -38,6 +38,14 @@ public class  PaymentRule extends AuditableSql implements Serializable {
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
 	@Temporal(TemporalType.TIMESTAMP)
+	private Date paymentRuleEffetEscompteDate;
+
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date paymentRuleEffetDate;
+
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date paymentRuleDeadlineDate;
 
 	private boolean isValidated = false;
