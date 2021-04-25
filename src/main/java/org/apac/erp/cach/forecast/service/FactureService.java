@@ -36,7 +36,7 @@ public class FactureService {
 
     public List<Facture>getAllInvoices()
    {
-    return factureRepository.findAllByOrderByFactureDate();
+    return factureRepository.findAllByOrderByFactureNumberDesc();
    }
 
    public Facture getInvoiceById(Long id)
@@ -205,7 +205,7 @@ public class FactureService {
                 			customerInvoice.setInvoiceRsType(RsTypeSaisie.POURCENTAGE);
                 		}
                 	}
-                	
+                	customerInvoice.setInvoiceDate(facture.getFactureDate());
                     //customerInvoice.setInvoiceId(facture.getInvoiceCustomerId());
                 } else { 
                 	customerInvoice = createCustomerInvoiceFromFacture(facture);
