@@ -1408,15 +1408,15 @@ public class SupervisionTresorerieService {
 			turnoverDto.setHeading(Utils.getMonthName(currentMonth) + " " + Utils.getYearFromDate(startDate));
 			bd = new BigDecimal(sommeTurnover).setScale(3, RoundingMode.HALF_UP);
 			turnoverDto.setTurnover(bd.doubleValue());
-			turnoverDto.setTurnoverS(Utils.convertAmountToString(bd.doubleValue()));
+			turnoverDto.setTurnoverS(Utils.convertAmountToStringWithSeperator(bd.doubleValue()));
 			if (previousTurnover == 0D) {
 				turnoverDto.setEvolution(0D);
-				turnoverDto.setEvolutionS(Utils.convertAmountToString(0D));
+				turnoverDto.setEvolutionS(Utils.convertAmountToStringWithSeperator(0D));
 			} else {
 				double evolution=((turnoverDto.getTurnover() - previousTurnover) / previousTurnover)*100;
 				bd = new BigDecimal(evolution).setScale(3, RoundingMode.HALF_UP);
 				turnoverDto.setEvolution(bd.doubleValue());
-				turnoverDto.setEvolutionS(Utils.convertAmountToString(bd.doubleValue()));
+				turnoverDto.setEvolutionS(Utils.convertAmountToStringWithSeperator(bd.doubleValue()));
 			}
 			previousTurnover = turnoverDto.getTurnover();
 			turnoverDtoList.add(turnoverDto);
@@ -1431,11 +1431,11 @@ public class SupervisionTresorerieService {
 			totalEvolution = totalEvolution + turnoverDto.getEvolution();
 		}
 		bd = new BigDecimal(totalEvolution).setScale(3, RoundingMode.HALF_UP);
-		turnoverDtoTotal.setEvolution(bd.doubleValue());
-		turnoverDtoTotal.setEvolutionS(Utils.convertAmountToString(bd.doubleValue()));
+		turnoverDtoTotal.setEvolution(0d);
+		turnoverDtoTotal.setEvolutionS("---");
 		bd = new BigDecimal(totalTurnover).setScale(3, RoundingMode.HALF_UP);
 		turnoverDtoTotal.setTurnover(bd.doubleValue());
-		turnoverDtoTotal.setTurnoverS(Utils.convertAmountToString(bd.doubleValue()));
+		turnoverDtoTotal.setTurnoverS(Utils.convertAmountToStringWithSeperator(bd.doubleValue()));
 		turnoverDtoList.add(turnoverDtoTotal);
 		return turnoverDtoList;
 	}
