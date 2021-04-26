@@ -11,4 +11,6 @@ public class TurnoverDto {
     private String heading;
     private Double turnover;
     private Double evolution;
+    private String turnoverS;
+    private String evolutionS;
 }

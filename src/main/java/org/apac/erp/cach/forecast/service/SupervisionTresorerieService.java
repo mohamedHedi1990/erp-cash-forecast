@@ -1,11 +1,10 @@
 package org.apac.erp.cach.forecast.service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apac.erp.cach.forecast.constants.Constants;
@@ -1385,10 +1384,18 @@ public class SupervisionTresorerieService {
 
 
 	public List<TurnoverDto> findTurnover(Date startDate, Date endDate) {
+
+		LocalDate localDate=LocalDate.of(Calendar.getInstance().get(Calendar.YEAR),1,1);
+		startDate=java.util.Date.from(localDate.atStartOfDay()
+				.atZone(ZoneId.systemDefault())
+				.toInstant());
+		endDate=Calendar.getInstance().getTime();
+		int endMonth=Calendar.getInstance().get(Calendar.MONTH)+1;
 		List<TurnoverDto> turnoverDtoList = new ArrayList<>();
 		List<Facture> factures = this.factureRepository.findByFactureDateBetweenOrderByFactureDate(startDate, endDate);
 		Double previousTurnover = 0D;
-		for (int i = 1; i <= 12; i++) {
+		BigDecimal bd=null;
+		for (int i = 1; i <= endMonth; i++) {
 			TurnoverDto turnoverDto = new TurnoverDto();
 			int currentMonth = i;
 			turnoverDto.setHeading(Utils.getMonthName(currentMonth) + " " + Utils.getYearFromDate(startDate));
@@ -1399,11 +1406,17 @@ public class SupervisionTresorerieService {
 				sommeTurnover = sommeTurnover + fa.getTotalHT();
 			}
 			turnoverDto.setHeading(Utils.getMonthName(currentMonth) + " " + Utils.getYearFromDate(startDate));
-			turnoverDto.setTurnover(sommeTurnover);
+			bd = new BigDecimal(sommeTurnover).setScale(3, RoundingMode.HALF_UP);
+			turnoverDto.setTurnover(bd.doubleValue());
+			turnoverDto.setTurnoverS(Utils.convertAmountToString(bd.doubleValue()));
 			if (previousTurnover == 0D) {
 				turnoverDto.setEvolution(0D);
+				turnoverDto.setEvolutionS(Utils.convertAmountToString(0D));
 			} else {
-				turnoverDto.setEvolution((turnoverDto.getTurnover() - previousTurnover) / previousTurnover);
+				double evolution=((turnoverDto.getTurnover() - previousTurnover) / previousTurnover)*100;
+				bd = new BigDecimal(evolution).setScale(3, RoundingMode.HALF_UP);
+				turnoverDto.setEvolution(bd.doubleValue());
+				turnoverDto.setEvolutionS(Utils.convertAmountToString(bd.doubleValue()));
 			}
 			previousTurnover = turnoverDto.getTurnover();
 			turnoverDtoList.add(turnoverDto);
@@ -1417,8 +1430,12 @@ public class SupervisionTresorerieService {
 			totalTurnover = totalTurnover + turnoverDto.getTurnover();
 			totalEvolution = totalEvolution + turnoverDto.getEvolution();
 		}
-		turnoverDtoTotal.setEvolution(totalEvolution);
-		turnoverDtoTotal.setTurnover(totalTurnover);
+		bd = new BigDecimal(totalEvolution).setScale(3, RoundingMode.HALF_UP);
+		turnoverDtoTotal.setEvolution(bd.doubleValue());
+		turnoverDtoTotal.setEvolutionS(Utils.convertAmountToString(bd.doubleValue()));
+		bd = new BigDecimal(totalTurnover).setScale(3, RoundingMode.HALF_UP);
+		turnoverDtoTotal.setTurnover(bd.doubleValue());
+		turnoverDtoTotal.setTurnoverS(Utils.convertAmountToString(bd.doubleValue()));
 		turnoverDtoList.add(turnoverDtoTotal);
 		return turnoverDtoList;
 	}
