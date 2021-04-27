@@ -1,22 +1,24 @@
 package org.apac.erp.cach.forecast.service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apac.erp.cach.forecast.constants.Constants;
 import org.apac.erp.cach.forecast.constants.Utils;
 import org.apac.erp.cach.forecast.dtos.OperationTreserorieDto;
+import org.apac.erp.cach.forecast.dtos.StatusCashDto;
+import org.apac.erp.cach.forecast.dtos.TurnoverDto;
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
 import org.apac.erp.cach.forecast.enumeration.Operation;
 import org.apac.erp.cach.forecast.enumeration.OperationDtoType;
 import org.apac.erp.cach.forecast.enumeration.OperationType;
 import org.apac.erp.cach.forecast.enumeration.PaymentMethod;
 import org.apac.erp.cach.forecast.persistence.entities.*;
+import org.apac.erp.cach.forecast.persistence.repositories.FactureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -58,9 +60,12 @@ public class SupervisionTresorerieService {
 	private HistoricAccountSoldService historicAccountSoldService;
 	@Autowired
 	private HistoryOperationBankService historyOperationBankService;
+	@Autowired
+	FactureRepository factureRepository;
+
 
 	public List<OperationTreserorieDto> globalSupervisionEngage(Long accountId, Date startDate, Date endDate,
-			Boolean isValidated) {
+																Boolean isValidated) {
 
 		// test
 
@@ -126,7 +131,7 @@ public class SupervisionTresorerieService {
 		 * paymentRules.stream().filter(paymentRule ->
 		 * paymentRule.getIsValidated() == isValidated)
 		 * .collect(Collectors.toList());
-		 * 
+		 *
 		 * }
 		 */
 		List<OperationTreserorieDto> paymentRuleOperations = convertPaymentRulesToOperationTreserorieList(paymentRules,
@@ -247,8 +252,10 @@ public class SupervisionTresorerieService {
 		return operations;
 	}
 
+
 	private List<OperationTreserorieDto> convertTimeLineEntriesToOperationsTreserorieList(BankAccount bankAccount, List<TimeLineEntry> entries,
 			String creditNumber, String creditInstitution, Boolean isInTheSimulatedPeriod) {
+
 		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
 		entries.stream().forEach(entry -> {
 
@@ -284,7 +291,7 @@ public class SupervisionTresorerieService {
 			 * operation.setOperationAmount(entry.getInitialAmount());
 			 * operation.setIsValidated(entry.getIsValidated());
 			 * operations.add(operation);
-			 * 
+			 *
 			 * OperationTreserorieDto operation2 = new OperationTreserorieDto();
 			 * operation2.setOpperationType(OperationType.DECAISSEMENT);
 			 * operation2.setOperationDate(entry.getLineDate());
@@ -304,7 +311,7 @@ public class SupervisionTresorerieService {
 	}
 
 	private List<OperationTreserorieDto> convertPaymentRulesToOperationTreserorieList(List<PaymentRule> paymentRules,
-			List<Comission> comissions, Boolean isInTheSimulatedPeriod) {
+																					  List<Comission> comissions, Boolean isInTheSimulatedPeriod) {
 		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
 		paymentRules.forEach(paymentRule -> {
 			OperationTreserorieDto operation = new OperationTreserorieDto();
@@ -350,7 +357,7 @@ public class SupervisionTresorerieService {
 			 * String label = "Payement de la facture "; String invoicesIds =
 			 * paymentRule.getPaymentRuleInvoices(); List<Invoice> invoices =
 			 * new ArrayList<Invoice>(); String[] ids = invoicesIds.split(",");
-			 * 
+			 *
 			 * Arrays.stream(ids).forEach(invoiceId -> { if
 			 * (paymentRule.getPaymentRuleOperationType() ==
 			 * OperationType.DECAISSEMENT) { ProviderInvoice providerInvoice =
@@ -366,13 +373,13 @@ public class SupervisionTresorerieService {
 			 * getInvoiceCurrency());
 			 * operation.setOpperationType(OperationType.ENCAISSEMENT);
 			 * invoices.add(customerInvoice); }
-			 * 
+			 *
 			 * });
-			 * 
+			 *
 			 * for (int i = 0; i < invoices.size(); i++) { label = label +
 			 * invoices.get(i).getInvoiceNumber(); if (i < invoices.size() - 1)
 			 * { label = label + " et "; } }
-			 * 
+			 *
 			 * operation.setOpperationLabel(label);
 			 */
 
@@ -501,7 +508,7 @@ public class SupervisionTresorerieService {
 				 * .filter(comission -> comission.getComissionOperation() ==
 				 * Operation.REMISE_EFFET_ENCAISSEMENT)
 				 * .collect(Collectors.toList());
-				 * 
+				 *
 				 * effetEncaissementsComissions.stream().forEach(com -> {
 				 * OperationTreserorieDto operationCom = new
 				 * OperationTreserorieDto();
@@ -518,14 +525,14 @@ public class SupervisionTresorerieService {
 				 * add("Comission de remise d'effet d'encaissement");
 				 * operationCom.setOpperationDetails(detailsPayements);
 				 * operations.add(operationCom); });
-				 * 
+				 *
 				 * } else if (paymentRule.getPaymentRulePaymentMethod() ==
 				 * PaymentMethod.EFFET_ESCOMPTE) { List<Comission>
 				 * effetEscomptesComissions = comissions.stream()
 				 * .filter(comission -> comission.getComissionOperation() ==
 				 * Operation.REMISE_EFFET_ESCOMPTE)
 				 * .collect(Collectors.toList());
-				 * 
+				 *
 				 * effetEscomptesComissions.stream().forEach(com -> {
 				 * OperationTreserorieDto operationCom = new
 				 * OperationTreserorieDto();
@@ -542,7 +549,7 @@ public class SupervisionTresorerieService {
 				 * detailsPayements.add("Comission de remise d'effet d'escompte"
 				 * ); operationCom.setOpperationDetails(detailsPayements);
 				 * operations.add(operationCom); });
-				 * 
+				 *
 				 * }
 				 */
 			} else if (paymentRule.getPaymentRuleOperationType() == OperationType.DECAISSEMENT) {
@@ -584,7 +591,7 @@ public class SupervisionTresorerieService {
 	}
 
 	private List<OperationTreserorieDto> convertDecaissementsToOperationTreserorieList(List<Decaissement> decaissements,
-			List<Comission> comissions, Boolean isInTheSimulatedPeriod) {
+																					   List<Comission> comissions, Boolean isInTheSimulatedPeriod) {
 
 		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
 
@@ -605,18 +612,18 @@ public class SupervisionTresorerieService {
 			} else {
 				operation.setBeneficiaryName(decaissement.getBeneficaryName());
 			}
-			if(decaissement.getDecaissementPaymentType() == PaymentMethod.COMISSION_BANCAIRE && 
+			if(decaissement.getDecaissementPaymentType() == PaymentMethod.COMISSION_BANCAIRE &&
 					decaissement.getBeneficaryName() == null) {
 				operation.setBeneficiaryName("COMISSION BANCAIRE");
 			}
-				
+
 			List<String> detailsPayements = new ArrayList<String>();
 			detailsPayements.add(decaissement.getDecaissementPaymentType().toString());
 			detailsPayements.add(decaissement.getDecaissementPaymentRuleNumber());
 			detailsPayements.add(decaissement.getDecaissementDetails());
 
 			operation.setOpperationDetails(detailsPayements);
-	
+
 			String label = "DECAISSEMENT " + decaissement.getDecaissementPaymentType().toString().toUpperCase().replace("_", " ");
 			if (decaissement.getDecaissementPaymentRuleNumber() != null) {
 				label = label + " N° " + decaissement.getDecaissementPaymentRuleNumber().toUpperCase();
@@ -669,7 +676,7 @@ public class SupervisionTresorerieService {
 			 * comissions.stream() .filter(comission ->
 			 * comission.getComissionOperation() == Operation.REMISE_CHHEQUE)
 			 * .collect(Collectors.toList());
-			 * 
+			 *
 			 * chequeComissions.stream().forEach(com -> { OperationTreserorieDto
 			 * operationCom = new OperationTreserorieDto();
 			 * operationCom.setOpperationType(OperationType.DECAISSEMENT);
@@ -688,21 +695,21 @@ public class SupervisionTresorerieService {
 			 * getOpperationCurrency());
 			 * operationCom.setOperationAccount(decaissement.
 			 * getDecaissementBankAccount());
-			 * 
+			 *
 			 * List<String> detailsPayementsCom = new ArrayList<String>();
 			 * detailsPayements.add( "Comission de remise de chèque numéro " +
 			 * decaissement.getDecaissementPaymentRuleNumber());
 			 * operationCom.setOpperationDetails(detailsPayements);
 			 * operationCom.setIsInTheSimulatedPeriod(isInTheSimulatedPeriod);
-			 * 
+			 *
 			 * operations.add(operationCom); });
-			 * 
+			 *
 			 * } else if (decaissement.getDecaissementPaymentType() ==
 			 * PaymentMethod.VIREMENT) { List<Comission> virementComissions =
 			 * comissions.stream() .filter(comission ->
 			 * comission.getComissionOperation() == Operation.VIREMENT)
 			 * .collect(Collectors.toList());
-			 * 
+			 *
 			 * virementComissions.stream().forEach(com -> {
 			 * OperationTreserorieDto operationCom = new
 			 * OperationTreserorieDto();
@@ -725,13 +732,13 @@ public class SupervisionTresorerieService {
 			 * ; operationCom.setOperationRealType(OperationDtoType.COMISSION);
 			 * operationCom.setOpperationDetails(detailsPayements);
 			 * operations.add(operationCom); });
-			 * 
+			 *
 			 * } else if (decaissement.getDecaissementPaymentType() ==
 			 * PaymentMethod.TRAITE) { List<Comission> traiteComissions =
 			 * comissions.stream() .filter(comission ->
 			 * comission.getComissionOperation() == Operation.TRAITE)
 			 * .collect(Collectors.toList());
-			 * 
+			 *
 			 * traiteComissions.stream().forEach(com -> { OperationTreserorieDto
 			 * operationCom = new OperationTreserorieDto();
 			 * operationCom.setOpperationType(OperationType.DECAISSEMENT);
@@ -756,7 +763,7 @@ public class SupervisionTresorerieService {
 			 * decaissement.getDecaissementPaymentRuleNumber());
 			 * operationCom.setOpperationDetails(detailsPayements);
 			 * operations.add(operationCom); });
-			 * 
+			 *
 			 * }
 			 */
 			/*
@@ -766,7 +773,7 @@ public class SupervisionTresorerieService {
 			 * .filter(comission -> comission.getComissionOperation() ==
 			 * Operation.REMISE_EFFET_ENCAISSEMENT)
 			 * .collect(Collectors.toList());
-			 * 
+			 *
 			 * effetEncaissementsComissions.stream().forEach(com -> {
 			 * OperationTreserorieDto operationCom = new
 			 * OperationTreserorieDto();
@@ -783,13 +790,13 @@ public class SupervisionTresorerieService {
 			 * add("Comission de remise d'effet d'encaissement");
 			 * operationCom.setOpperationDetails(detailsPayements);
 			 * operations.add(operationCom); });
-			 * 
+			 *
 			 * } else if (decaissement.getDecaissementPaymentType() ==
 			 * PaymentMethod.EFFET_ESCOMPTE) { List<Comission>
 			 * effetEscomptesComissions = comissions.stream() .filter(comission
 			 * -> comission.getComissionOperation() ==
 			 * Operation.REMISE_EFFET_ESCOMPTE) .collect(Collectors.toList());
-			 * 
+			 *
 			 * effetEscomptesComissions.stream().forEach(com -> {
 			 * OperationTreserorieDto operationCom = new
 			 * OperationTreserorieDto();
@@ -806,7 +813,7 @@ public class SupervisionTresorerieService {
 			 * detailsPayements.add("Comission de remise d'effet d'escompte" );
 			 * operationCom.setOpperationDetails(detailsPayements);
 			 * operations.add(operationCom); });
-			 * 
+			 *
 			 * }
 			 */
 
@@ -816,7 +823,7 @@ public class SupervisionTresorerieService {
 	}
 
 	private List<OperationTreserorieDto> convertEncaissementsToOperationTreserorieList(List<Encaissement> encaissements,
-			List<Comission> comissions, Boolean isInTheSimulatedPeriod) {
+																					   List<Comission> comissions, Boolean isInTheSimulatedPeriod) {
 
 		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
 
@@ -979,7 +986,7 @@ public class SupervisionTresorerieService {
 			 * comissions.stream() .filter(comission ->
 			 * comission.getComissionOperation() == Operation.REMISE_CHHEQUE)
 			 * .collect(Collectors.toList());
-			 * 
+			 *
 			 * chequeComissions.stream().forEach(com -> { OperationTreserorieDto
 			 * operationCom = new OperationTreserorieDto();
 			 * operationCom.setOpperationType(OperationType.DECAISSEMENT);
@@ -995,13 +1002,13 @@ public class SupervisionTresorerieService {
 			 * encaissement.getEncaissementPaymentRuleNumber());
 			 * operationCom.setOpperationDetails(detailsPayements);
 			 * operations.add(operationCom); });
-			 * 
+			 *
 			 * } else if (encaissement.getEncaissementPaymentType() ==
 			 * PaymentMethod.VIREMENT) { List<Comission> virementComissions =
 			 * comissions.stream() .filter(comission ->
 			 * comission.getComissionOperation() == Operation.VIREMENT)
 			 * .collect(Collectors.toList());
-			 * 
+			 *
 			 * virementComissions.stream().forEach(com -> {
 			 * OperationTreserorieDto operationCom = new
 			 * OperationTreserorieDto();
@@ -1017,13 +1024,13 @@ public class SupervisionTresorerieService {
 			 * detailsPayements.add("Comission de virement ");
 			 * operationCom.setOpperationDetails(detailsPayements);
 			 * operations.add(operationCom); });
-			 * 
+			 *
 			 * } else if (encaissement.getEncaissementPaymentType() ==
 			 * PaymentMethod.TRAITE) { List<Comission> traiteComissions =
 			 * comissions.stream() .filter(comission ->
 			 * comission.getComissionOperation() == Operation.TRAITE)
 			 * .collect(Collectors.toList());
-			 * 
+			 *
 			 * traiteComissions.stream().forEach(com -> { OperationTreserorieDto
 			 * operationCom = new OperationTreserorieDto();
 			 * operationCom.setOpperationType(OperationType.DECAISSEMENT);
@@ -1039,14 +1046,14 @@ public class SupervisionTresorerieService {
 			 * encaissement.getEncaissementPaymentRuleNumber());
 			 * operationCom.setOpperationDetails(detailsPayements);
 			 * operations.add(operationCom); });
-			 * 
+			 *
 			 * } else if (encaissement.getEncaissementPaymentType() ==
 			 * PaymentMethod.EFFET_ENCAISSEMENT) { List<Comission>
 			 * effetEncaissementsComissions = comissions.stream()
 			 * .filter(comission -> comission.getComissionOperation() ==
 			 * Operation.REMISE_EFFET_ENCAISSEMENT)
 			 * .collect(Collectors.toList());
-			 * 
+			 *
 			 * effetEncaissementsComissions.stream().forEach(com -> {
 			 * OperationTreserorieDto operationCom = new
 			 * OperationTreserorieDto();
@@ -1063,13 +1070,13 @@ public class SupervisionTresorerieService {
 			 * detailsPayements.add("Comission de remise d'effet d'encaissement"
 			 * ); operationCom.setOpperationDetails(detailsPayements);
 			 * operations.add(operationCom); });
-			 * 
+			 *
 			 * } else if (encaissement.getEncaissementPaymentType() ==
 			 * PaymentMethod.EFFET_ESCOMPTE) { List<Comission>
 			 * effetEscomptesComissions = comissions.stream() .filter(comission
 			 * -> comission.getComissionOperation() ==
 			 * Operation.REMISE_EFFET_ESCOMPTE) .collect(Collectors.toList());
-			 * 
+			 *
 			 * effetEscomptesComissions.stream().forEach(com -> {
 			 * OperationTreserorieDto operationCom = new
 			 * OperationTreserorieDto();
@@ -1086,7 +1093,7 @@ public class SupervisionTresorerieService {
 			 * detailsPayements.add("Comission de remise d'effet d'escompte");
 			 * operationCom.setOpperationDetails(detailsPayements);
 			 * operations.add(operationCom); });
-			 * 
+			 *
 			 * }
 			 */
 
@@ -1228,7 +1235,7 @@ public class SupervisionTresorerieService {
 		historyOperationBank.setHistoryOperationBankType(operation.getOpperationType());
 		historyOperationBank.setHistoryOperationBankInitialAmount(initalAmount);
 		historyOperationBank.setHistoryOperationBankFinalAmount(finalAmount);
-        historyOperationBankService.saveHistoryOperationBank(historyOperationBank);
+		historyOperationBankService.saveHistoryOperationBank(historyOperationBank);
 
 
 	}
@@ -1236,7 +1243,7 @@ public class SupervisionTresorerieService {
 	// etat non engagé
 
 	public List<OperationTreserorieDto> nonEngageSupervision(Date startDate, Date endDate, boolean isCustomer,
-			boolean isProvider) {
+															 boolean isProvider) {
 
 		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
 
@@ -1375,5 +1382,368 @@ public class SupervisionTresorerieService {
 
 		return operations;
 	}
+
+//
+
+
+	public List<TurnoverDto> findTurnover(Date startDate, Date endDate) {
+
+		LocalDate localDate=LocalDate.of(Calendar.getInstance().get(Calendar.YEAR),1,1);
+		startDate=java.util.Date.from(localDate.atStartOfDay()
+				.atZone(ZoneId.systemDefault())
+				.toInstant());
+		endDate=Calendar.getInstance().getTime();
+		int endMonth=Calendar.getInstance().get(Calendar.MONTH)+1;
+		List<TurnoverDto> turnoverDtoList = new ArrayList<>();
+		List<Facture> factures = this.factureRepository.findByFactureDateBetweenOrderByFactureDate(startDate, endDate);
+		Double previousTurnover = 0D;
+		BigDecimal bd=null;
+		for (int i = 1; i <= endMonth; i++) {
+			TurnoverDto turnoverDto = new TurnoverDto();
+			int currentMonth = i;
+			turnoverDto.setHeading(Utils.getMonthName(currentMonth) + " " + Utils.getYearFromDate(startDate));
+
+			List<Facture> facturesCurrentMonth = factures.stream().filter(f -> Utils.getMonth(f.getFactureDate()) == currentMonth).collect(Collectors.toList());
+			Double sommeTurnover = 0D;
+			for (Facture fa : facturesCurrentMonth) {
+				sommeTurnover = sommeTurnover + fa.getTotalHT();
+			}
+			turnoverDto.setHeading(Utils.getMonthName(currentMonth) + " " + Utils.getYearFromDate(startDate));
+			bd = new BigDecimal(sommeTurnover).setScale(3, RoundingMode.HALF_UP);
+			turnoverDto.setTurnover(bd.doubleValue());
+			turnoverDto.setTurnoverS(Utils.convertAmountToStringWithSeperator(bd.doubleValue()));
+			if (previousTurnover == 0D) {
+				turnoverDto.setEvolution(0D);
+				turnoverDto.setEvolutionS(Utils.convertAmountToStringWithSeperator(0D));
+			} else {
+				double evolution=((turnoverDto.getTurnover() - previousTurnover) / previousTurnover)*100;
+				bd = new BigDecimal(evolution).setScale(3, RoundingMode.HALF_UP);
+				turnoverDto.setEvolution(bd.doubleValue());
+				turnoverDto.setEvolutionS(Utils.convertAmountToStringWithSeperator(bd.doubleValue()));
+			}
+			previousTurnover = turnoverDto.getTurnover();
+			turnoverDtoList.add(turnoverDto);
+		}
+
+		Double totalTurnover = 0D;
+		Double totalEvolution = 0D;
+		TurnoverDto turnoverDtoTotal = new TurnoverDto();
+		turnoverDtoTotal.setHeading("Total");
+		for (TurnoverDto turnoverDto : turnoverDtoList) {
+			totalTurnover = totalTurnover + turnoverDto.getTurnover();
+			totalEvolution = totalEvolution + turnoverDto.getEvolution();
+		}
+		bd = new BigDecimal(totalEvolution).setScale(3, RoundingMode.HALF_UP);
+		turnoverDtoTotal.setEvolution(0d);
+		turnoverDtoTotal.setEvolutionS("---");
+		bd = new BigDecimal(totalTurnover).setScale(3, RoundingMode.HALF_UP);
+		turnoverDtoTotal.setTurnover(bd.doubleValue());
+		turnoverDtoTotal.setTurnoverS(Utils.convertAmountToStringWithSeperator(bd.doubleValue()));
+		turnoverDtoList.add(turnoverDtoTotal);
+		return turnoverDtoList;
+	}
+	public List<StatusCashDto> statusCash(Date startDate, Date endDate, Boolean isNotEngaged) {
+		List<OperationTreserorieDto> operationTreserorieDtosEngaged = new ArrayList<OperationTreserorieDto>();
+		List<OperationTreserorieDto> operationTreserorieDtosNotEngaged = new ArrayList<OperationTreserorieDto>();
+		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
+		Utils.getFirstDayMonthPrevious(startDate);
+		Utils.getLastDayMonthPrevious(startDate);
+		List<BankAccount> bankAccountList = this.bankAccountService.getAllBankAccounts();
+		bankAccountList.forEach(bankAccount -> {
+			operationTreserorieDtosEngaged.addAll(this.globalSupervisionEngage(bankAccount.getAccountId(), startDate, endDate, false));
+		});
+		if (isNotEngaged) {
+			operationTreserorieDtosNotEngaged.addAll(this.nonEngageSupervision(startDate, endDate, true, true));
+		}
+		operations.addAll(operationTreserorieDtosEngaged);
+		operations.addAll(operationTreserorieDtosNotEngaged);
+		Comparator<OperationTreserorieDto> c = (s1, s2) -> s1.getOperationDate().compareTo(s2.getOperationDate());
+		operationTreserorieDtosEngaged.sort(c);
+		operationTreserorieDtosNotEngaged.sort(c);
+		operations.sort(c);
+		Integer previousMonth = null;
+		Integer previousYear = null;
+		Double soldeMM = this.getInitialSoldeMM(startDate,bankAccountList);
+		List<OperationTreserorieDto> operationsList = this.eliminateOperationsJustBefore(startDate, operations);
+		List<StatusCashDto> statusCashDtoList = new ArrayList<StatusCashDto>();
+		System.out.println("-----list size----:"+operationsList.size());
+		for (OperationTreserorieDto op : operationsList)
+		{
+			Integer currentMonth = Utils.getMonthFromDate(op.getOperationDate());
+			Integer currentYear = Utils.getYearFromDate(op.getOperationDate());
+			if((previousMonth==null && previousYear== null ) || (currentMonth!=null && currentYear!=null && ((previousMonth!=currentMonth )||( !previousYear.equals(currentYear) ))))
+			{
+				System.out.println("----new Month------"+currentMonth);
+				StatusCashDto statusCashDto=new StatusCashDto();
+				List<OperationTreserorieDto> operationsEngagedInTheSameMonthAndYear=this.getOperationsInSameMonthAndYear(currentMonth,currentYear,operationTreserorieDtosEngaged);
+				List<OperationTreserorieDto> encaissementsEngagedInTheSameMonthAndYear=operationsEngagedInTheSameMonthAndYear.stream().filter(e->e.getOpperationType()==OperationType.ENCAISSEMENT).collect(Collectors.toList());
+				List<OperationTreserorieDto> decaissementsEngagedInTheSameMonthAndYear=operationsEngagedInTheSameMonthAndYear.stream().filter(e->e.getOpperationType()==OperationType.DECAISSEMENT).collect(Collectors.toList());
+				List<OperationTreserorieDto> operationsNotEngagedInTheSameMonthAndYear=this.getOperationsInSameMonthAndYear(currentMonth,currentYear,operationTreserorieDtosNotEngaged);
+				List<OperationTreserorieDto> encaissementsNotEngagedInTheSameMonthAndYear=operationsNotEngagedInTheSameMonthAndYear.stream().filter(e->e.getOpperationType()==OperationType.ENCAISSEMENT).collect(Collectors.toList());
+				List<OperationTreserorieDto> decaissementsNotEngagedInTheSameMonthAndYear=operationsNotEngagedInTheSameMonthAndYear.stream().filter(e->e.getOpperationType()==OperationType.DECAISSEMENT).collect(Collectors.toList());
+				Double soldeEncaissementEngaged=this.getSumOperationsAmount(encaissementsEngagedInTheSameMonthAndYear);
+				Double soldeDecaissementEngaged=this.getSumOperationsAmount(decaissementsEngagedInTheSameMonthAndYear);
+				Double soldeEncaissementNotEngaged=this.getSumOperationsAmount(encaissementsNotEngagedInTheSameMonthAndYear);
+				Double soldeDecaissementNotEngaged=this.getSumOperationsAmount(decaissementsNotEngagedInTheSameMonthAndYear);
+				statusCashDto.setHeading(Utils.getMonthName(currentMonth)+" "+currentYear);
+				statusCashDto.setCashBalanceMM(soldeMM);
+				statusCashDto.setCashBalanceMMS(Utils.convertAmountToStringWithSeperator(statusCashDto.getCashBalanceMM()));
+				statusCashDto.setEncaissementEngaged(soldeEncaissementEngaged);
+				statusCashDto.setEncaissementEngagedS(Utils.convertAmountToStringWithSeperator(statusCashDto.getEncaissementEngaged()));
+				statusCashDto.setDecaissementEngaged(soldeDecaissementEngaged);
+				statusCashDto.setDecaissementEngagedS(Utils.convertAmountToStringWithSeperator(statusCashDto.getDecaissementEngaged()));
+				statusCashDto.setCommittedCash(soldeEncaissementEngaged-soldeDecaissementEngaged);
+				statusCashDto.setCommittedCashS(Utils.convertAmountToStringWithSeperator(statusCashDto.getCommittedCash()));
+				statusCashDto.setCashBalanceM(statusCashDto.getCashBalanceMM()+statusCashDto.getCommittedCash());
+				statusCashDto.setCashBalanceMS(Utils.convertAmountToStringWithSeperator(statusCashDto.getCashBalanceM()));
+				statusCashDto.setEncaissementNotEngaged(soldeEncaissementNotEngaged);
+				statusCashDto.setEncaissementNotEngagedS(Utils.convertAmountToStringWithSeperator(statusCashDto.getEncaissementNotEngaged()));
+				statusCashDto.setDecaissementNotEngaged(soldeDecaissementNotEngaged);
+				statusCashDto.setDecaissementNotEngagedS(Utils.convertAmountToStringWithSeperator(statusCashDto.getDecaissementNotEngaged()));
+
+				statusCashDto.setCashBalanceNotEngagedM(soldeEncaissementNotEngaged-soldeDecaissementNotEngaged);
+				statusCashDto.setCashBalanceNotEngagedMS(Utils.convertAmountToStringWithSeperator(statusCashDto.getCashBalanceNotEngagedM()));
+				statusCashDto.setCumulativeNetCash(statusCashDto.getCashBalanceM()+statusCashDto.getCashBalanceNotEngagedM());
+				statusCashDto.setCumulativeNetCashS(Utils.convertAmountToStringWithSeperator(statusCashDto.getCumulativeNetCash()));
+				soldeMM=statusCashDto.getCumulativeNetCash();
+				statusCashDtoList.add(statusCashDto);
+				previousMonth=currentMonth;
+				previousYear=currentYear;
+			}
+
+
+		}
+		if(statusCashDtoList.size()>0) {
+			statusCashDtoList.add(this.getStatusCashDtoTotal(statusCashDtoList));
+		}
+		return statusCashDtoList;
+	}
+
+/*
+    public List<StatusCashDto> statusCashS(Date startDate, Date endDate, Boolean isNotEngaged) throws ParseException {
+        List<OperationTreserorieDto> operationsEncaissementEngaged = new ArrayList<OperationTreserorieDto>();
+        List<OperationTreserorieDto> operationsDecaissementEngaged = new ArrayList<OperationTreserorieDto>();
+        List<OperationTreserorieDto> operationsEncaissementNotEngaged = new ArrayList<OperationTreserorieDto>();
+        List<OperationTreserorieDto> operationsDecaissementNotEngaged = new ArrayList<OperationTreserorieDto>();
+        List<OperationTreserorieDto> operationsEngaged = new ArrayList<OperationTreserorieDto>();
+        List<OperationTreserorieDto> operationsNotEngaged = new ArrayList<OperationTreserorieDto>();
+
+        List<BankAccount> bankAccountList = this.bankAccountService.getAllBankAccounts();
+        bankAccountList.forEach(bankAccount -> {
+            operationsEngaged.addAll(this.globalSupervisionEngage(bankAccount.getAccountId(), startDate, endDate, false));
+
+        });
+        if (isNotEngaged == true) {
+            operationsNotEngaged.addAll(this.nonEngageSupervision(startDate, endDate, true, true));
+        }
+        Comparator<OperationTreserorieDto> c = (s1, s2) -> s1.getOperationDate().compareTo(s2.getOperationDate());
+        operationsEngaged.forEach(operationTreserorieDto -> {
+            if (operationTreserorieDto.getOpperationType() == OperationType.ENCAISSEMENT) {
+                operationsEncaissementEngaged.add(operationTreserorieDto);
+            } else {
+                operationsDecaissementEngaged.add(operationTreserorieDto);
+            }
+
+        });
+
+        operationsEngaged.forEach(operationTreserorieDto -> {
+            if (operationTreserorieDto.getOpperationType() == OperationType.ENCAISSEMENT) {
+                operationsEncaissementNotEngaged.add(operationTreserorieDto);
+            } else {
+                operationsDecaissementNotEngaged.add(operationTreserorieDto);
+            }
+
+        });
+        operationsEncaissementEngaged.sort(c);
+        operationsDecaissementEngaged.sort(c);
+        operationsEncaissementNotEngaged.sort(c);
+        operationsDecaissementNotEngaged.sort(c);
+
+        List<StatusCashDto> statusCashDtoList = new ArrayList<StatusCashDto>();
+        Double soldeMM = 0D;
+        soldeMM = this.getInitialSoldeMM( startDate, bankAccountList, isNotEngaged);
+
+        for (int i = 1; i <= 12; i++) {
+            StatusCashDto statusCashDto = new StatusCashDto();
+            int currentMonth = i;
+            double sommeEncaissementEngage = 0D;
+            double sommeDecaissementEngage = 0D;
+            List<OperationTreserorieDto> operationsEncaissementEngagedCurrentMonth = operationsEncaissementEngaged.stream().filter(op -> Utils.getMonthFromDate(op.getOperationDate()) == currentMonth).collect(Collectors.toList());
+            List<OperationTreserorieDto> operationsDecaissementEngagedCurrentMonth = operationsDecaissementEngaged.stream().filter(op -> Utils.getMonthFromDate(op.getOperationDate()) == currentMonth).collect(Collectors.toList());
+
+            for (OperationTreserorieDto op : operationsEncaissementEngagedCurrentMonth) {
+                sommeEncaissementEngage = sommeEncaissementEngage + op.getOperationAmount();
+            }
+            for (OperationTreserorieDto op : operationsDecaissementEngagedCurrentMonth) {
+                sommeDecaissementEngage = sommeDecaissementEngage + op.getOperationAmount();
+            }
+            double sommeEncaissementNotEngaged = 0D;
+            double sommeDecaissementNotEngaged = 0D;
+            if (isNotEngaged) {
+                List<OperationTreserorieDto> operationsEncaissementNotEngagedCurrentMonth = operationsEncaissementEngaged.stream().filter(op -> Utils.getMonthFromDate(op.getOperationDate()) == currentMonth).collect(Collectors.toList());
+                List<OperationTreserorieDto> operationsDecaissementNotEngagedCurrentMonth = operationsDecaissementEngaged.stream().filter(op -> Utils.getMonthFromDate(op.getOperationDate()) == currentMonth).collect(Collectors.toList());
+                for (OperationTreserorieDto op : operationsEncaissementNotEngagedCurrentMonth) {
+                    sommeEncaissementNotEngaged = sommeEncaissementNotEngaged + op.getOperationAmount();
+                }
+                for (OperationTreserorieDto op : operationsDecaissementNotEngagedCurrentMonth) {
+                    sommeDecaissementNotEngaged = sommeDecaissementNotEngaged + op.getOperationAmount();
+                }
+
+            }
+            statusCashDto.setHeading(Utils.getMonthName(currentMonth) + " " + Utils.getYearFromDate(startDate));
+            statusCashDto.setCashBalanceMM(soldeMM);
+            statusCashDto.setEncaissementEngaged(sommeEncaissementEngage);
+            statusCashDto.setDecaissementEngaged(sommeDecaissementEngage);
+            statusCashDto.setCommittedCash(sommeEncaissementEngage - sommeDecaissementEngage);
+            statusCashDto.setCashBalanceM(statusCashDto.getCashBalanceMM() + statusCashDto.getCommittedCash());
+            statusCashDto.setEncaissementNotEngaged(sommeEncaissementNotEngaged);
+            statusCashDto.setDecaissementNotEngaged(sommeDecaissementNotEngaged);
+            statusCashDto.setCashBalanceNotEngagedM(sommeEncaissementNotEngaged - sommeDecaissementNotEngaged);
+            statusCashDto.setCumulativeNetCash(statusCashDto.getCashBalanceM() + statusCashDto.getCashBalanceNotEngagedM());
+            soldeMM = statusCashDto.getCumulativeNetCash();
+            statusCashDtoList.add(statusCashDto);
+        }
+        StatusCashDto statusCashDtoTotal = new StatusCashDto();
+        statusCashDtoTotal.setHeading("Total");
+        Double cashBalanceMMTotal = 0D;
+        Double encaissementEngagedTotal = 0D;
+        Double decaissementEngagedTotal = 0D;
+        Double committedCashTotal = 0D;
+        Double cashBalanceMTotal = 0D;
+        Double encaissementNotEngagedTotal = 0D;
+        Double decaissementNotEngagedTotal = 0D;
+        Double cashBalanceNotEngagedMTotal = 0D;
+        Double cumulativeNetCashTotal = 0D;
+        for (StatusCashDto statusCashDto : statusCashDtoList) {
+            cashBalanceMMTotal = cashBalanceMMTotal + statusCashDto.getCashBalanceMM();
+            encaissementEngagedTotal = encaissementEngagedTotal + statusCashDto.getEncaissementEngaged();
+            decaissementEngagedTotal = decaissementEngagedTotal + statusCashDto.getDecaissementEngaged();
+            committedCashTotal = committedCashTotal + statusCashDto.getCommittedCash();
+            cashBalanceMTotal = cashBalanceMTotal + statusCashDto.getCashBalanceM();
+            encaissementNotEngagedTotal = encaissementNotEngagedTotal + statusCashDto.getEncaissementNotEngaged();
+            decaissementNotEngagedTotal = decaissementNotEngagedTotal + statusCashDto.getDecaissementNotEngaged();
+            cashBalanceNotEngagedMTotal = cashBalanceNotEngagedMTotal + statusCashDto.getCashBalanceNotEngagedM();
+            cumulativeNetCashTotal = cumulativeNetCashTotal + statusCashDto.getCumulativeNetCash();
+        }
+        statusCashDtoTotal.setCashBalanceMM(cashBalanceMMTotal);
+        statusCashDtoTotal.setEncaissementEngaged(encaissementEngagedTotal);
+        statusCashDtoTotal.setDecaissementEngaged(decaissementEngagedTotal);
+        statusCashDtoTotal.setCommittedCash(committedCashTotal);
+        statusCashDtoTotal.setCashBalanceM(cashBalanceMTotal);
+        statusCashDtoTotal.setEncaissementNotEngaged(encaissementNotEngagedTotal);
+        statusCashDtoTotal.setDecaissementNotEngaged(decaissementNotEngagedTotal);
+        statusCashDtoTotal.setCashBalanceNotEngagedM(cashBalanceNotEngagedMTotal);
+        statusCashDtoTotal.setCumulativeNetCash(cumulativeNetCashTotal);
+        statusCashDtoList.add(statusCashDtoTotal);
+        return statusCashDtoList;
+
+    }
+*/
+
+	public StatusCashDto getStatusCashDtoTotal(List<StatusCashDto> statusCashDtos) {
+		StatusCashDto statusCashDtoTotal = new StatusCashDto();
+		statusCashDtoTotal.setHeading("Total");
+		Double cashBalanceMMTotal = 0D;
+		Double encaissementEngagedTotal = 0D;
+		Double decaissementEngagedTotal = 0D;
+		Double committedCashTotal = 0D;
+		Double cashBalanceMTotal = 0D;
+		Double encaissementNotEngagedTotal = 0D;
+		Double decaissementNotEngagedTotal = 0D;
+		Double cashBalanceNotEngagedMTotal = 0D;
+		Double cumulativeNetCashTotal = 0D;
+		for (StatusCashDto statusCashDto : statusCashDtos) {
+			cashBalanceMMTotal = cashBalanceMMTotal + statusCashDto.getCashBalanceMM();
+			encaissementEngagedTotal = encaissementEngagedTotal + statusCashDto.getEncaissementEngaged();
+			decaissementEngagedTotal = decaissementEngagedTotal + statusCashDto.getDecaissementEngaged();
+			committedCashTotal = committedCashTotal + statusCashDto.getCommittedCash();
+			cashBalanceMTotal = cashBalanceMTotal + statusCashDto.getCashBalanceM();
+			encaissementNotEngagedTotal = encaissementNotEngagedTotal + statusCashDto.getEncaissementNotEngaged();
+			decaissementNotEngagedTotal = decaissementNotEngagedTotal + statusCashDto.getDecaissementNotEngaged();
+			cashBalanceNotEngagedMTotal = cashBalanceNotEngagedMTotal + statusCashDto.getCashBalanceNotEngagedM();
+			cumulativeNetCashTotal = cumulativeNetCashTotal + statusCashDto.getCumulativeNetCash();
+		}
+		statusCashDtoTotal.setCashBalanceMM(cashBalanceMMTotal);
+		statusCashDtoTotal.setCashBalanceMMS(Utils.convertAmountToStringWithSeperator(cashBalanceMMTotal));
+
+		statusCashDtoTotal.setEncaissementEngaged(encaissementEngagedTotal);
+		statusCashDtoTotal.setEncaissementEngagedS(Utils.convertAmountToStringWithSeperator(encaissementEngagedTotal));
+
+		statusCashDtoTotal.setDecaissementEngaged(decaissementEngagedTotal);
+		statusCashDtoTotal.setDecaissementEngagedS(Utils.convertAmountToStringWithSeperator(decaissementEngagedTotal));
+
+		statusCashDtoTotal.setCommittedCash(committedCashTotal);
+		statusCashDtoTotal.setCommittedCashS(Utils.convertAmountToStringWithSeperator(committedCashTotal));
+
+		statusCashDtoTotal.setCashBalanceM(cashBalanceMTotal);
+		statusCashDtoTotal.setCashBalanceMS(Utils.convertAmountToStringWithSeperator(cashBalanceMTotal));
+
+		statusCashDtoTotal.setEncaissementNotEngaged(encaissementNotEngagedTotal);
+		statusCashDtoTotal.setEncaissementNotEngagedS(Utils.convertAmountToStringWithSeperator(encaissementNotEngagedTotal));
+
+		statusCashDtoTotal.setDecaissementNotEngaged(decaissementNotEngagedTotal);
+		statusCashDtoTotal.setDecaissementNotEngagedS(Utils.convertAmountToStringWithSeperator(decaissementNotEngagedTotal));
+
+		statusCashDtoTotal.setCashBalanceNotEngagedM(cashBalanceNotEngagedMTotal);
+		statusCashDtoTotal.setCashBalanceNotEngagedMS(Utils.convertAmountToStringWithSeperator(cashBalanceNotEngagedMTotal));
+
+		statusCashDtoTotal.setCumulativeNetCash(cumulativeNetCashTotal);
+		statusCashDtoTotal.setCumulativeNetCashS(Utils.convertAmountToStringWithSeperator(cumulativeNetCashTotal));
+
+		return statusCashDtoTotal;
+	}
+
+	public Double getInitialSoldeMM( Date startDate, List<BankAccount> bankAccountList)  {
+
+		Double sommeAccount = 0D;
+		for (BankAccount bankAccount : bankAccountList) {
+			HistoricAccountSold historicAccountSold = historicAccountSoldService.findFirstByBankAccountAndCreatedAtLessThanEqualOrderByCreatedAtDesc(bankAccount, startDate);
+			if (historicAccountSold != null)
+				sommeAccount = sommeAccount + historicAccountSold.getSolde();
+		}
+		Date startDateYear = Utils.getFirstDayMonthPrevious(startDate);
+		Date endDateYear = Utils.getLastDayMonthPrevious(startDate);
+		List<OperationTreserorieDto> operationsEngaged = new ArrayList<OperationTreserorieDto>();
+		List<OperationTreserorieDto> operationsNotEngaged = new ArrayList<OperationTreserorieDto>();
+		bankAccountList.forEach(bankAccount -> {
+			operationsEngaged.addAll(this.globalSupervisionEngage(bankAccount.getAccountId(), startDateYear, endDateYear, false));
+
+		});
+		operationsNotEngaged.addAll(this.nonEngageSupervision(startDateYear, endDateYear, true, true));
+
+		Comparator<OperationTreserorieDto> c = (s1, s2) -> s1.getOperationDate().compareTo(s2.getOperationDate());
+		operationsEngaged.sort(c);
+		operationsNotEngaged.sort(c);
+		List<OperationTreserorieDto>operationsEngagedFilter=this.eliminateOperationsJustBefore(startDate, operationsEngaged);
+		List<OperationTreserorieDto>operationsNotEngagedFilter=this.eliminateOperationsJustBefore(startDate, operationsNotEngaged);
+		List<OperationTreserorieDto> encaissementsEngaged=operationsEngagedFilter.stream().filter(e->e.getOpperationType()==OperationType.ENCAISSEMENT).collect(Collectors.toList());
+		List<OperationTreserorieDto> decaissementsEngaged=operationsEngagedFilter.stream().filter(e->e.getOpperationType()==OperationType.DECAISSEMENT).collect(Collectors.toList());
+		List<OperationTreserorieDto> encaissementsNotEngaged=operationsNotEngagedFilter.stream().filter(e->e.getOpperationType()==OperationType.ENCAISSEMENT).collect(Collectors.toList());
+		List<OperationTreserorieDto> decaissementsNotEngaged=operationsNotEngagedFilter.stream().filter(e->e.getOpperationType()==OperationType.DECAISSEMENT).collect(Collectors.toList());
+		Double soldeEncaissementEngaged=this.getSumOperationsAmount(encaissementsEngaged);
+		Double soldeDecaissementEngaged=this.getSumOperationsAmount(decaissementsEngaged);
+		Double soldeEncaissementNotEngaged=this.getSumOperationsAmount(encaissementsNotEngaged);
+		Double soldeDecaissementNotEngaged=this.getSumOperationsAmount(decaissementsNotEngaged);
+		Double initialAmount = sommeAccount + soldeEncaissementEngaged + soldeEncaissementNotEngaged - soldeDecaissementEngaged - soldeDecaissementNotEngaged;
+		return initialAmount;
+	}
+
+
+	public Double getSumOperationsAmount(List<OperationTreserorieDto> operationTreserorieDtoList) {
+		Double sumOperationsAmount = 0D;
+		for (OperationTreserorieDto op : operationTreserorieDtoList) {
+			sumOperationsAmount = sumOperationsAmount + op.getOperationAmount();
+		}
+		return sumOperationsAmount;
+	}
+
+	public List<OperationTreserorieDto> getOperationsInSameMonthAndYear(Integer month, Integer year, List<OperationTreserorieDto> operationTreserorieDtoList) {
+		return operationTreserorieDtoList.stream().filter(op -> (Utils.getMonthFromDate(op.getOperationDate()).equals(month) && Utils.getYearFromDate(op.getOperationDate()).equals(year))).collect(Collectors.toList());
+	}
+
+	public List<OperationTreserorieDto> eliminateOperationsJustBefore(Date startDate, List<OperationTreserorieDto> operationTreserorieDtoList) {
+		return operationTreserorieDtoList.stream().filter(op ->op.getOperationDate().compareTo(startDate)>=0).collect(Collectors.toList());
+	}
+
 
 }
