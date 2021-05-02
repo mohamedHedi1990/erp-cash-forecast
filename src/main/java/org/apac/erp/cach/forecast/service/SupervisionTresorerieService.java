@@ -91,7 +91,7 @@ public class SupervisionTresorerieService {
 		HistoricAccountSold initialAmountInTheBeginingOfThePeriod = this.historicAccountSoldService
 				.findFirst(bankAccount.getAccountId(), startDate);
 		HistoricAccountSold lastAmountOfAccount = this.historicAccountSoldService.findLast(bankAccount.getAccountId());
-		// Double initialAmount = bankAccount.getAccountInitialAmount();
+		// Double initialAmount = bankAchttps://github.com/mohamedHedi1990/erp-cash-forecast/edit/etatVente/src/main/java/org/apac/erp/cach/forecast/service/SupervisionTresorerieService.java?pr=%2FmohamedHedi1990%2Ferp-cash-forecast%2Fpull%2F59count.getAccountInitialAmount();
 		Double initialAmount = 0.0;
 		if (lastAmountOfAccount != null) {
 			initialAmount = lastAmountOfAccount.getSolde();
