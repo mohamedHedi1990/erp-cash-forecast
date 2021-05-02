@@ -261,7 +261,7 @@ public class SupervisionTresorerieService {
 
 	private List<OperationTreserorieDto> convertTimeLineEntriesToOperationsTreserorieList(BankAccount bankAccount, List<TimeLineEntry> entries,
 			String creditNumber, String creditInstitution, Boolean isInTheSimulatedPeriod) {
-																						  String creditNumber, String creditInstitution, Boolean isInTheSimulatedPeriod) {
+																						 
 		List<OperationTreserorieDto> operations = new ArrayList<OperationTreserorieDto>();
 		entries.stream().forEach(entry -> {
 
