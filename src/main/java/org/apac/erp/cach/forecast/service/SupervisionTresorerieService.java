@@ -1803,7 +1803,7 @@ public class SupervisionTresorerieService {
 			for (Product product : productGroup.getProductList()) {
 				ProductSaleDto productSale = new ProductSaleDto();
 				productSale.setProductGroupLabel(productGroup.getProductGroupLabel());
-				productSale.setProductLabel(product.getProductLabel());
+				productSale.setProductLabel(product.getProductReference());
 				List<Facture> factures = this.factureRepository.findByFactureDateBetweenOrderByFactureDate(startDate, endDate);
 				List<FactureLine> factureLines=this.factureLineRepository.findByFactureInAndProductAndProductGroup(factures,product,productGroup);
 				BigDecimal bd = null;
@@ -1846,7 +1846,7 @@ public class SupervisionTresorerieService {
 			List<Product> products=productRepository.findAllByOrderByProductLabelAsc();
 				for (Product product : products) {
                     ProductCustomerDto productCustomer=new ProductCustomerDto();
-                    productCustomer.setProductLabel(product.getProductLabel());
+                    productCustomer.setProductLabel(product.getProductReference());
 					List<FactureLine> factureLines = this.factureLineRepository.findByFactureInAndProduct(factures, product);
 				    double somme=0D;
 					for (FactureLine factureLine : factureLines) {
