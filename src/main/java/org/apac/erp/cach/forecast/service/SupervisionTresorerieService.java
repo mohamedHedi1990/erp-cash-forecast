@@ -9,19 +9,18 @@ import java.util.stream.Collectors;
 
 import org.apac.erp.cach.forecast.constants.Constants;
 import org.apac.erp.cach.forecast.constants.Utils;
-import org.apac.erp.cach.forecast.dtos.OperationTreserorieDto;
-import org.apac.erp.cach.forecast.dtos.StatusCashDto;
-import org.apac.erp.cach.forecast.dtos.TurnoverDto;
+import org.apac.erp.cach.forecast.dtos.*;
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
 import org.apac.erp.cach.forecast.enumeration.Operation;
 import org.apac.erp.cach.forecast.enumeration.OperationDtoType;
 import org.apac.erp.cach.forecast.enumeration.OperationType;
 import org.apac.erp.cach.forecast.enumeration.PaymentMethod;
 import org.apac.erp.cach.forecast.persistence.entities.*;
-import org.apac.erp.cach.forecast.persistence.repositories.FactureRepository;
+import org.apac.erp.cach.forecast.persistence.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.thymeleaf.util.DateUtils;
 
 @Service
 public class SupervisionTresorerieService {
@@ -34,6 +33,10 @@ public class SupervisionTresorerieService {
 
 	@Autowired
 	private CustomerInvoiceService customerInvoiceService;
+	@Autowired
+	private ProductGroupRepository productGroupRepository;
+	@Autowired
+	private ProductRepository productRepository;
 
 	@Autowired
 	private DecaissementService decaissementService;
@@ -62,6 +65,10 @@ public class SupervisionTresorerieService {
 	private HistoryOperationBankService historyOperationBankService;
 	@Autowired
 	FactureRepository factureRepository;
+	@Autowired
+	private FactureLineRepository factureLineRepository;
+	@Autowired
+	CustomerRepository customerRepository;
 
 
 	public List<OperationTreserorieDto> globalSupervisionEngage(Long accountId, Date startDate, Date endDate,
@@ -1741,6 +1748,120 @@ public class SupervisionTresorerieService {
 	public List<OperationTreserorieDto> eliminateOperationsJustBefore(Date startDate, List<OperationTreserorieDto> operationTreserorieDtoList) {
 		return operationTreserorieDtoList.stream().filter(op ->op.getOperationDate().compareTo(startDate)>=0).collect(Collectors.toList());
 	}
+
+	public List<CustomerSaleDto> getCustomersSales() {
+		LocalDate localDate=LocalDate.of(Calendar.getInstance().get(Calendar.YEAR),1,1);
+		Date startDate=java.util.Date.from(localDate.atStartOfDay()
+				.atZone(ZoneId.systemDefault())
+				.toInstant());
+		Date endDate=Calendar.getInstance().getTime();
+		int endMonth=Calendar.getInstance().get(Calendar.MONTH)+1;
+		List<CustomerSaleDto> customerSales = new ArrayList<>();
+		for (Customer customer : customerRepository.findAllByOrderByCustomerLabel()) {
+			CustomerSaleDto customerSale = new CustomerSaleDto();
+			customerSale.setCustomerLabel(customer.getCustomerLabel());
+			List<Facture> factures = this.factureRepository.findByCustomerAndFactureDateBetweenOrderByFactureDate(customer,startDate, endDate);
+			BigDecimal bd = null;
+			for (int i = 1; i <= endMonth; i++) {
+				CustomerMonthSaleDto monthSale = new CustomerMonthSaleDto();
+				int currentMonth = i;
+				monthSale.setHeading(Utils.getMonthName(currentMonth) + " " + Utils.getYearFromDate(startDate));
+
+				List<Facture> facturesCurrentMonth = factures.stream().filter(f -> Utils.getMonth(f.getFactureDate()) == currentMonth).collect(Collectors.toList());
+				Double sommeValue = 0D;
+				for (Facture fa : facturesCurrentMonth) {
+					sommeValue = sommeValue + fa.getTotalHT();
+				}
+				monthSale.setHeading(Utils.getMonthName(currentMonth) + " " + Utils.getYearFromDate(startDate));
+				bd = new BigDecimal(sommeValue).setScale(3, RoundingMode.HALF_UP);
+				monthSale.setValue(bd.doubleValue());
+				monthSale.setValueS(Utils.convertAmountToStringWithSeperator(bd.doubleValue()));
+				customerSale.setValueTotal(customerSale.getValueTotal()+monthSale.getValue());
+				customerSale.getMonthSales().add(monthSale);
+			}
+			bd = new BigDecimal(customerSale.getValueTotal()).setScale(3, RoundingMode.HALF_UP);
+			customerSale.setValueTotal(bd.doubleValue());
+			customerSale.setValueTotalS(Utils.convertAmountToStringWithSeperator(customerSale.getValueTotal()));
+			customerSales.add(customerSale);
+		}
+		return customerSales;
+	}
+
+
+	public List<ProductSaleDto> getProductsSales() {
+		LocalDate localDate=LocalDate.of(Calendar.getInstance().get(Calendar.YEAR),1,1);
+		Date startDate=java.util.Date.from(localDate.atStartOfDay()
+				.atZone(ZoneId.systemDefault())
+				.toInstant());
+		Date endDate=Calendar.getInstance().getTime();
+		int endMonth=Calendar.getInstance().get(Calendar.MONTH)+1;
+		List<ProductSaleDto> productSales = new ArrayList<>();
+		List<ProductGroup> productGroups=productGroupRepository.findAll();
+		for (ProductGroup productGroup : productGroups) {
+			for (Product product : productGroup.getProductList()) {
+				ProductSaleDto productSale = new ProductSaleDto();
+				productSale.setProductGroupLabel(productGroup.getProductGroupLabel());
+				productSale.setProductLabel(product.getProductLabel());
+				List<Facture> factures = this.factureRepository.findByFactureDateBetweenOrderByFactureDate(startDate, endDate);
+				List<FactureLine> factureLines=this.factureLineRepository.findByFactureInAndProductAndProductGroup(factures,product,productGroup);
+				BigDecimal bd = null;
+				for (int i = 1; i <= endMonth; i++) {
+					ProductMonthSaleDto monthSale = new ProductMonthSaleDto();
+					int currentMonth = i;
+					monthSale.setHeading(Utils.getMonthName(currentMonth) + " " + Utils.getYearFromDate(startDate));
+
+					List<FactureLine> facturesCurrentMonth = factureLines.stream().filter(fl -> Utils.getMonth(fl.getFacture().getFactureDate()) == currentMonth).collect(Collectors.toList());
+					Double sommeValue = 0D;
+					Double quantite=0D;
+					for (FactureLine fl : facturesCurrentMonth) {
+						sommeValue = sommeValue + fl.getMontantHt();
+						quantite+=fl.getQuantity();
+					}
+					monthSale.setHeading(Utils.getMonthName(currentMonth) + " " + Utils.getYearFromDate(startDate));
+					bd = new BigDecimal(sommeValue).setScale(3, RoundingMode.HALF_UP);
+					monthSale.setValue(bd.doubleValue());
+					productSale.setValueTotal(productSale.getValueTotal()+monthSale.getValue());
+					monthSale.setValueS(Utils.convertAmountToStringWithSeperator(bd.doubleValue()));
+					monthSale.setQuantity(quantite);
+					productSale.getMonthSales().add(monthSale);
+				}
+				bd = new BigDecimal(productSale.getValueTotal()).setScale(3, RoundingMode.HALF_UP);
+				productSale.setValueTotal(bd.doubleValue());
+				productSale.setValueTotalS(Utils.convertAmountToStringWithSeperator(productSale.getValueTotal()));
+				productSales.add(productSale);
+			}
+		}
+		return productSales;
+	}
+
+
+	public List<CustomerProductSaleDto> getCustomersSalesByProduct(Date startDate,Date endDate) {
+		List<CustomerProductSaleDto> customerProductSales = new ArrayList<>();
+		for (Customer customer : customerRepository.findAllByOrderByCustomerLabel()) {
+			CustomerProductSaleDto customerProductSale = new CustomerProductSaleDto();
+			customerProductSale.setCustomerLabel(customer.getCustomerLabel());
+			List<Facture> factures = this.factureRepository.findByCustomerAndFactureDateBetweenOrderByFactureDate(customer,startDate, endDate);
+			List<Product> products=productRepository.findAllByOrderByProductLabelAsc();
+				for (Product product : products) {
+                    ProductCustomerDto productCustomer=new ProductCustomerDto();
+                    productCustomer.setProductLabel(product.getProductLabel());
+					List<FactureLine> factureLines = this.factureLineRepository.findByFactureInAndProduct(factures, product);
+				    double somme=0D;
+					for (FactureLine factureLine : factureLines) {
+						somme+=factureLine.getMontantHt();
+					}
+					BigDecimal bd = new BigDecimal(somme).setScale(3, RoundingMode.HALF_UP);
+					productCustomer.setValue(bd.doubleValue());
+					productCustomer.setValueS(Utils.convertAmountToStringWithSeperator(productCustomer.getValue()));
+					customerProductSale.setValueTotal(customerProductSale.getValueTotal()+bd.doubleValue());
+					customerProductSale.getProductsCustomer().add(productCustomer);
+			}
+			customerProductSale.setValueTotalS(Utils.convertAmountToStringWithSeperator(customerProductSale.getValueTotal()));
+			customerProductSales.add(customerProductSale);
+		}
+		return customerProductSales;
+	}
+
 
 
 }
