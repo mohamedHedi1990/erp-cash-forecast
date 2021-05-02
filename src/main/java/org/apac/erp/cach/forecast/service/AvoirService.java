@@ -117,6 +117,7 @@ public class AvoirService {
             avoirLine.setMontantTva((avoirLine.getMontantFaudec()+avoirLine.getMontantHt())*factureLine.getProduct().getProductTVA()/100);
             avoirLine.setProduct(factureLine.getProduct());
             avoirLine.setQuantity(factureLine.getQuantity());
+            avoirLine.setProductGroup(factureLine.getProductGroup());
             avoirLines.add(avoirLine);
         });
         return avoirLines;

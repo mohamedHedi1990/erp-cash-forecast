@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
 import org.apac.erp.cach.forecast.enumeration.OperationType;
+import org.apac.erp.cach.forecast.enumeration.PaymentMethod;
 import org.apac.erp.cach.forecast.persistence.entities.BankAccount;
 import org.apac.erp.cach.forecast.persistence.entities.CustomerAttachedInvoices;
 import org.apac.erp.cach.forecast.persistence.entities.HistoricAccountSold;
@@ -202,7 +203,11 @@ public class PaymentRuleService {
 						bankAccount, false, startDate);
 	}
 
-	/*
+    public List<PaymentRule> getEffectRules() {
+		return this.paymentRuleRepo.findBypaymentRulePaymentMethodIn(new PaymentMethod[]{PaymentMethod.EFFET_ESCOMPTE,PaymentMethod.TRAITE});
+    }
+
+    /*
 	 * 
 	 * public PaymentRule saveNewPaymentRuleToInvoice(PaymentRule paymentRule,
 	 * Long invoiceId, Long accountId) { Invoice invoice =

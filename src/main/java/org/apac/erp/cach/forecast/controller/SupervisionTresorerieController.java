@@ -4,6 +4,9 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
+import org.apac.erp.cach.forecast.dtos.OperationTreserorieDto;
+import org.apac.erp.cach.forecast.dtos.StatusCashDto;
+import org.apac.erp.cach.forecast.dtos.TurnoverDto;
 import org.apac.erp.cach.forecast.dtos.*;
 import org.apac.erp.cach.forecast.enumeration.OperationDtoType;
 import org.apac.erp.cach.forecast.service.SupervisionTresorerieService;
