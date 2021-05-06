@@ -1,8 +1,13 @@
 package org.apac.erp.cach.forecast.constants;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
+import java.text.*;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAdjuster;
+import java.time.temporal.TemporalAdjusters;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class Utils {
@@ -25,7 +30,6 @@ public class Utils {
 			return initialAmount;
 		}
 	}
-
 	public static String convertAmountToStringWithSeperator(double amount1) {
 		DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
 		symbols.setGroupingSeparator('\'');
@@ -65,5 +69,87 @@ public class Utils {
 
 			return initialAmount;
 		}
+	}
+
+	public static Date getFirstDayMonthPrevious(Date date)
+	{
+		System.out.println("-----first date in month -----"+date);
+		LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDate localDateMM=localDate.minusMonths(1).with(TemporalAdjusters.lastDayOfMonth());
+		Date dateMM = Date.from(localDateMM.atStartOfDay(ZoneId.systemDefault()).toInstant());
+		System.out.println("-----last date in month MM-----"+dateMM);
+		return dateMM;
+	}
+	public static Date getLastDayMonthPrevious(Date date) {
+		System.out.println("-----last date in month -----"+date);
+		LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDate localDateMM=localDate.minusMonths(1).with(TemporalAdjusters.firstDayOfMonth());
+		Date dateMM = Date.from(localDateMM.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        System.out.println("-----last date in month MM-----"+dateMM);
+		return dateMM;
+	}
+	public static Integer getMonthFromDate(Date date)
+	{
+		LocalDate localDate = Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+		Integer month = localDate.getMonthValue();
+		return month;
+	}
+	public static Integer getYearFromDate(Date date)
+	{
+		LocalDate localDate = Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+		Integer year = localDate.getYear();
+		return year;
+	}
+	public static Integer getMonth(Date date)
+	{
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		Integer month = cal.get(Calendar.MONTH);
+		return month+1;
+	}
+	public static String getMonthName(int month)
+	{
+
+		String monthName = null;
+		switch (month) {
+			case 1:
+				monthName = "Janv";
+				break;
+			case 2:
+				monthName = "Fevr";
+				break;
+			case 3:
+				monthName = "Mars";
+				break;
+			case 4:
+				monthName = "Avr";
+				break;
+			case 5:
+				monthName = "Mai";
+				break;
+			case 6:
+				monthName = "Juin";
+				break;
+			case 7:
+				monthName = "Juil";
+				break;
+			case 8:
+				monthName = "Aout";
+				break;
+			case 9:
+				monthName = "Sept";
+				break;
+			case 10:
+				monthName = "Oct";
+				break;
+			case 11:
+				monthName = "Nov";
+				break;
+			case 12:
+				monthName = "Dec";
+				break;
+		}
+
+		return monthName;
 	}
 }

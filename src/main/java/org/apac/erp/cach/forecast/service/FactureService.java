@@ -36,7 +36,7 @@ public class FactureService {
 
     public List<Facture>getAllInvoices()
    {
-    return factureRepository.findAllByOrderByFactureDate();
+    return factureRepository.findAllByOrderByFactureNumberDesc();
    }
 
    public Facture getInvoiceById(Long id)
@@ -205,7 +205,7 @@ public class FactureService {
                 			customerInvoice.setInvoiceRsType(RsTypeSaisie.POURCENTAGE);
                 		}
                 	}
-                	
+                	customerInvoice.setInvoiceDate(facture.getFactureDate());
                     //customerInvoice.setInvoiceId(facture.getInvoiceCustomerId());
                 } else { 
                 	customerInvoice = createCustomerInvoiceFromFacture(facture);
@@ -277,6 +277,7 @@ public class FactureService {
             fl.setMontantHtBrut(bonLivraisonLine.getMontantHtBrut());
             fl.setMontantTva(bonLivraisonLine.getMontantTva());
             fl.setProduct(bonLivraisonLine.getProduct());
+            fl.setProductGroup(bonLivraisonLine.getProductGroup());
             fl.setQuantity(bonLivraisonLine.getQuantity());
             fl.setRemiseTaux(bonLivraisonLine.getRemiseTaux());
             fl.setRemiseValeur(bonLivraisonLine.getRemiseValeur());
@@ -297,7 +298,7 @@ public class FactureService {
             customerInvoice.setInvoiceDeadlineDate(c.getTime());
         }
         if(customerInvoice.getInvoiceDeadlineInNumberOfDays() == null) {
-            customerInvoice.setInvoiceDeadlineInNumberOfDays(0);
+            customerInvoice.setInvoiceDeadlineInNumberOfDays(30);
         }
 
       customerInvoice.setInvoiceTotalAmount(facture.getTotalTTC());
@@ -340,7 +341,7 @@ public class FactureService {
             customerInvoice.setInvoiceDeadlineDate(c.getTime());
         }
         if(customerInvoice.getInvoiceDeadlineInNumberOfDays() == null) {
-            customerInvoice.setInvoiceDeadlineInNumberOfDays(0);
+            customerInvoice.setInvoiceDeadlineInNumberOfDays(30);
         }
         if(facture.getFactureType() == FactureType.AVOIR) {
             customerInvoice.setInvoiceTotalAmount((-1)*facture.getTotalTTC());
@@ -382,6 +383,7 @@ public class FactureService {
             fl.setMontantHtBrut(devisLine.getMontantHtBrut());
             fl.setMontantTva(devisLine.getMontantTva());
             fl.setProduct(devisLine.getProduct());
+            fl.setProductGroup(devisLine.getProductGroup());
             fl.setQuantity(devisLine.getQuantity());
             fl.setRemiseTaux(devisLine.getRemiseTaux());
             fl.setRemiseValeur(devisLine.getRemiseValeur());
