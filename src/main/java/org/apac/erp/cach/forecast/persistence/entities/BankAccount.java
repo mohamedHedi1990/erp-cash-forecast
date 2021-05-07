@@ -38,7 +38,8 @@ public class BankAccount extends AuditableSql implements Serializable {
 	private String accountAgency;
 	
 	private double accountInitialAmount;
-	
+	private double accountOpenedAmount;
+	private String accountOpenedAmountS;
 	private String accountInitialAmountS;
 	
 	private String accountAgencyAdress;
@@ -68,6 +69,8 @@ public class BankAccount extends AuditableSql implements Serializable {
 	public void initInvoice() {
 		this.accountInitialAmount =  (double)(Math.round(this.accountInitialAmount * 1000))/1000;
 		this.accountInitialAmountS = Utils.convertAmountToStringWithSeperator(this.accountInitialAmount);
+		this.accountOpenedAmount=this.accountInitialAmount;
+		this.accountOpenedAmountS=Utils.convertAmountToStringWithSeperator(this.accountOpenedAmount);
 		this.accountComissions = new ArrayList<Comission>();
 		
 	}
