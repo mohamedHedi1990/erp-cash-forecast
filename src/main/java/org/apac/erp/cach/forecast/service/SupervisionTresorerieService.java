@@ -1706,6 +1706,15 @@ public class SupervisionTresorerieService {
 			if (historicAccountSold != null)
 				sommeAccount = sommeAccount + historicAccountSold.getSolde();
 		}
+		// if sommeAccount egal to zero so get the first historic account after the start date
+		if(sommeAccount==0)
+		{
+			for (BankAccount bankAccount : bankAccountList) {
+				HistoricAccountSold historicAccountSold = historicAccountSoldService.findFirstByBankAccountAndCreatedAtGreaterThanEqualOrderByCreatedAtAsc(bankAccount, startDate);
+				if (historicAccountSold != null)
+					sommeAccount = sommeAccount + historicAccountSold.getSolde();
+			}
+		}
 		Date startDateYear = Utils.getFirstDayMonthPrevious(startDate);
 		Date endDateYear = Utils.getLastDayMonthPrevious(startDate);
 		List<OperationTreserorieDto> operationsEngaged = new ArrayList<OperationTreserorieDto>();
