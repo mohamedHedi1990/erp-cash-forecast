@@ -253,9 +253,8 @@ public class SupervisionTresorerieService {
 			double progressiveAmount = (double) Math.round(operations.get(i).getProgressiveAmount() * 100) / 100;
 			operations.get(i).setProgressiveAmount(progressiveAmount);
 			operations.get(i)
-					.setProgressiveAmountS(Utils.convertAmountToString(operations.get(i).getProgressiveAmount()));
+					.setProgressiveAmountS(Utils.convertAmountToStringWithSeperator(operations.get(i).getProgressiveAmount()));
 		}
-
 		return operations;
 	}
 
