@@ -1393,17 +1393,55 @@ public class SupervisionTresorerieService {
 
 	public List<TurnoverDto> findTurnover(Date startDate, Date endDate) {
 
-		LocalDate localDate=LocalDate.of(Calendar.getInstance().get(Calendar.YEAR),1,1);
+		/*LocalDate localDate=LocalDate.of(Calendar.getInstance().get(Calendar.YEAR),1,1);
 		startDate=java.util.Date.from(localDate.atStartOfDay()
 				.atZone(ZoneId.systemDefault())
 				.toInstant());
-		endDate=Calendar.getInstance().getTime();
+		endDate=Calendar.getInstance().getTime();*/
 		int endMonth=Calendar.getInstance().get(Calendar.MONTH)+1;
 		List<TurnoverDto> turnoverDtoList = new ArrayList<>();
-		List<Facture> factures = this.factureRepository.findByFactureDateBetweenOrderByFactureDate(startDate, endDate);
+		List<Facture> facturesInitial = this.factureRepository.findByFactureDateBetweenOrderByFactureDate(startDate, endDate);
+
+		List<Facture> factures=facturesInitial.stream().filter(f ->f.getFactureDate().compareTo(startDate)>=0).collect(Collectors.toList());
 		Double previousTurnover = 0D;
 		BigDecimal bd=null;
-		for (int i = 1; i <= endMonth; i++) {
+		System.out.println("----endMonth-----"+endMonth);
+		Integer previousMonth = null;
+		Integer previousYear = null;
+		for (Facture facture : factures)
+		{
+			Integer currentMonth = Utils.getMonthFromDate(facture.getFactureDate());
+			Integer currentYear = Utils.getYearFromDate(facture.getFactureDate());
+			if((previousMonth==null && previousYear== null ) || (currentMonth!=null && currentYear!=null && ((previousMonth!=currentMonth )||( !previousYear.equals(currentYear) ))))
+			{
+
+				TurnoverDto turnoverDto = new TurnoverDto();
+				turnoverDto.setHeading(Utils.getMonthName(currentMonth) + " " + Utils.getYearFromDate(startDate));
+				List<Facture>facturesInTheSameMonthAndYear=factures.stream().filter(f->(Utils.getYearFromDate(f.getFactureDate()).equals(currentYear) && Utils.getMonthFromDate(f.getFactureDate()).equals(currentMonth))).collect(Collectors.toList());
+
+				Double sommeTurnover = 0D;
+				for (Facture fa : facturesInTheSameMonthAndYear) {
+					sommeTurnover = sommeTurnover + fa.getTotalHT();
+				}
+				bd = new BigDecimal(sommeTurnover).setScale(3, RoundingMode.HALF_UP);
+				turnoverDto.setTurnover(bd.doubleValue());
+				turnoverDto.setTurnoverS(Utils.convertAmountToStringWithSeperator(bd.doubleValue()));
+				if (previousTurnover == 0D) {
+					turnoverDto.setEvolution(0D);
+					turnoverDto.setEvolutionS(Utils.convertAmountToStringWithSeperator(0D));
+				} else {
+					double evolution=((turnoverDto.getTurnover() - previousTurnover) / previousTurnover)*100;
+					bd = new BigDecimal(evolution).setScale(3, RoundingMode.HALF_UP);
+					turnoverDto.setEvolution(bd.doubleValue());
+					turnoverDto.setEvolutionS(Utils.convertAmountToStringWithSeperator(bd.doubleValue()));
+				}
+				previousTurnover = turnoverDto.getTurnover();
+				turnoverDtoList.add(turnoverDto);
+				previousMonth=currentMonth;
+				previousYear=currentYear;
+			}
+		}
+	/*	for (int i = 1; i <= endMonth; i++) {
 			TurnoverDto turnoverDto = new TurnoverDto();
 			int currentMonth = i;
 			turnoverDto.setHeading(Utils.getMonthName(currentMonth) + " " + Utils.getYearFromDate(startDate));
@@ -1428,23 +1466,26 @@ public class SupervisionTresorerieService {
 			}
 			previousTurnover = turnoverDto.getTurnover();
 			turnoverDtoList.add(turnoverDto);
+		}*/
+
+		if(turnoverDtoList.size()>0) {
+			Double totalTurnover = 0D;
+			Double totalEvolution = 0D;
+			TurnoverDto turnoverDtoTotal = new TurnoverDto();
+			turnoverDtoTotal.setHeading("Total");
+			for (TurnoverDto turnoverDto : turnoverDtoList) {
+				totalTurnover = totalTurnover + turnoverDto.getTurnover();
+				totalEvolution = totalEvolution + turnoverDto.getEvolution();
+			}
+			bd = new BigDecimal(totalEvolution).setScale(3, RoundingMode.HALF_UP);
+			turnoverDtoTotal.setEvolution(0d);
+			turnoverDtoTotal.setEvolutionS("---");
+			bd = new BigDecimal(totalTurnover).setScale(3, RoundingMode.HALF_UP);
+			turnoverDtoTotal.setTurnover(bd.doubleValue());
+			turnoverDtoTotal.setTurnoverS(Utils.convertAmountToStringWithSeperator(bd.doubleValue()));
+			turnoverDtoList.add(turnoverDtoTotal);
 		}
 
-		Double totalTurnover = 0D;
-		Double totalEvolution = 0D;
-		TurnoverDto turnoverDtoTotal = new TurnoverDto();
-		turnoverDtoTotal.setHeading("Total");
-		for (TurnoverDto turnoverDto : turnoverDtoList) {
-			totalTurnover = totalTurnover + turnoverDto.getTurnover();
-			totalEvolution = totalEvolution + turnoverDto.getEvolution();
-		}
-		bd = new BigDecimal(totalEvolution).setScale(3, RoundingMode.HALF_UP);
-		turnoverDtoTotal.setEvolution(0d);
-		turnoverDtoTotal.setEvolutionS("---");
-		bd = new BigDecimal(totalTurnover).setScale(3, RoundingMode.HALF_UP);
-		turnoverDtoTotal.setTurnover(bd.doubleValue());
-		turnoverDtoTotal.setTurnoverS(Utils.convertAmountToStringWithSeperator(bd.doubleValue()));
-		turnoverDtoList.add(turnoverDtoTotal);
 		return turnoverDtoList;
 	}
 	public List<StatusCashDto> statusCash(Date startDate, Date endDate, Boolean isNotEngaged) {
