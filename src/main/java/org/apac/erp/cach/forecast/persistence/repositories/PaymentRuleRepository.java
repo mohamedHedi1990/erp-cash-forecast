@@ -14,5 +14,5 @@ public interface PaymentRuleRepository extends JpaRepository<PaymentRule, Long> 
 List<PaymentRule> findByPaymentRuleAccountAndPaymentRuleDeadlineDateBetweenOrderByPaymentRuleDeadlineDateAsc(BankAccount bankAccount, Date startDate, Date endDate);
 List<PaymentRule> findByPaymentRuleAccountAndIsValidatedAndPaymentRuleDeadlineDateBeforeOrderByPaymentRuleDeadlineDateAsc(BankAccount bankAccount, boolean isvalidated, Date startDate);
 
-    List<PaymentRule> findBypaymentRulePaymentMethodIn(PaymentMethod[] paymentMethods);
+    List<PaymentRule> findBypaymentRulePaymentMethodInAndIsValidated(PaymentMethod[] paymentMethods, boolean isValidated);
 }

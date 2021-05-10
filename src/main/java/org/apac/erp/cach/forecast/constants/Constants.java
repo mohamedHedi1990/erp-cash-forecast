@@ -9,4 +9,7 @@ public static final String PAYMENT_RULE = "PAYMENT_RULE";
 public static final String DECAISSEMENT = "DECAISSEMENT";
 public static final String ENCAISSEMENT = "ENCAISSEMENT";
 
+public static final String ENGAGE = "ENGAGE";
+public static final String NON_ENGAGE = "NON_ENGAGE";
+
 }

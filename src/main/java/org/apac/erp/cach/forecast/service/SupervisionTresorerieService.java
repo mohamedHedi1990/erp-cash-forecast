@@ -257,6 +257,9 @@ public class SupervisionTresorerieService {
 			operations.get(i).setProgressiveAmount(progressiveAmount);
 			operations.get(i)
 					.setProgressiveAmountS(Utils.convertAmountToStringWithSeperator(operations.get(i).getProgressiveAmount()));
+		
+		// set that this operation is engaged operation
+			operations.get(i).setOperationCategory(Constants.ENGAGE);
 		}
 		return operations;
 	}
@@ -1317,6 +1320,10 @@ public class SupervisionTresorerieService {
 		List<OperationTreserorieDto> sortedOperations = operations.stream()
 				.sorted(Comparator.comparing(OperationTreserorieDto::getOperationDate)).collect(Collectors.toList());
 
+		// set that this operation is engaged operation
+		sortedOperations.forEach(operation -> {
+			operation.setOperationCategory(Constants.NON_ENGAGE);
+		});
 		return sortedOperations;
 	}
 
