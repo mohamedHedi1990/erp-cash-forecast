@@ -204,7 +204,7 @@ public class PaymentRuleService {
 	}
 
     public List<PaymentRule> getEffectRules() {
-		return this.paymentRuleRepo.findBypaymentRulePaymentMethodIn(new PaymentMethod[]{PaymentMethod.EFFET_ESCOMPTE,PaymentMethod.TRAITE});
+		return this.paymentRuleRepo.findBypaymentRulePaymentMethodInAndIsValidated(new PaymentMethod[]{PaymentMethod.EFFET_ESCOMPTE,PaymentMethod.TRAITE}, false);
     }
 
     /*

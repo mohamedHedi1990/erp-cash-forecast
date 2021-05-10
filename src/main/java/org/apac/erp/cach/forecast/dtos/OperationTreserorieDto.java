@@ -34,4 +34,6 @@ public class OperationTreserorieDto {
 	private Boolean isInTheSimulatedPeriod;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
 	private Date historyOperationDate;
+	
+	private String operationCategory;
 }

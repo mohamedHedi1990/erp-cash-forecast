@@ -85,15 +85,15 @@ public class SupervisionTresorerieController {
 	}
 
 	@CrossOrigin
-	@GetMapping("/get-customer-sales")
-	public List<CustomerSaleDto> getCustomersSales(){
-		return supervisionTresorerieService.getCustomersSales();
+	@GetMapping("/get-customer-sales/{startDate}/{endDate}")
+	public List<CustomerSaleDto> getCustomersSales(@PathVariable("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,@PathVariable("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate){
+		return supervisionTresorerieService.getCustomersSales(startDate,endDate);
 	}
 
 	@CrossOrigin
-	@GetMapping("/get-product-sales")
-	public List<ProductSaleDto> getProductsSales() {
-		return supervisionTresorerieService.getProductsSales();
+	@GetMapping("/get-product-sales/{startDate}/{endDate}")
+	public List<ProductSaleDto> getProductsSales(@PathVariable("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,@PathVariable("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+		return supervisionTresorerieService.getProductsSales(startDate,endDate);
 	}
 
 	@CrossOrigin

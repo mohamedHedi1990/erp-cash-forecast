@@ -2,6 +2,9 @@ package org.apac.erp.cach.forecast.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
@@ -254,6 +257,9 @@ public class SupervisionTresorerieService {
 			operations.get(i).setProgressiveAmount(progressiveAmount);
 			operations.get(i)
 					.setProgressiveAmountS(Utils.convertAmountToStringWithSeperator(operations.get(i).getProgressiveAmount()));
+		
+		// set that this operation is engaged operation
+			operations.get(i).setOperationCategory(Constants.ENGAGE);
 		}
 		return operations;
 	}
@@ -1314,6 +1320,10 @@ public class SupervisionTresorerieService {
 		List<OperationTreserorieDto> sortedOperations = operations.stream()
 				.sorted(Comparator.comparing(OperationTreserorieDto::getOperationDate)).collect(Collectors.toList());
 
+		// set that this operation is engaged operation
+		sortedOperations.forEach(operation -> {
+			operation.setOperationCategory(Constants.NON_ENGAGE);
+		});
 		return sortedOperations;
 	}
 
@@ -1393,17 +1403,55 @@ public class SupervisionTresorerieService {
 
 	public List<TurnoverDto> findTurnover(Date startDate, Date endDate) {
 
-		LocalDate localDate=LocalDate.of(Calendar.getInstance().get(Calendar.YEAR),1,1);
+		/*LocalDate localDate=LocalDate.of(Calendar.getInstance().get(Calendar.YEAR),1,1);
 		startDate=java.util.Date.from(localDate.atStartOfDay()
 				.atZone(ZoneId.systemDefault())
 				.toInstant());
-		endDate=Calendar.getInstance().getTime();
+		endDate=Calendar.getInstance().getTime();*/
 		int endMonth=Calendar.getInstance().get(Calendar.MONTH)+1;
 		List<TurnoverDto> turnoverDtoList = new ArrayList<>();
-		List<Facture> factures = this.factureRepository.findByFactureDateBetweenOrderByFactureDate(startDate, endDate);
+		List<Facture> facturesInitial = this.factureRepository.findByFactureDateBetweenOrderByFactureDate(startDate, endDate);
+
+		List<Facture> factures=facturesInitial.stream().filter(f ->f.getFactureDate().compareTo(startDate)>=0).collect(Collectors.toList());
 		Double previousTurnover = 0D;
 		BigDecimal bd=null;
-		for (int i = 1; i <= endMonth; i++) {
+		System.out.println("----endMonth-----"+endMonth);
+		Integer previousMonth = null;
+		Integer previousYear = null;
+		for (Facture facture : factures)
+		{
+			Integer currentMonth = Utils.getMonthFromDate(facture.getFactureDate());
+			Integer currentYear = Utils.getYearFromDate(facture.getFactureDate());
+			if((previousMonth==null && previousYear== null ) || (currentMonth!=null && currentYear!=null && ((previousMonth!=currentMonth )||( !previousYear.equals(currentYear) ))))
+			{
+
+				TurnoverDto turnoverDto = new TurnoverDto();
+				turnoverDto.setHeading(Utils.getMonthName(currentMonth) + " " + Utils.getYearFromDate(startDate));
+				List<Facture>facturesInTheSameMonthAndYear=factures.stream().filter(f->(Utils.getYearFromDate(f.getFactureDate()).equals(currentYear) && Utils.getMonthFromDate(f.getFactureDate()).equals(currentMonth))).collect(Collectors.toList());
+
+				Double sommeTurnover = 0D;
+				for (Facture fa : facturesInTheSameMonthAndYear) {
+					sommeTurnover = sommeTurnover + fa.getTotalHT();
+				}
+				bd = new BigDecimal(sommeTurnover).setScale(3, RoundingMode.HALF_UP);
+				turnoverDto.setTurnover(bd.doubleValue());
+				turnoverDto.setTurnoverS(Utils.convertAmountToStringWithSeperator(bd.doubleValue()));
+				if (previousTurnover == 0D) {
+					turnoverDto.setEvolution(0D);
+					turnoverDto.setEvolutionS(Utils.convertAmountToStringWithSeperator(0D));
+				} else {
+					double evolution=((turnoverDto.getTurnover() - previousTurnover) / previousTurnover)*100;
+					bd = new BigDecimal(evolution).setScale(3, RoundingMode.HALF_UP);
+					turnoverDto.setEvolution(bd.doubleValue());
+					turnoverDto.setEvolutionS(Utils.convertAmountToStringWithSeperator(bd.doubleValue()));
+				}
+				previousTurnover = turnoverDto.getTurnover();
+				turnoverDtoList.add(turnoverDto);
+				previousMonth=currentMonth;
+				previousYear=currentYear;
+			}
+		}
+	/*	for (int i = 1; i <= endMonth; i++) {
 			TurnoverDto turnoverDto = new TurnoverDto();
 			int currentMonth = i;
 			turnoverDto.setHeading(Utils.getMonthName(currentMonth) + " " + Utils.getYearFromDate(startDate));
@@ -1428,23 +1476,26 @@ public class SupervisionTresorerieService {
 			}
 			previousTurnover = turnoverDto.getTurnover();
 			turnoverDtoList.add(turnoverDto);
+		}*/
+
+		if(turnoverDtoList.size()>0) {
+			Double totalTurnover = 0D;
+			Double totalEvolution = 0D;
+			TurnoverDto turnoverDtoTotal = new TurnoverDto();
+			turnoverDtoTotal.setHeading("Total");
+			for (TurnoverDto turnoverDto : turnoverDtoList) {
+				totalTurnover = totalTurnover + turnoverDto.getTurnover();
+				totalEvolution = totalEvolution + turnoverDto.getEvolution();
+			}
+			bd = new BigDecimal(totalEvolution).setScale(3, RoundingMode.HALF_UP);
+			turnoverDtoTotal.setEvolution(0d);
+			turnoverDtoTotal.setEvolutionS("---");
+			bd = new BigDecimal(totalTurnover).setScale(3, RoundingMode.HALF_UP);
+			turnoverDtoTotal.setTurnover(bd.doubleValue());
+			turnoverDtoTotal.setTurnoverS(Utils.convertAmountToStringWithSeperator(bd.doubleValue()));
+			turnoverDtoList.add(turnoverDtoTotal);
 		}
 
-		Double totalTurnover = 0D;
-		Double totalEvolution = 0D;
-		TurnoverDto turnoverDtoTotal = new TurnoverDto();
-		turnoverDtoTotal.setHeading("Total");
-		for (TurnoverDto turnoverDto : turnoverDtoList) {
-			totalTurnover = totalTurnover + turnoverDto.getTurnover();
-			totalEvolution = totalEvolution + turnoverDto.getEvolution();
-		}
-		bd = new BigDecimal(totalEvolution).setScale(3, RoundingMode.HALF_UP);
-		turnoverDtoTotal.setEvolution(0d);
-		turnoverDtoTotal.setEvolutionS("---");
-		bd = new BigDecimal(totalTurnover).setScale(3, RoundingMode.HALF_UP);
-		turnoverDtoTotal.setTurnover(bd.doubleValue());
-		turnoverDtoTotal.setTurnoverS(Utils.convertAmountToStringWithSeperator(bd.doubleValue()));
-		turnoverDtoList.add(turnoverDtoTotal);
 		return turnoverDtoList;
 	}
 	public List<StatusCashDto> statusCash(Date startDate, Date endDate, Boolean isNotEngaged) {
@@ -1759,12 +1810,13 @@ public class SupervisionTresorerieService {
 		return operationTreserorieDtoList.stream().filter(op ->op.getOperationDate().compareTo(startDate)>=0).collect(Collectors.toList());
 	}
 
-	public List<CustomerSaleDto> getCustomersSales() {
+	public List<CustomerSaleDto> getCustomersSales(Date startDate, Date endDate) {
 		LocalDate localDate=LocalDate.of(Calendar.getInstance().get(Calendar.YEAR),1,1);
-		Date startDate=java.util.Date.from(localDate.atStartOfDay()
+		/*Date startDate=java.util.Date.from(localDate.atStartOfDay()
 				.atZone(ZoneId.systemDefault())
 				.toInstant());
 		Date endDate=Calendar.getInstance().getTime();
+		 */
 		int endMonth=Calendar.getInstance().get(Calendar.MONTH)+1;
 		List<CustomerSaleDto> customerSales = new ArrayList<>();
 		for (Customer customer : customerRepository.findAllByOrderByCustomerLabel()) {
@@ -1772,23 +1824,44 @@ public class SupervisionTresorerieService {
 			customerSale.setCustomerLabel(customer.getCustomerLabel());
 			List<Facture> factures = this.factureRepository.findByCustomerAndFactureDateBetweenOrderByFactureDate(customer,startDate, endDate);
 			BigDecimal bd = null;
-			for (int i = 1; i <= endMonth; i++) {
-				CustomerMonthSaleDto monthSale = new CustomerMonthSaleDto();
-				int currentMonth = i;
-				monthSale.setHeading(Utils.getMonthName(currentMonth) + " " + Utils.getYearFromDate(startDate));
 
-				List<Facture> facturesCurrentMonth = factures.stream().filter(f -> Utils.getMonth(f.getFactureDate()) == currentMonth).collect(Collectors.toList());
+			DateFormat formater = new SimpleDateFormat("MMM-yyyy");
+			Calendar beginCalendar = Calendar.getInstance();
+			Calendar finishCalendar = Calendar.getInstance();
+
+			beginCalendar.setTime(startDate);
+			finishCalendar.setTime(endDate);
+
+			while (beginCalendar.before(finishCalendar)) {
+				// add one month to date per loop
+				String date =     formater.format(beginCalendar.getTime()).toUpperCase();
+			//for (int i = 1; i <= endMonth; i++) {
+				CustomerMonthSaleDto monthSale = new CustomerMonthSaleDto();
+				//int currentMonth = i;
+				monthSale.setHeading(date);
+				//monthSale.setHeading(Utils.getMonthName(currentMonth) + " " + Utils.getYearFromDate(startDate));
+
+				//List<Facture> facturesCurrentMonth = new ArrayList<>();
+				//for (Facture facture : factures) {
+				//	if(f.format( facture.getFactureDate()).equals(formater.format(beginCalendar.getTime()))){
+				//		facturesCurrentMonth.add(facture);
+				//	}
+				//}
+				List<Facture> facturesCurrentMonth = factures.stream().filter(f ->
+						(formater.format( f.getFactureDate()).equals(formater.format(beginCalendar.getTime())))).collect(Collectors.toList());
 				Double sommeValue = 0D;
 				for (Facture fa : facturesCurrentMonth) {
 					sommeValue = sommeValue + fa.getTotalHT();
 				}
-				monthSale.setHeading(Utils.getMonthName(currentMonth) + " " + Utils.getYearFromDate(startDate));
+				//monthSale.setHeading(Utils.getMonthName(currentMonth) + " " + Utils.getYearFromDate(startDate));
 				bd = new BigDecimal(sommeValue).setScale(3, RoundingMode.HALF_UP);
 				monthSale.setValue(bd.doubleValue());
 				monthSale.setValueS(Utils.convertAmountToStringWithSeperator(bd.doubleValue()));
 				customerSale.setValueTotal(customerSale.getValueTotal()+monthSale.getValue());
 				customerSale.getMonthSales().add(monthSale);
+				beginCalendar.add(Calendar.MONTH, 1);
 			}
+
 			bd = new BigDecimal(customerSale.getValueTotal()).setScale(3, RoundingMode.HALF_UP);
 			customerSale.setValueTotal(bd.doubleValue());
 			customerSale.setValueTotalS(Utils.convertAmountToStringWithSeperator(customerSale.getValueTotal()));
@@ -1798,13 +1871,14 @@ public class SupervisionTresorerieService {
 	}
 
 
-	public List<ProductSaleDto> getProductsSales() {
-		LocalDate localDate=LocalDate.of(Calendar.getInstance().get(Calendar.YEAR),1,1);
-		Date startDate=java.util.Date.from(localDate.atStartOfDay()
+	public List<ProductSaleDto> getProductsSales(Date startDate , Date endDate) {
+		//LocalDate localDate=LocalDate.of(Calendar.getInstance().get(Calendar.YEAR),1,1);
+		/*Date startDate=java.util.Date.from(localDate.atStartOfDay()
 				.atZone(ZoneId.systemDefault())
 				.toInstant());
 		Date endDate=Calendar.getInstance().getTime();
-		int endMonth=Calendar.getInstance().get(Calendar.MONTH)+1;
+		 */
+		//int endMonth=Calendar.getInstance().get(Calendar.MONTH)+1;
 		List<ProductSaleDto> productSales = new ArrayList<>();
 		List<ProductGroup> productGroups=productGroupRepository.findAll();
 		for (ProductGroup productGroup : productGroups) {
@@ -1815,25 +1889,40 @@ public class SupervisionTresorerieService {
 				List<Facture> factures = this.factureRepository.findByFactureDateBetweenOrderByFactureDate(startDate, endDate);
 				List<FactureLine> factureLines=this.factureLineRepository.findByFactureInAndProductAndProductGroup(factures,product,productGroup);
 				BigDecimal bd = null;
-				for (int i = 1; i <= endMonth; i++) {
-					ProductMonthSaleDto monthSale = new ProductMonthSaleDto();
-					int currentMonth = i;
-					monthSale.setHeading(Utils.getMonthName(currentMonth) + " " + Utils.getYearFromDate(startDate));
+				DateFormat formater = new SimpleDateFormat("MMM-yyyy");
+				Calendar beginCalendar = Calendar.getInstance();
+				Calendar finishCalendar = Calendar.getInstance();
 
-					List<FactureLine> facturesCurrentMonth = factureLines.stream().filter(fl -> Utils.getMonth(fl.getFacture().getFactureDate()) == currentMonth).collect(Collectors.toList());
+				beginCalendar.setTime(startDate);
+				finishCalendar.setTime(endDate);
+
+				while (beginCalendar.before(finishCalendar)) {
+					// add one month to date per loop
+					String date =     formater.format(beginCalendar.getTime()).toUpperCase();
+				//for (int i = 1; i <= endMonth; i++) {
+					ProductMonthSaleDto monthSale = new ProductMonthSaleDto();
+					//int currentMonth = i;
+					//monthSale.setHeading(Utils.getMonthName(currentMonth) + " " + Utils.getYearFromDate(startDate));
+					monthSale.setHeading(date);
+
+					//List<FactureLine> facturesCurrentMonth = factureLines.stream().filter(fl -> Utils.getMonth(fl.getFacture().getFactureDate()) == currentMonth).collect(Collectors.toList());
+					List<FactureLine> facturesCurrentMonth =factureLines.stream().filter(fl ->
+							(formater.format( fl.getFacture().getFactureDate()).equals(formater.format(beginCalendar.getTime())))).collect(Collectors.toList());
+
 					Double sommeValue = 0D;
 					Double quantite=0D;
 					for (FactureLine fl : facturesCurrentMonth) {
 						sommeValue = sommeValue + fl.getMontantHt();
 						quantite+=fl.getQuantity();
 					}
-					monthSale.setHeading(Utils.getMonthName(currentMonth) + " " + Utils.getYearFromDate(startDate));
+					//monthSale.setHeading(Utils.getMonthName(currentMonth) + " " + Utils.getYearFromDate(startDate));
 					bd = new BigDecimal(sommeValue).setScale(3, RoundingMode.HALF_UP);
 					monthSale.setValue(bd.doubleValue());
 					productSale.setValueTotal(productSale.getValueTotal()+monthSale.getValue());
 					monthSale.setValueS(Utils.convertAmountToStringWithSeperator(bd.doubleValue()));
 					monthSale.setQuantity(quantite);
 					productSale.getMonthSales().add(monthSale);
+					beginCalendar.add(Calendar.MONTH, 1);
 				}
 				bd = new BigDecimal(productSale.getValueTotal()).setScale(3, RoundingMode.HALF_UP);
 				productSale.setValueTotal(bd.doubleValue());
