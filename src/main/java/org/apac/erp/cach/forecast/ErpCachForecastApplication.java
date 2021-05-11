@@ -2,13 +2,11 @@ package org.apac.erp.cach.forecast;
 
 import org.apac.erp.cach.forecast.config.FileStorageProperties;
 import org.apac.erp.cach.forecast.constants.Utils;
+import org.apac.erp.cach.forecast.enumeration.ERole;
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
 import org.apac.erp.cach.forecast.enumeration.RsTypeSaisie;
-import org.apac.erp.cach.forecast.persistence.repositories.AttachedInvoicesRepository;
-import org.apac.erp.cach.forecast.persistence.repositories.CustomerAttachedInvoicesRepository;
-import org.apac.erp.cach.forecast.persistence.repositories.CustomerInvoiceRepository;
-import org.apac.erp.cach.forecast.persistence.repositories.ProviderAttachedInvoicesRepository;
-import org.apac.erp.cach.forecast.persistence.repositories.ProviderInvoiceRepository;
+import org.apac.erp.cach.forecast.persistence.entities.Role;
+import org.apac.erp.cach.forecast.persistence.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -30,7 +28,8 @@ public class ErpCachForecastApplication implements CommandLineRunner {
 	
 	@Autowired
 	private ProviderAttachedInvoicesRepository providerAttachedInvoiceRepo;
-
+    @Autowired
+    private RoleRepository roleRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ErpCachForecastApplication.class, args);
@@ -71,7 +70,30 @@ public class ErpCachForecastApplication implements CommandLineRunner {
 			invoice.setInvoiceNetS(Utils.convertAmountToStringWithSeperator(invoice.getInvoiceNet()));
 			this.providerInvoiceRepository.save(invoice);
 		});
-		
+		if(!roleRepository.findByName(ERole.ADMINISTRATOR).isPresent())
+		{
+			Role role=new Role();
+			role.setName(ERole.ADMINISTRATOR);
+			roleRepository.save(role);
+		}
+		if(!roleRepository.findByName(ERole.CAISSIER).isPresent())
+		{
+			Role role=new Role();
+			role.setName(ERole.CAISSIER);
+			roleRepository.save(role);
+		}
+		if(!roleRepository.findByName(ERole.SIMPLE).isPresent())
+		{
+			Role role=new Role();
+			role.setName(ERole.SIMPLE);
+			roleRepository.save(role);
+		}
+		if(!roleRepository.findByName(ERole.GESTION_COMMERCIAL).isPresent())
+		{
+			Role role=new Role();
+			role.setName(ERole.GESTION_COMMERCIAL);
+			roleRepository.save(role);
+		}
 		
 		
 	}
