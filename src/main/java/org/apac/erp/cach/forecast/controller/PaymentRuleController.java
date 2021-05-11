@@ -4,8 +4,11 @@ import org.apac.erp.cach.forecast.enumeration.PaymentMethod;
 import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
 import org.apac.erp.cach.forecast.service.PaymentRuleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.crypto.Data;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -20,11 +23,16 @@ public class PaymentRuleController {
 	public PaymentRule validatePaymentRule(@PathVariable("paymentRuleId") Long paymentRuleId) {
 		return paymentRuleService.validatePaymentRule(paymentRuleId);
 	}
+	@CrossOrigin
+	@PostMapping
+	public PaymentRule savePaymentRule(@RequestBody PaymentRule paymentRule) {
+		return this.paymentRuleService.savePaymentRule(paymentRule);
+	}
 
 	@CrossOrigin
-	@GetMapping("/get-effect-rule")
-	public List<PaymentRule> getEffectRule() {
-		return paymentRuleService.getEffectRules();
+	@GetMapping("/get-effect-rule/{startDate}/{endDate}/{paymentMethode}")
+	public List<PaymentRule> getEffectRule(@PathVariable("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate, @PathVariable("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate, @PathVariable("paymentMethode") String paymentMethod) {
+		return paymentRuleService.getEffectRules(startDate,endDate,paymentMethod);
 	}
 
 	@CrossOrigin

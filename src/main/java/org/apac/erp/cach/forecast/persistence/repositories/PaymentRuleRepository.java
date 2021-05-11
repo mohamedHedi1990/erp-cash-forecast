@@ -15,4 +15,8 @@ List<PaymentRule> findByPaymentRuleAccountAndPaymentRuleDeadlineDateBetweenOrder
 List<PaymentRule> findByPaymentRuleAccountAndIsValidatedAndPaymentRuleDeadlineDateBeforeOrderByPaymentRuleDeadlineDateAsc(BankAccount bankAccount, boolean isvalidated, Date startDate);
 
     List<PaymentRule> findBypaymentRulePaymentMethodInAndIsValidated(PaymentMethod[] paymentMethods, boolean isValidated);
+    List<PaymentRule> findByPaymentRuleDeadlineDateBetweenAndPaymentRulePaymentMethodAndIsValidated(Date startDate,Date endDate,PaymentMethod paymentMethod,boolean isValidated);
+    List<PaymentRule> findByPaymentRuleDeadlineDateBetweenAndPaymentRulePaymentMethodInAndIsValidated(Date startDate,Date endDate,PaymentMethod[] paymentMethods,boolean isValidated);
+
+
 }
