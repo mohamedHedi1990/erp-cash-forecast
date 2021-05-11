@@ -203,10 +203,23 @@ public class PaymentRuleService {
 						bankAccount, false, startDate);
 	}
 
-    public List<PaymentRule> getEffectRules() {
+   /* public List<PaymentRule> getEffectRules() {
 		return this.paymentRuleRepo.findBypaymentRulePaymentMethodInAndIsValidated(new PaymentMethod[]{PaymentMethod.EFFET_ESCOMPTE,PaymentMethod.TRAITE}, false);
+    }*/
+  public List<PaymentRule> getEffectRules(Date startDate,Date endDate,String paymentMethod) {
+  	if(paymentMethod.equals(PaymentMethod.EFFET_ESCOMPTE))
+	{
+		return this.paymentRuleRepo.findByPaymentRuleDeadlineDateBetweenAndPaymentRulePaymentMethodAndIsValidated(startDate,endDate,PaymentMethod.EFFET_ESCOMPTE,false);
+	}
+  	else if(paymentMethod.equals(PaymentMethod.TRAITE))
+	{
+		return this.paymentRuleRepo.findByPaymentRuleDeadlineDateBetweenAndPaymentRulePaymentMethodAndIsValidated(startDate,endDate,PaymentMethod.TRAITE,false);
+	}
+  	else
+	{
+		return this.paymentRuleRepo.findByPaymentRuleDeadlineDateBetweenAndPaymentRulePaymentMethodInAndIsValidated(startDate,endDate,new PaymentMethod[]{PaymentMethod.EFFET_ESCOMPTE,PaymentMethod.TRAITE},false);
+	}
     }
-
     /*
 	 * 
 	 * public PaymentRule saveNewPaymentRuleToInvoice(PaymentRule paymentRule,
@@ -271,4 +284,8 @@ public class PaymentRuleService {
 	 * ArrayList<PaymentMethod>(); Collections.addAll(list, methodsArray);
 	 * return list; }
 	 */
+	public PaymentRule savePaymentRule(PaymentRule paymentRule)
+	{
+		return  this.paymentRuleRepo.save(paymentRule);
+	}
 }
