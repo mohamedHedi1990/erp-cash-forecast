@@ -30,8 +30,8 @@ public class PaymentRuleController {
 	}
 
 	@CrossOrigin
-	@GetMapping("/get-effect-rule/{startDate}/{endDate}/{paymentMethode}")
-	public List<PaymentRule> getEffectRule(@PathVariable("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate, @PathVariable("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate, @PathVariable("paymentMethode") String paymentMethod) {
+	@GetMapping("/get-effect-rule/{startDate}/{endDate}")
+	public List<PaymentRule> getEffectRule(@PathVariable("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate, @PathVariable("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate, @RequestParam(value="paymentMethod", required = false) PaymentMethod paymentMethod) {
 		return paymentRuleService.getEffectRules(startDate,endDate,paymentMethod);
 	}
 

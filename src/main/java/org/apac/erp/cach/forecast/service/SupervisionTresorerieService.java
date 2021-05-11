@@ -120,7 +120,11 @@ public class SupervisionTresorerieService {
 
 		// Trouver toutes les opérations non validés avant cette date
 
-		List<PaymentRule> paymentRulesNV = paymentRuleService.getAllNonValidatedBeforeDate(bankAccount, startDate);
+		List<PaymentRule> paymentRulesClassicNV = paymentRuleService.getAllNonValidatedBeforeDate(bankAccount, startDate);
+		List<PaymentRule> paymentRuleEffetsEscompteNV = paymentRuleService.getAllNonValidatedEffetsEscompteBeforeDate(bankAccount, startDate);
+		List<PaymentRule> paymentRulesNV = new ArrayList<>();
+		paymentRulesNV.addAll(paymentRulesClassicNV);
+		paymentRulesNV.addAll(paymentRuleEffetsEscompteNV);
 		List<OperationTreserorieDto> paymentRuleOperationsNV = convertPaymentRulesToOperationTreserorieList(
 				paymentRulesNV, comissions, false);
 		operations.addAll(paymentRuleOperationsNV);
@@ -134,8 +138,12 @@ public class SupervisionTresorerieService {
 		operations.addAll(encaissementOperationsNV);
 
 		// Trouver tout kles réglements sur cette intervalle
-		List<PaymentRule> paymentRules = paymentRuleService.getAllPaymentRuleBetwwenTwoDates(bankAccount, startDate,
+		List<PaymentRule> paymentRulesClassic = paymentRuleService.getAllPaymentRuleBetwwenTwoDates(bankAccount, startDate,
 				endDate);
+		List<PaymentRule> paymentRuleEffetsEscompte = paymentRuleService.getAllEffetsEscompteBetwwenTwoDates(bankAccount, startDate, endDate);
+		List<PaymentRule> paymentRules = new ArrayList<>();
+		paymentRules.addAll(paymentRulesClassic);
+		paymentRules.addAll(paymentRuleEffetsEscompte);
 		/*
 		 * if (isValidated) { paymentRules =
 		 * paymentRules.stream().filter(paymentRule ->
@@ -327,7 +335,7 @@ public class SupervisionTresorerieService {
 		paymentRules.forEach(paymentRule -> {
 			OperationTreserorieDto operation = new OperationTreserorieDto();
 			operation.setOpperationType(paymentRule.getPaymentRuleOperationType());
-			operation.setOperationDate(paymentRule.getPaymentRuleDeadlineDate());
+			operation.setOperationDate(paymentRule.getPaymentRulePaymentMethod() == PaymentMethod.EFFET_ESCOMPTE ? paymentRule.getPaymentRuleEffetEscompteDate() : paymentRule.getPaymentRuleDeadlineDate());
 			operation.setOperationAmountS(paymentRule.getPaymentRuleAmountS());
 			operation.setOperationAmount(paymentRule.getPaymentRuleAmount());
 			operation.setOperationRealId(paymentRule.getPaymentRuleId());

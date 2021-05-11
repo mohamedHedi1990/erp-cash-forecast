@@ -11,9 +11,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PaymentRuleRepository extends JpaRepository<PaymentRule, Long> {
-List<PaymentRule> findByPaymentRuleAccountAndPaymentRuleDeadlineDateBetweenOrderByPaymentRuleDeadlineDateAsc(BankAccount bankAccount, Date startDate, Date endDate);
-List<PaymentRule> findByPaymentRuleAccountAndIsValidatedAndPaymentRuleDeadlineDateBeforeOrderByPaymentRuleDeadlineDateAsc(BankAccount bankAccount, boolean isvalidated, Date startDate);
+List<PaymentRule> findByPaymentRuleAccountAndPaymentRulePaymentMethodInAndPaymentRuleDeadlineDateBetweenOrderByPaymentRuleDeadlineDateAsc(BankAccount bankAccount,PaymentMethod[] paymentMethods, Date startDate, Date endDate);
+List<PaymentRule> findByPaymentRuleAccountAndPaymentRulePaymentMethodInAndPaymentRuleEffetEscompteDateBetweenOrderByPaymentRuleEffetEscompteDateAsc(BankAccount bankAccount,PaymentMethod[] paymentMethods, Date startDate, Date endDate);
 
+List<PaymentRule> findByPaymentRuleAccountAndIsValidatedAndPaymentRulePaymentMethodInAndPaymentRuleDeadlineDateBeforeOrderByPaymentRuleDeadlineDateAsc(BankAccount bankAccount, boolean isvalidated,PaymentMethod[] paymentMethods, Date startDate);
+List<PaymentRule> findByPaymentRuleAccountAndIsValidatedAndPaymentRulePaymentMethodInAndPaymentRuleEffetEscompteDateBeforeOrderByPaymentRuleEffetEscompteDateAsc(BankAccount bankAccount, boolean isvalidated,PaymentMethod[] paymentMethods, Date startDate);
     List<PaymentRule> findBypaymentRulePaymentMethodInAndIsValidated(PaymentMethod[] paymentMethods, boolean isValidated);
     List<PaymentRule> findByPaymentRuleDeadlineDateBetweenAndPaymentRulePaymentMethodAndIsValidated(Date startDate,Date endDate,PaymentMethod paymentMethod,boolean isValidated);
     List<PaymentRule> findByPaymentRuleDeadlineDateBetweenAndPaymentRulePaymentMethodInAndIsValidated(Date startDate,Date endDate,PaymentMethod[] paymentMethods,boolean isValidated);
