@@ -1987,8 +1987,8 @@ public class SupervisionTresorerieService {
           while(i <= customerInvoices.size()-1){
                   CustomerInvoice customerInvoice=customerInvoices.get(i);
                   GeneralLedgerDto generalLedgerInvoice=new GeneralLedgerDto();
-                  generalLedgerInvoice.setDebit(customerInvoice.getInvoiceNet());
-                  generalLedgerInvoice.setDebitS(customerInvoice.getInvoiceNetS());
+                  generalLedgerInvoice.setDebit(customerInvoice.getInvoiceTotalAmount());
+                  generalLedgerInvoice.setDebitS(customerInvoice.getInvoiceTotalAmountS());
                   generalLedgerInvoice.setDate(customerInvoice.getInvoiceDate());
                   generalLedgerInvoice.setLabel(customer.getCustomerLabel() + " " + customerInvoice.getInvoiceNumber());
                   GeneralLedgerDto generalLedgerRs=new GeneralLedgerDto();
