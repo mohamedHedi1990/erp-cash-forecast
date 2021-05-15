@@ -101,4 +101,10 @@ public class SupervisionTresorerieController {
 	public List<CustomerProductSaleDto> getCustomersSalesByProduct(@PathVariable("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,@PathVariable("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
 		return supervisionTresorerieService.getCustomersSalesByProduct(startDate,endDate );
 	}
+
+	@CrossOrigin
+	@GetMapping("/get-general-ledger-by-customer/{idCustomer}")
+	public List<GeneralLedgerDto> getGeneralLedger(@RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,@RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate,@PathVariable(name = "idCustomer" ) Long idCustomer) {
+		return supervisionTresorerieService.getGeneralLedger(startDate,endDate ,idCustomer);
+	}
 }

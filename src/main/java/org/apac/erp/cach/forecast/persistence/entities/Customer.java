@@ -1,6 +1,8 @@
 package org.apac.erp.cach.forecast.persistence.entities;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -9,9 +11,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apac.erp.cach.forecast.constants.Utils;
 
 import lombok.Data;
 
@@ -38,7 +41,25 @@ public class Customer extends AuditableSql implements Serializable {
 
 	private String customerEmail;
 
+	private Double customerInitialSold;
+
+	private String customerInitialSoldS;
+
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Contact> customerContacts;
+
+	@PrePersist
+	public void initInvoice() {
+		if (this.customerInitialSold != null) {
+			DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
+			simbolos.setGroupingSeparator(',');
+			simbolos.setDecimalSeparator('.');
+			this.customerInitialSold = Double
+					.parseDouble(new DecimalFormat("##.###", simbolos).format(this.customerInitialSold));
+
+			this.customerInitialSoldS = Utils.convertAmountToStringWithSeperator(this.customerInitialSold);
+		}
+
+	}
 
 }

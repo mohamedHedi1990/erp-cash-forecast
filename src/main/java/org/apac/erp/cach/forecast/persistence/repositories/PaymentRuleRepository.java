@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apac.erp.cach.forecast.enumeration.PaymentMethod;
 import org.apac.erp.cach.forecast.persistence.entities.BankAccount;
+import org.apac.erp.cach.forecast.persistence.entities.Customer;
 import org.apac.erp.cach.forecast.persistence.entities.PaymentRule;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -21,4 +22,7 @@ List<PaymentRule> findByPaymentRuleAccountAndIsValidatedAndPaymentRulePaymentMet
     List<PaymentRule> findByPaymentRuleDeadlineDateBetweenAndPaymentRulePaymentMethodInAndIsValidated(Date startDate,Date endDate,PaymentMethod[] paymentMethods,boolean isValidated);
 
 
+    List<PaymentRule> findByCustomerAndPaymentRuleEffetDateBetweenOrderByPaymentRuleEffetDate(Customer customer, Date startDate, Date endDate);
+
+    List<PaymentRule> findByCustomer(Customer customer);
 }
