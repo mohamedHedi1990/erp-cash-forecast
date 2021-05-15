@@ -1978,7 +1978,7 @@ public class SupervisionTresorerieService {
 	  if(customer != null) {
 		  List<CustomerInvoice> customerInvoices = customerInvoiceRepository.findByCustomerAndInvoiceDateBetweenOrderByInvoiceDate(customer,startDate,endDate);
 		  List<PaymentRule> paymentRules=paymentRuleRepository.findByCustomer(customer).stream().filter(paymentRule -> {
-					return  ((paymentRule.getPaymentRulePaymentMethod() == PaymentMethod.EFFET_ESCOMPTE || paymentRule.getPaymentRulePaymentMethod() == PaymentMethod.TRAITE) && paymentRule.getPaymentRuleEffetEscompteDate().after(startDate) && paymentRule.getPaymentRuleEffetEscompteDate().before(endDate))
+					return  ((paymentRule.getPaymentRulePaymentMethod() == PaymentMethod.EFFET_ESCOMPTE) && paymentRule.getPaymentRuleEffetEscompteDate().after(startDate) && paymentRule.getPaymentRuleEffetEscompteDate().before(endDate))
 							  || (paymentRule.getPaymentRulePaymentMethod() != PaymentMethod.EFFET_ESCOMPTE && paymentRule.getPaymentRulePaymentMethod() != PaymentMethod.TRAITE && paymentRule.getPaymentRuleDeadlineDate().after(startDate) && paymentRule.getPaymentRuleDeadlineDate().before(endDate));
 				  }
 			  ).collect(Collectors.toList());
