@@ -1984,70 +1984,6 @@ public class SupervisionTresorerieService {
 			  ).collect(Collectors.toList());
 		  int i=0;
 		  int j=0;
-/*		  while(i <= customerInvoices.size()-1  && j<=paymentRules.size() -1){
-			  CustomerInvoice customerInvoice=customerInvoices.get(i);
-			  PaymentRule paymentRule = paymentRules.get(j);
-			  if(((paymentRule.getPaymentRulePaymentMethod() == PaymentMethod.EFFET_ESCOMPTE ||paymentRule.getPaymentRulePaymentMethod() == PaymentMethod.TRAITE)
-			  && customerInvoice.getInvoiceDate().before(paymentRule.getPaymentRuleEffetEscompteDate()))
-			  || (paymentRule.getPaymentRulePaymentMethod() != PaymentMethod.EFFET_ESCOMPTE  && paymentRule.getPaymentRulePaymentMethod() != PaymentMethod.TRAITE
-					  && customerInvoice.getInvoiceDate().before(paymentRule.getPaymentRuleDeadlineDate()))
-			  ){
-		  		GeneralLedgerDto generalLedgerInvoice=new GeneralLedgerDto();
-				generalLedgerInvoice.setDebit(customerInvoice.getInvoiceNet());
-				generalLedgerInvoice.setDebitS(customerInvoice.getInvoiceNetS());
-				generalLedgerInvoice.setDate(customerInvoice.getInvoiceDate());
-				generalLedgerInvoice.setLabel(customer.getCustomerLabel() + " " + customerInvoice.getInvoiceNumber());
-				GeneralLedgerDto generalLedgerRs=new GeneralLedgerDto();
-				generalLedgerRs.setLabel("RS " + customer.getCustomerLabel() + " " + customerInvoice.getInvoiceNumber());
-		  		generalLedgerRs.setDate(customerInvoice.getInvoiceDate());
-		  		if(customerInvoice.getInvoiceRsType() == RsTypeSaisie.VALUE){
-		  			generalLedgerRs.setCredit(customerInvoice.getInvoiceRs());
-					generalLedgerRs.setCreditS(Utils.convertAmountToStringWithSeperator(customerInvoice.getInvoiceRs()));
-				}else if(customerInvoice.getInvoiceRsType() == RsTypeSaisie.POURCENTAGE){
-		  			generalLedgerRs.setCredit((customerInvoice.getInvoiceNet()*customerInvoice.getInvoiceRs())/100);
-					generalLedgerRs.setCreditS(Utils.convertAmountToStringWithSeperator((customerInvoice.getInvoiceNet()*customerInvoice.getInvoiceRs())/100));
-				}
-		  		progressiveAmmount-=generalLedgerRs.getCredit();
-		  		generalLedgerRs.setProgressiveAmount(progressiveAmmount);
-				generalLedgerRs.setProgressiveAmountS(Utils.convertAmountToStringWithSeperator(generalLedgerRs.getProgressiveAmount()));
-				progressiveAmmount+=generalLedgerInvoice.getDebit();
-				generalLedgerInvoice.setProgressiveAmount(progressiveAmmount);
-				generalLedgerInvoice.setProgressiveAmountS(Utils.convertAmountToStringWithSeperator(generalLedgerInvoice.getProgressiveAmount()));
-				generalLedgerDtos.add(generalLedgerRs);
-		  		generalLedgerDtos.add(generalLedgerInvoice);
-				i++;
-			}
-		  	else {
-                GeneralLedgerDto generalLedgerPR = new GeneralLedgerDto();
-                if (paymentRule.getPaymentRulePaymentMethod() == PaymentMethod.EFFET_ESCOMPTE || paymentRule.getPaymentRulePaymentMethod() == PaymentMethod.TRAITE){
-                    generalLedgerPR.setDate(paymentRule.getPaymentRuleEffetEscompteDate());
-                }else{
-                    generalLedgerPR.setDate(paymentRule.getPaymentRuleDeadlineDate());
-                }
-		  	    generalLedgerPR.setCredit(paymentRule.getPaymentRuleAmount());
-				generalLedgerPR.setCreditS(paymentRule.getPaymentRuleAmountS());
-                switch(paymentRule.getPaymentRulePaymentMethod()){
-                    case CHEQUE: generalLedgerPR.setLabel("Encaissement cheque");
-                        break;
-                    case ESPECE: generalLedgerPR.setLabel("Paymenet espece");
-                        break;
-                    case TRAITE: generalLedgerPR.setLabel("Traite");
-                        break;
-                    case VIREMENT: generalLedgerPR.setLabel("Virement");
-                        break;
-                    case EFFET_ESCOMPTE: generalLedgerPR.setLabel("Effet escompte");
-                        break;
-                    case COMISSION_BANCAIRE: generalLedgerPR.setLabel("Comission Bancaire");
-                        break;
-                }
-				progressiveAmmount-=generalLedgerPR.getCredit();
-				generalLedgerPR.setProgressiveAmount(progressiveAmmount);
-				generalLedgerPR.setProgressiveAmountS(Utils.convertAmountToStringWithSeperator(generalLedgerPR.getProgressiveAmount()));
-				generalLedgerDtos.add(generalLedgerPR);
-		  		j++;
-			}
-		  }
-*/
           while(i <= customerInvoices.size()-1){
                   CustomerInvoice customerInvoice=customerInvoices.get(i);
                   GeneralLedgerDto generalLedgerInvoice=new GeneralLedgerDto();
@@ -2065,13 +2001,7 @@ public class SupervisionTresorerieService {
                       generalLedgerRs.setCredit((customerInvoice.getInvoiceNet()*customerInvoice.getInvoiceRs())/100);
 					  generalLedgerRs.setCreditS(Utils.convertAmountToStringWithSeperator((customerInvoice.getInvoiceNet()*customerInvoice.getInvoiceRs())/100));
 				  }
-			 	  //progressiveAmmount-=generalLedgerRs.getCredit();
-                  //generalLedgerRs.setProgressiveAmount(progressiveAmmount);
-				  //generalLedgerRs.setProgressiveAmountS(Utils.convertAmountToStringWithSeperator(generalLedgerRs.getProgressiveAmount()));
-				  //progressiveAmmount+=generalLedgerInvoice.getDebit();
-                  //generalLedgerInvoice.setProgressiveAmount(progressiveAmmount);
-				  //generalLedgerInvoice.setProgressiveAmountS(Utils.convertAmountToStringWithSeperator(generalLedgerInvoice.getProgressiveAmount()));
-				  generalLedgerDtos.add(generalLedgerRs);
+			 	  generalLedgerDtos.add(generalLedgerRs);
                   generalLedgerDtos.add(generalLedgerInvoice);
                   i++;
           }
@@ -2100,9 +2030,6 @@ public class SupervisionTresorerieService {
                   case COMISSION_BANCAIRE: generalLedgerPR.setLabel("Comission Bancaire");
                       break;
               }
-			  //progressiveAmmount-=generalLedgerPR.getCredit();
-			  //generalLedgerPR.setProgressiveAmount(progressiveAmmount);
-			  //generalLedgerPR.setProgressiveAmountS(Utils.convertAmountToStringWithSeperator(generalLedgerPR.getProgressiveAmount()));
 			  generalLedgerDtos.add(generalLedgerPR);
               j++;
           }
