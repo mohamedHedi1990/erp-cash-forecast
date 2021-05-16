@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.thymeleaf.util.DateUtils;
 
+import javax.xml.crypto.Data;
+
 @Service
 public class SupervisionTresorerieService {
 
@@ -1974,13 +1976,36 @@ public class SupervisionTresorerieService {
 	  List<GeneralLedgerDto> generalLedgerDtos=new ArrayList<>();
 	  Customer customer=customerRepository.findOne(idCustomer);
 	  GeneralLedgerDto total=new GeneralLedgerDto();
+		Calendar c = Calendar.getInstance();
+		c.setTime(startDate);
+		c.add(Calendar.DATE,-1);
+		Date startDateInf = c.getTime();
+	  Calendar c1 = Calendar.getInstance();
+	  c1.setTime(endDate);
+	  c1.add(Calendar.DATE,-1);
+	  Date endDateSup = c1.getTime();
 	  double progressiveAmmount=0;
+		double initialProgressiveAmmount=0;
 	  if(customer != null) {
-		  List<CustomerInvoice> customerInvoices = customerInvoiceRepository.findByCustomerAndInvoiceDateBetweenOrderByInvoiceDate(customer,startDate,endDate);
+	  	  if(startDate.before(customer.getCreatedAt())){
+	  	  	startDate=customer.getCreatedAt();
+	  	  	  c = Calendar.getInstance();
+			  c.setTime(startDate);
+			  c.add(Calendar.DATE,-1);
+			  startDateInf = c.getTime();
+	  	  	if(customer.getCustomerInitialSold() != null) {
+				initialProgressiveAmmount = customer.getCustomerInitialSold();
+			}
+		  }else {
+	  	  	initialProgressiveAmmount = this.getProgressiveAmountBefore(startDate, idCustomer);
+		  }
+		  progressiveAmmount=initialProgressiveAmmount;
+		  List<CustomerInvoice> customerInvoices = customerInvoiceRepository.findByCustomerAndInvoiceDateBetweenOrderByInvoiceDate(customer,startDate,endDateSup);
+		  Date finalStartDateInf = startDateInf;
 		  List<PaymentRule> paymentRules=paymentRuleRepository.findByCustomer(customer).stream().filter(paymentRule -> {
-					return  ((paymentRule.getPaymentRulePaymentMethod() == PaymentMethod.EFFET_ESCOMPTE) && paymentRule.getPaymentRuleEffetEscompteDate().after(startDate) && paymentRule.getPaymentRuleEffetEscompteDate().before(endDate))
-							  || (paymentRule.getPaymentRulePaymentMethod() != PaymentMethod.EFFET_ESCOMPTE && paymentRule.getPaymentRulePaymentMethod() != PaymentMethod.TRAITE && paymentRule.getPaymentRuleDeadlineDate().after(startDate) && paymentRule.getPaymentRuleDeadlineDate().before(endDate));
-				  }
+					return  ((paymentRule.getPaymentRulePaymentMethod() == PaymentMethod.EFFET_ESCOMPTE) && paymentRule.getPaymentRuleEffetEscompteDate().after(finalStartDateInf) && paymentRule.getPaymentRuleEffetEscompteDate().before(endDateSup))
+							  || (paymentRule.getPaymentRulePaymentMethod() != PaymentMethod.EFFET_ESCOMPTE && paymentRule.getPaymentRuleDeadlineDate().after(finalStartDateInf) && paymentRule.getPaymentRuleDeadlineDate().before(endDateSup));
+				}
 			  ).collect(Collectors.toList());
 		  int i=0;
 		  int j=0;
@@ -2009,7 +2034,7 @@ public class SupervisionTresorerieService {
           while(j<=paymentRules.size() - 1 ){
               PaymentRule paymentRule = paymentRules.get(j);
               GeneralLedgerDto generalLedgerPR = new GeneralLedgerDto();
-              if (paymentRule.getPaymentRulePaymentMethod() == PaymentMethod.EFFET_ESCOMPTE || paymentRule.getPaymentRulePaymentMethod() == PaymentMethod.TRAITE){
+              if (paymentRule.getPaymentRulePaymentMethod() == PaymentMethod.EFFET_ESCOMPTE ){
                   generalLedgerPR.setDate(paymentRule.getPaymentRuleEffetEscompteDate());
               }else{
                   generalLedgerPR.setDate(paymentRule.getPaymentRuleDeadlineDate());
@@ -2042,6 +2067,11 @@ public class SupervisionTresorerieService {
 			  generalLedgerDto.setProgressiveAmount(progressiveAmmount);
 			  generalLedgerDto.setProgressiveAmountS(Utils.convertAmountToStringWithSeperator(progressiveAmmount));
 		  }
+		  GeneralLedgerDto initial=new GeneralLedgerDto();
+		  initial.setProgressiveAmount(initialProgressiveAmmount);
+		  initial.setDate(customer.getCreatedAt());
+		  initial.setProgressiveAmountS(Utils.convertAmountToStringWithSeperator(initialProgressiveAmmount));
+		  generalLedgerDtos.add(0,initial);
 		  total.setProgressiveAmount(progressiveAmmount);
 		  total.setProgressiveAmountS(Utils.convertAmountToStringWithSeperator(progressiveAmmount));
 		  total.setDebitS(Utils.convertAmountToStringWithSeperator(total.getDebit()));
@@ -2050,4 +2080,88 @@ public class SupervisionTresorerieService {
 	  }
 	  return generalLedgerDtos;
 	}
+
+	public double getProgressiveAmountBefore(Date endDate, Long idCustomer) {
+		List<GeneralLedgerDto> generalLedgerDtos=new ArrayList<>();
+		Customer customer=customerRepository.findOne(idCustomer);
+		double progressiveAmmount=0;
+		if(customer != null) {
+			if(customer.getCustomerInitialSold() != null){
+				progressiveAmmount=customer.getCustomerInitialSold();
+			}
+			Date startDate=customer.getCreatedAt();
+			Calendar c = Calendar.getInstance();
+			c.setTime(startDate);
+			c.add(Calendar.DATE, -1);
+			Date startDateInf = c.getTime();
+			Calendar c1 = Calendar.getInstance();
+			c1.setTime(endDate);
+			c1.add(Calendar.DATE, -1);
+			Date endDateInf = c1.getTime();
+			List<CustomerInvoice> customerInvoices = customerInvoiceRepository.findByCustomerAndInvoiceDateBetweenOrderByInvoiceDate(customer,startDate,endDateInf);
+			List<PaymentRule> paymentRules=paymentRuleRepository.findByCustomer(customer).stream().filter(paymentRule -> {
+						return  ((paymentRule.getPaymentRulePaymentMethod() == PaymentMethod.EFFET_ESCOMPTE) && paymentRule.getPaymentRuleEffetEscompteDate().after(startDateInf) && paymentRule.getPaymentRuleEffetEscompteDate().before(endDate))
+								|| (paymentRule.getPaymentRulePaymentMethod() != PaymentMethod.EFFET_ESCOMPTE && paymentRule.getPaymentRuleDeadlineDate().after(startDateInf) && paymentRule.getPaymentRuleDeadlineDate().before(endDate));
+					}
+			).collect(Collectors.toList());
+			int i=0;
+			int j=0;
+			while(i <= customerInvoices.size()-1){
+				CustomerInvoice customerInvoice=customerInvoices.get(i);
+				GeneralLedgerDto generalLedgerInvoice=new GeneralLedgerDto();
+				generalLedgerInvoice.setDebit(customerInvoice.getInvoiceTotalAmount());
+				generalLedgerInvoice.setDebitS(customerInvoice.getInvoiceTotalAmountS());
+				generalLedgerInvoice.setDate(customerInvoice.getInvoiceDate());
+				generalLedgerInvoice.setLabel(customer.getCustomerLabel() + " " + customerInvoice.getInvoiceNumber());
+				GeneralLedgerDto generalLedgerRs=new GeneralLedgerDto();
+				generalLedgerRs.setLabel("RS " + customer.getCustomerLabel() + " " + customerInvoice.getInvoiceNumber());
+				generalLedgerRs.setDate(customerInvoice.getInvoiceDate());
+				if(customerInvoice.getInvoiceRsType() == RsTypeSaisie.VALUE){
+					generalLedgerRs.setCredit(customerInvoice.getInvoiceRs());
+					generalLedgerRs.setCreditS(Utils.convertAmountToStringWithSeperator(customerInvoice.getInvoiceRs()));
+				}else if(customerInvoice.getInvoiceRsType() == RsTypeSaisie.POURCENTAGE){
+					generalLedgerRs.setCredit((customerInvoice.getInvoiceNet()*customerInvoice.getInvoiceRs())/100);
+					generalLedgerRs.setCreditS(Utils.convertAmountToStringWithSeperator((customerInvoice.getInvoiceNet()*customerInvoice.getInvoiceRs())/100));
+				}
+				generalLedgerDtos.add(generalLedgerRs);
+				generalLedgerDtos.add(generalLedgerInvoice);
+				i++;
+			}
+
+			while(j<=paymentRules.size() - 1 ){
+				PaymentRule paymentRule = paymentRules.get(j);
+				GeneralLedgerDto generalLedgerPR = new GeneralLedgerDto();
+				if (paymentRule.getPaymentRulePaymentMethod() == PaymentMethod.EFFET_ESCOMPTE ){
+					generalLedgerPR.setDate(paymentRule.getPaymentRuleEffetEscompteDate());
+				}else{
+					generalLedgerPR.setDate(paymentRule.getPaymentRuleDeadlineDate());
+				}
+				generalLedgerPR.setCredit(paymentRule.getPaymentRuleAmount());
+				generalLedgerPR.setCreditS(paymentRule.getPaymentRuleAmountS());
+				switch(paymentRule.getPaymentRulePaymentMethod()){
+					case CHEQUE: generalLedgerPR.setLabel("Encaissement cheque");
+						break;
+					case ESPECE: generalLedgerPR.setLabel("Paymenet espece");
+						break;
+					case TRAITE: generalLedgerPR.setLabel("Traite");
+						break;
+					case VIREMENT: generalLedgerPR.setLabel("Virement");
+						break;
+					case EFFET_ESCOMPTE: generalLedgerPR.setLabel("Effet escompte");
+						break;
+					case COMISSION_BANCAIRE: generalLedgerPR.setLabel("Comission Bancaire");
+						break;
+				}
+				generalLedgerDtos.add(generalLedgerPR);
+				j++;
+			}
+			generalLedgerDtos.sort(Comparator.comparing(GeneralLedgerDto::getDate));
+			for (GeneralLedgerDto generalLedgerDto : generalLedgerDtos) {
+				progressiveAmmount=progressiveAmmount - generalLedgerDto.getCredit() + generalLedgerDto.getDebit();
+			}
+
+		}
+		return progressiveAmmount;
+	}
+
 }
