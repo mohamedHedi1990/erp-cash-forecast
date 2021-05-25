@@ -136,7 +136,7 @@ public class SupervisionTresorerieService {
 		operations.addAll(decaissementOperationsNV);
 		List<Encaissement> encaissementsNV = encaissementService.findAllNonValidatedBeforeDate(bankAccount, startDate);
 		List<OperationTreserorieDto> encaissementOperationsNV = convertEncaissementsToOperationTreserorieList(
-				encaissementsNV, comissions, true);
+				encaissementsNV, comissions, false);
 		operations.addAll(encaissementOperationsNV);
 
 		// Trouver tout kles réglements sur cette intervalle

@@ -184,14 +184,14 @@ public class PaymentRuleService {
 
 	public List<PaymentRule> getAllPaymentRuleBetwwenTwoDates(BankAccount bankAccount, Date startDate, Date endDate) {
 		return this.paymentRuleRepo
-				.findByPaymentRuleAccountAndPaymentRulePaymentMethodInAndPaymentRuleDeadlineDateBetweenOrderByPaymentRuleDeadlineDateAsc(bankAccount,new PaymentMethod[] { PaymentMethod.CHEQUE, PaymentMethod.TRAITE, PaymentMethod.VIREMENT },
+				.findByPaymentRuleAccountAndPaymentRulePaymentMethodInAndPaymentRuleDeadlineDateBetweenOrderByPaymentRuleDeadlineDateAsc(bankAccount,new PaymentMethod[] { PaymentMethod.CHEQUE, PaymentMethod.TRAITE, PaymentMethod.VIREMENT, PaymentMethod.ESPECE },
 						startDate, endDate);
 	}
 
 	public List<PaymentRule> getAllNonValidatedBeforeDate(BankAccount bankAccount, Date startDate) {
 		return this.paymentRuleRepo
 				.findByPaymentRuleAccountAndIsValidatedAndPaymentRulePaymentMethodInAndPaymentRuleDeadlineDateBeforeOrderByPaymentRuleDeadlineDateAsc(
-						bankAccount, false, new PaymentMethod[] { PaymentMethod.CHEQUE, PaymentMethod.TRAITE, PaymentMethod.VIREMENT }, startDate);
+						bankAccount, false, new PaymentMethod[] { PaymentMethod.CHEQUE, PaymentMethod.TRAITE, PaymentMethod.VIREMENT, PaymentMethod.ESPECE }, startDate);
 	}
 
 	/*
