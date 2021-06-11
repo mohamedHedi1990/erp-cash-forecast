@@ -50,6 +50,7 @@ public class AvoirService {
         if(avoirgenerer.getCustomer() == null){
             avoirgenerer.setCustomer(facture.getCustomer());
         }
+        avoirgenerer.setCommercialName(facture.getCommercialName());
         if(avoirgenerer.getAvoirCurrency() == null){
             avoirgenerer.setAvoirCurrency(facture.getFactureCurrency());
         }

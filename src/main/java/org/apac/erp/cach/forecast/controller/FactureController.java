@@ -50,12 +50,7 @@ public class FactureController {
         return  this.factureService.genererFactureFromBL(blsIds);
     }
 
-    @CrossOrigin
-    @PostMapping("/generer-from-devis")
-    Facture genererFacture(@RequestBody Long devisId)
-    {
-        return  this.factureService.genererFactureFromDevis(devisId);
-    }
+
 
     @CrossOrigin
     @PostMapping()
