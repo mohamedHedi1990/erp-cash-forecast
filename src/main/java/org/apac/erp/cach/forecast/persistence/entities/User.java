@@ -23,6 +23,12 @@ public class User extends AuditableSql implements Serializable {
 
 	private String username;
 
+	private String firstName;
+	private String lastName;
+	private String registrationNumber;
+	private String email;
+	private String phoneNumber;
+
 	private String userPassword;
 
 	@ManyToMany(fetch = FetchType.LAZY)
