@@ -26,6 +26,7 @@ public class Facture extends  AuditableSql implements Serializable {
     private String factureCondition;
     //private Integer factureDeadlineInNumberOfDays;
     private String factureCurrency;
+    private String commercialName;
     //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
     //@Temporal(TemporalType.DATE)
     //private Date factureDeadlineDate;

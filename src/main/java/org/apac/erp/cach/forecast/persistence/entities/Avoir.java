@@ -23,6 +23,7 @@ public class Avoir extends  AuditableSql implements Serializable {
     private Long avoirId;
     private String avoirNumber;
     private String avoirCurrency;
+    private String commercialName;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
     @Temporal(TemporalType.DATE)
     private Date avoirDate;

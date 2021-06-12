@@ -21,6 +21,7 @@ public class BonLivraison extends  AuditableSql implements Serializable {
     private Long bonLivraisonId;
     private String bonLivraisonNumber;
     private String bonLivraisonCurrency;
+    private String commercialName;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Africa/Tunis")
     @Temporal(TemporalType.DATE)
     private Date bonLivraisonDate;
