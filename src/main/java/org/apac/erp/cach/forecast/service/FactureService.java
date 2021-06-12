@@ -6,6 +6,7 @@ import org.apac.erp.cach.forecast.enumeration.FactureType;
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
 import org.apac.erp.cach.forecast.enumeration.RsTypeSaisie;
 import org.apac.erp.cach.forecast.persistence.entities.*;
+import org.apac.erp.cach.forecast.persistence.repositories.BonLivraisonRepository;
 import org.apac.erp.cach.forecast.persistence.repositories.CustomerInvoiceRepository;
 import org.apac.erp.cach.forecast.persistence.repositories.FactureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ public class FactureService {
     @Autowired
     FactureRepository factureRepository;
     @Autowired
+    BonLivraisonRepository bonLivraisonRepository;
+    @Autowired
     FactureLineService factureLineService;
     @Autowired
     CustomerInvoiceService customerInvoiceService;
@@ -30,6 +33,9 @@ public class FactureService {
 
     @Autowired
     BonLivraisonService bonLivraisonService;
+
+    @Autowired
+    BonLivraisonLineService bonLivraisonLineService;
     
     @Autowired
     private CustomerInvoiceRepository customerInvoiceRepo;
@@ -63,6 +69,9 @@ public class FactureService {
             }
             if(facturegenerer.getFactureCurrency() == null){
                 facturegenerer.setFactureCurrency(bonLivraison.getBonLivraisonCurrency());
+            }
+            if(bonLivraison.getCommercialName() != null && bonLivraison.getCommercialName() != ""){
+                facturegenerer.setCommercialName(bonLivraison.getCommercialName());
             }
             /*if(facturegenerer.getFactureDeadlineDate() == null){
                 Calendar c=Calendar.getInstance();
@@ -115,77 +124,6 @@ public class FactureService {
         return savedFact;
 
    }
-
-    public Facture genererFactureFromDevis(Long devisId)
-    {    Facture facturegenerer=new Facture();
-        facturegenerer.setTotalHTBrut(0d);
-        facturegenerer.setRemise(0d);
-        facturegenerer.setTotalHT(0d);
-        facturegenerer.setTotalTVA(0d);
-        facturegenerer.setTotalFodec(0d);
-        facturegenerer.setTotalTaxe(0d);
-        facturegenerer.setTimbreFiscal(0d);
-        facturegenerer.setTotalTTC(0d);
-        facturegenerer.setFactureType(FactureType.FACTURE);
-        Devis devis=devisService.devisRepository.findOne(devisId);
-        List<FactureLine> factureLines=new ArrayList<>();
-        if(facturegenerer.getCustomer() == null){
-            facturegenerer.setCustomer(devis.getCustomer());
-        }
-        if(facturegenerer.getFactureCurrency() == null){
-            facturegenerer.setFactureCurrency(devis.getDevisCurrency());
-        }
-        /*if(facturegenerer.getFactureDeadlineDate() == null){
-            Calendar c=Calendar.getInstance();
-            c.add(Calendar.DATE,30);
-            facturegenerer.setFactureDeadlineDate(c.getTime());
-        }
-        if(facturegenerer.getFactureDeadlineInNumberOfDays() == null){
-            facturegenerer.setFactureDeadlineInNumberOfDays(30);
-        }*/
-        facturegenerer.setTotalHTBrut(facturegenerer.getTotalHTBrut()+devis.getTotalHTBrut());
-        facturegenerer.setRemise(facturegenerer.getRemise()+devis.getRemise());
-        facturegenerer.setTotalHT(facturegenerer.getTotalHT()+devis.getTotalHT());
-        facturegenerer.setTotalTVA(facturegenerer.getTotalTVA()+devis.getTotalTVA());
-        facturegenerer.setTotalFodec(facturegenerer.getTotalFodec()+devis.getTotalFodec());
-        facturegenerer.setTotalTaxe(facturegenerer.getTotalTaxe()+devis.getTotalTaxe());
-        facturegenerer.setTimbreFiscal(facturegenerer.getTimbreFiscal()+devis.getTimbreFiscal());
-        facturegenerer.setTotalTTC(facturegenerer.getTotalTTC()+devis.getTotalTTC());
-        facturegenerer.setFactureDate(new Date());
-        factureLines.addAll(this.devisLinesToFactureLines(devis.getDevisLines()));
-
-        facturegenerer.setFactureLines(factureLines);
-        final DateFormat df = new SimpleDateFormat("yyyy");
-        Optional<Facture> lastFacture=factureRepository.findTopByFactureTypeOrderByCreatedAtDesc(FactureType.FACTURE);
-        String factureNumber="";
-        if(! lastFacture.isPresent()) {
-            factureNumber="FACT" + "-" + df.format(Calendar.getInstance().getTime())+ "-" +String.format("%04d", 1);
-        }else if(! df.format(lastFacture.get().getCreatedAt()).equals(df.format(Calendar.getInstance().getTime()))){
-            factureNumber="FACT" + "-" + df.format(Calendar.getInstance().getTime())+ "-" +String.format("%04d", 1);
-        }else{
-            String currentFactNumber=lastFacture.get().getFactureNumber();
-            String sequanceNumber=String.format("%04d",Integer.parseInt(currentFactNumber.substring(currentFactNumber.length()-4))+1);
-            factureNumber="FACT" + "-" + df.format(Calendar.getInstance().getTime())+ "-" +sequanceNumber;
-        }
-        facturegenerer.setFactureNumber(factureNumber);
-
-        Facture savedFacture=factureRepository.save(facturegenerer);
-        CustomerInvoice customerInvoice=this.genererCustomerInvoiceFromFacture(savedFacture);
-        savedFacture.setInvoiceCustomerId(customerInvoice.getInvoiceId());
-        if(savedFacture != null){
-            savedFacture.getFactureLines().forEach(factureLine -> {
-                factureLine.setFacture(savedFacture);
-                factureLineService.saveFactureLine(factureLine);
-            });
-            Facture savedFact=factureRepository.save(facturegenerer);
-            customerInvoice.setInvoiceNumber(savedFacture.getFactureNumber());
-            this.customerInvoiceRepo.save(customerInvoice);
-            devisService.deleteDevisById(devis.getDevisId());
-            return savedFact;
-        }else {
-            return null;
-        }
-    }
 
     public Facture saveFacture(Facture facture) {
             CustomerInvoice customerInvoice = null;
@@ -373,24 +311,6 @@ public class FactureService {
        factureRepository.deleteAll();
    }
 
-    private List<FactureLine> devisLinesToFactureLines(List<DevisLine> devisLines) {
-        ArrayList<FactureLine> factureLines=new ArrayList<>();
-        devisLines.forEach(devisLine -> {
-            FactureLine fl=new FactureLine();
-            fl.setMontantFaudec(devisLine.getMontantFaudec());
-            fl.setMontantHt(devisLine.getMontantHt());
-            fl.setMontantHtBrut(devisLine.getMontantHtBrut());
-            fl.setMontantHtBrut(devisLine.getMontantHtBrut());
-            fl.setMontantTva(devisLine.getMontantTva());
-            fl.setProduct(devisLine.getProduct());
-            fl.setProductGroup(devisLine.getProductGroup());
-            fl.setQuantity(devisLine.getQuantity());
-            fl.setRemiseTaux(devisLine.getRemiseTaux());
-            fl.setRemiseValeur(devisLine.getRemiseValeur());
-            factureLines.add(fl);
-        });
-        return factureLines;
-    }
 
     public List<Facture> findAllFacturesDateBetween(Map<String, Date> dates) {
         return this.factureRepository.findByFactureDateBetweenOrderByFactureDate(dates.get("beginDate"),dates.get("endDate"));

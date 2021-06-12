@@ -1875,7 +1875,9 @@ public class SupervisionTresorerieService {
 			bd = new BigDecimal(customerSale.getValueTotal()).setScale(3, RoundingMode.HALF_UP);
 			customerSale.setValueTotal(bd.doubleValue());
 			customerSale.setValueTotalS(Utils.convertAmountToStringWithSeperator(customerSale.getValueTotal()));
-			customerSales.add(customerSale);
+			if(customerSale.getValueTotal()>0) {
+				customerSales.add(customerSale);
+			}
 		}
 		return customerSales;
 	}
@@ -1937,7 +1939,9 @@ public class SupervisionTresorerieService {
 				bd = new BigDecimal(productSale.getValueTotal()).setScale(3, RoundingMode.HALF_UP);
 				productSale.setValueTotal(bd.doubleValue());
 				productSale.setValueTotalS(Utils.convertAmountToStringWithSeperator(productSale.getValueTotal()));
-				productSales.add(productSale);
+				if(productSale.getValueTotal()>0) {
+					productSales.add(productSale);
+				}
 			}
 		}
 		return productSales;
@@ -1954,6 +1958,11 @@ public class SupervisionTresorerieService {
 				for (Product product : products) {
                     ProductCustomerDto productCustomer=new ProductCustomerDto();
                     productCustomer.setProductLabel(product.getProductReference());
+                    List<Facture> allFactureInSelectedPeriode=this.factureRepository.findByFactureDateBetweenOrderByFactureDate(startDate,endDate);
+                    Boolean existsFacturesWithProduct=this.factureLineRepository.findByFactureInAndProduct(allFactureInSelectedPeriode, product).size()>0;
+                    if( ! existsFacturesWithProduct){
+                    	continue;
+					}
 					List<FactureLine> factureLines = this.factureLineRepository.findByFactureInAndProduct(factures, product);
 				    double somme=0D;
 					for (FactureLine factureLine : factureLines) {
@@ -1966,7 +1975,9 @@ public class SupervisionTresorerieService {
 					customerProductSale.getProductsCustomer().add(productCustomer);
 			}
 			customerProductSale.setValueTotalS(Utils.convertAmountToStringWithSeperator(customerProductSale.getValueTotal()));
-			customerProductSales.add(customerProductSale);
+			if(customerProductSale.getValueTotal()>0) {
+				customerProductSales.add(customerProductSale);
+			}
 		}
 		return customerProductSales;
 	}
@@ -2042,17 +2053,17 @@ public class SupervisionTresorerieService {
               generalLedgerPR.setCredit(paymentRule.getPaymentRuleAmount());
 			  generalLedgerPR.setCreditS(paymentRule.getPaymentRuleAmountS());
               switch(paymentRule.getPaymentRulePaymentMethod()){
-                  case CHEQUE: generalLedgerPR.setLabel("Encaissement cheque");
+                  case CHEQUE: generalLedgerPR.setLabel("Encaissement cheque N° "+paymentRule.getPaymentRuleNumber());
                       break;
-                  case ESPECE: generalLedgerPR.setLabel("Paymenet espece");
+                  case ESPECE: generalLedgerPR.setLabel("Paiement espèce N' " + paymentRule.getPaymentRuleNumber());
                       break;
-                  case TRAITE: generalLedgerPR.setLabel("Traite");
+                  case TRAITE: generalLedgerPR.setLabel("Traite N' " + paymentRule.getPaymentRuleNumber());
                       break;
-                  case VIREMENT: generalLedgerPR.setLabel("Virement");
+                  case VIREMENT: generalLedgerPR.setLabel("Virement N' " + paymentRule.getPaymentRuleNumber());
                       break;
-                  case EFFET_ESCOMPTE: generalLedgerPR.setLabel("Effet escompte");
+                  case EFFET_ESCOMPTE: generalLedgerPR.setLabel("Effet escompte N' " + paymentRule.getPaymentRuleNumber());
                       break;
-                  case COMISSION_BANCAIRE: generalLedgerPR.setLabel("Comission Bancaire");
+                  case COMISSION_BANCAIRE: generalLedgerPR.setLabel("Comission Bancaire N'°" + paymentRule.getPaymentRuleNumber());
                       break;
               }
 			  generalLedgerDtos.add(generalLedgerPR);

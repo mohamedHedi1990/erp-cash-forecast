@@ -30,6 +30,13 @@ public class BonLivraisonController {
     }
 
     @CrossOrigin
+    @PostMapping("/generer-from-devis")
+    BonLivraison genererBLFromDevis(@RequestBody Long devisId)
+    {
+        return  this.bonLivraisonService.genererBLFromDevis(devisId);
+    }
+
+    @CrossOrigin
     @PostMapping()
     ResponseEntity<BonLivraison> saveBonLivraison(@RequestBody BonLivraison bonLivraison)
     {
