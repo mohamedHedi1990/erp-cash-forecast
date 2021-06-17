@@ -87,28 +87,40 @@ public class ErpCachForecastApplication implements CommandLineRunner {
 		{
 			Role role=new Role();
 			role.setName(ERole.ADMINISTRATOR);
+			role.setRoleLabel("ADMINISTRATEUR");
 			roleRepository.save(role);
 		}
 		if(!roleRepository.findByName(ERole.CAISSIER).isPresent())
 		{
 			Role role=new Role();
 			role.setName(ERole.CAISSIER);
+			role.setRoleLabel("CAISSIER");
 			roleRepository.save(role);
 		}
 		if(!roleRepository.findByName(ERole.SIMPLE).isPresent())
 		{
 			Role role=new Role();
 			role.setName(ERole.SIMPLE);
+			role.setRoleLabel("UTILISATEUR SIMPLE");
 			roleRepository.save(role);
 		}
 		if(!roleRepository.findByName(ERole.GESTION_COMMERCIAL).isPresent())
 		{
 			Role role=new Role();
 			role.setName(ERole.GESTION_COMMERCIAL);
+			role.setRoleLabel("GESTION COMMERCIALE");
 			roleRepository.save(role);
 		}
 		
 		this.editInitialSoldes();
+		
+		// Fixer le bug pour mettre en null la date d'escompte pour les reglements de type traite ou effet d'encaissement
+		paymentRuleRepository.findAll().stream().filter(paymentRule -> paymentRule.getPaymentRulePaymentMethod() == PaymentMethod.TRAITE).forEach(paymentRule -> {
+			if(paymentRule.getPaymentRuleEffetEscompteDate() != null) {
+				paymentRule.setPaymentRuleEffetEscompteDate(null);
+				paymentRuleRepository.save(paymentRule);
+			}
+		});
 	}
 
 	private void editInitialSoldes() {

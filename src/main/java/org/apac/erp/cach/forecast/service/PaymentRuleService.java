@@ -3,6 +3,7 @@ package org.apac.erp.cach.forecast.service;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apac.erp.cach.forecast.enumeration.InvoiceStatus;
 import org.apac.erp.cach.forecast.enumeration.OperationType;
@@ -200,17 +201,18 @@ public class PaymentRuleService {
 	 * PaymentMethod[]{PaymentMethod.EFFET_ESCOMPTE,PaymentMethod.TRAITE}, false); }
 	 */
 	public List<PaymentRule> getEffectRules(Date startDate, Date endDate, PaymentMethod paymentMethod) {
+		// On recupére uniquement les reglements des clients
 		if (paymentMethod == null) {
 			return this.paymentRuleRepo.findByPaymentRuleDeadlineDateBetweenAndPaymentRulePaymentMethodInAndIsValidated(
 					startDate, endDate, new PaymentMethod[] { PaymentMethod.EFFET_ESCOMPTE, PaymentMethod.TRAITE },
-					false);
+					false).stream().filter(paymentRule -> paymentRule.getProvider() == null).collect(Collectors.toList());
 
 		} else if (paymentMethod == PaymentMethod.EFFET_ESCOMPTE) {
 			return this.paymentRuleRepo.findByPaymentRuleDeadlineDateBetweenAndPaymentRulePaymentMethodAndIsValidated(
-					startDate, endDate, PaymentMethod.EFFET_ESCOMPTE, false);
+					startDate, endDate, PaymentMethod.EFFET_ESCOMPTE, false).stream().filter(paymentRule -> paymentRule.getProvider() == null).collect(Collectors.toList());
 		} else if (paymentMethod.equals(PaymentMethod.TRAITE)) {
 			return this.paymentRuleRepo.findByPaymentRuleDeadlineDateBetweenAndPaymentRulePaymentMethodAndIsValidated(
-					startDate, endDate, PaymentMethod.TRAITE, false);
+					startDate, endDate, PaymentMethod.TRAITE, false).stream().filter(paymentRule -> paymentRule.getProvider() == null).collect(Collectors.toList());
 		}
 		return null;
 	}
@@ -287,5 +289,15 @@ public class PaymentRuleService {
 		return this.paymentRuleRepo
 				.findByPaymentRuleAccountAndPaymentRulePaymentMethodInAndPaymentRuleEffetEscompteDateBetweenOrderByPaymentRuleEffetEscompteDateAsc(bankAccount,new PaymentMethod[] { PaymentMethod.EFFET_ESCOMPTE},
 						startDate, endDate);
+	}
+
+	public PaymentRule putInEscompte(PaymentRule paymentRule) {
+		PaymentRule oldPaymentRule = paymentRuleRepo.findOne(paymentRule.getPaymentRuleId());
+		if(oldPaymentRule != null) {
+			oldPaymentRule.setPaymentRulePaymentMethod(PaymentMethod.EFFET_ESCOMPTE);
+			oldPaymentRule.setPaymentRuleEffetEscompteDate(paymentRule.getPaymentRuleEffetEscompteDate());
+			return this.paymentRuleRepo.save(oldPaymentRule);
+		}
+		return null;
 	}
 }

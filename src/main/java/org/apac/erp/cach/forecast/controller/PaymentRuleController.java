@@ -28,6 +28,12 @@ public class PaymentRuleController {
 	public PaymentRule savePaymentRule(@RequestBody PaymentRule paymentRule) {
 		return this.paymentRuleService.savePaymentRule(paymentRule);
 	}
+	
+	@CrossOrigin
+	@PutMapping("/put-in-escompte")
+	public PaymentRule putInEscompte(@RequestBody PaymentRule paymentRule) {
+		return this.paymentRuleService.putInEscompte(paymentRule);
+	}
 
 	@CrossOrigin
 	@GetMapping("/get-effect-rule/{startDate}/{endDate}")
