@@ -19,6 +19,11 @@ public class BankAccountService {
 	private HistoricAccountSoldService historicAccountSoldService;
 
 	public BankAccount saveAccount(BankAccount account) {
+		//re-persister les tarifications banciares: suite au bug remonté que les comissions sont supprimés une fois on modifie le compte bancaire
+		if(account.getAccountId() != null && account.getAccountComissions() != null && !account.getAccountComissions().isEmpty()) {
+			account.getAccountComissions().stream().forEach(comission -> comission.setBankAccount(account));
+		}
+		
 		BankAccount accountB = this.bankAccountRepo.save(account);
 		HistoricAccountSold historicSolde = new HistoricAccountSold(account, account.getAccountInitialAmount(), new Date());
 		historicAccountSoldService.saveHistoricSolde(historicSolde);
